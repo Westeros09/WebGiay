@@ -1,10 +1,14 @@
 app.controller("product-ctrl", function($scope, $http){
 	$scope.items = [];
 	$scope.form = {};
+
 	
 	$scope.initialize = function(){
 		$http.get("/rest/categories").then(resp => {
 			$scope.categories = resp.data;
+		})
+			$http.get("/rest/discountSale").then(resp => {
+			$scope.discountSale = resp.data;
 		})
 
 		$http.get("/rest/products").then(resp => {

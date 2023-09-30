@@ -37,24 +37,29 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="item in cart.items">
-								<td><img src="/images/{{item.image}}" style="width:50%"></td>
-								
+								<td><img src="/images/{{item.image}}" style="width: 50%"></td>
+
+
 								<td>{{item.name}}</td>
-								<td >{{item.sizes}}</td>
-								<td>${{item.price | number : 2}}</td>
+								<td>{{item.sizes}}</td>
+
+								<!-- <td>${{item.price | number : 2}}</td> -->
+								<td>${{cart.price_product(item)}}</td>
+
 								<td><input ng-change="cart.saveToLocalStorage()"
 									ng-model="item.qty" type="number" min="1" style="width: 60px;" /></td>
-								<td>${{cart.amt_of(item) | number : 2}}</td>
+								<!-- <td>${{cart.amt_of(item) | number : 2}}</td> -->
+								<td>${{cart.amtt_of(item) | number : 2}}</td>
 								<td>
 									<button ng-click="cart.remove(item.id)"
 										class="btn btn-sm btn-danger">
 										<i class="fas fa-trash"> X</i>
 									</button>
 								</td>
-								
+
 							</tr>
 						</tbody>
-						
+
 					</table>
 				</div>
 				<!-- </form> -->
@@ -100,19 +105,19 @@
 									<span class="text-black">Total</span>
 								</div>
 								<div class="col-md-6 text-right">
-						
-									<strong class="text-black"> ${{cart.amount | number : 2}}</strong>
+
+									<strong class="text-black"> ${{cart.amount | number :
+										2}}</strong>
 								</div>
 							</div>
 
 							<div class="row">
 								<div class="col-md-12">
-								<a th:href="@{/checkout.html}">
-								<button class="btn btn-primary btn-lg py-3 btn-block"
-										>Proceed To
-										Checkout</button>
-								</a>
-									
+									<a th:href="@{/checkout.html}">
+										<button class="btn btn-primary btn-lg py-3 btn-block">Proceed
+											To Checkout</button>
+									</a>
+
 								</div>
 							</div>
 						</div>

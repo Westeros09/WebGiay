@@ -32,7 +32,9 @@ app.config(function($routeProvider) {
 			templateUrl: "/assets/admin/revenue/index.html",
 			controller: "revenue-ctrl"
 		})
-
+        .when("/chart", {
+			templateUrl: "/assets/admin/charts.html"
+		})
 		.otherwise({
 			template: "<h1 class='text-center'>Shoe Galaxy Administration</h1>"
 

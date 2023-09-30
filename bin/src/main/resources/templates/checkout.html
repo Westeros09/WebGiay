@@ -36,8 +36,8 @@
 						<div class="p-3 p-lg-5 border">
 							<table class="table site-block-order-table mb-5">
 								<thead>
-									<th>Image</th>
 									<th>Id</th>
+									<th>Image</th>
 									<th>Size</th>
 									<th>Price</th>
 									<th>Count</th>
@@ -45,27 +45,36 @@
 								</thead>
 								<tbody>
 									<tr ng-repeat="item in cart.items">
-										<td><img src="/images/{{item.image}}" style="width: 50%"></td>
-										<td><input type="text" ng-model="item.id"
-											name="idProduct"
+										<td><input type="text" style="width:30%"
+											ng-model="item.id" name="idProduct"
 											class="border border-light" /></td>
+										<td><img src="/images/{{item.image}}" style="width:30%"></td>
+
 										<td>{{item.sizes}}</td>
-										<td>${{item.price | number : 2}}</td>
-										
+										<td>${{cart.price_product(item)}}</td>
 										<td><input ng-model="item.qty" type="text"
-											name="countProduct" style="width: 20px" class="border border-light" /></td>
-										<td>${{cart.amt_of(item) | number : 2}}</td>
+											name="countProduct" style="width: 30px"
+											class="border border-light" /></td>
+										<td>${{cart.amtt_of(item) | number : 2}}</td>
 
 
 									</tr>
 									<tr>
 										<td class="text-black font-weight-bold"><strong>Order
 												Total</strong></td>
-										<td class="text-black font-weight-bold"><strong>${{cart.amount
-												| number : 2}}</strong></td>
-										<td><input type="hidden" id="inputAmount" name="total"
-											value="{{cart.amount | number : 2}}" /></td>
+
+										<td><input
+											class="text-black font-weight-bold border border-light"
+											type="text" name="total"
+											th:value="${calculatedValue != null ?  + calculatedValue : '{{cart.amount | number : 2}}'}" />
+
+											<input style="text-decoration: line-through;"
+											class="text-black font-weight-bold border border-light"
+											type="text" th:value="${{cartAmount}}" /></td>
+										<td><input type="hidden" id="inputAmount"
+											name="totalAmount" value="{{cart.amount}}" /></td>
 									</tr>
+
 								</tbody>
 							</table>
 
@@ -99,17 +108,16 @@
 
 									<div class="form-group row">
 										<div class="col-md-12">
-										<label th:text="${message}"></label>
-											<label for="c_fname" class="text-black">Name<span
-												class="text-danger">*</span>
+											<label th:text="${message}"></label> <label for="c_fname"
+												class="text-black">Name<span class="text-danger">*</span>
 											</label> <input type="text" class="form-control" id="fullname"
 												name="fullname"
 												th:value="${session.user != null ? session.user.fullname : ''}"
 												required>
 										</div>
-									
 
-									
+
+
 										<div class="col-md-12">
 											<label for="c_address" class="text-black">Address <span
 												class="text-danger">*</span></label> <input type="text"
@@ -125,25 +133,31 @@
 												required>
 										</div>
 									</div>
-								
+
 								</div>
 							</div>
 						</div>
 
 						<div class="row mb-5">
 							<div class="col-md-12">
+								<div th:if="${error}" class="alert alert-danger">
+									<p th:text="${error}"></p>
+								</div>
 								<h2 class="h3 mb-3 text-black">Coupon Code</h2>
 								<div class="p-3 p-lg-5 border">
 									<label for="c_code" class="text-black mb-3">Enter your
 										coupon code if you have one</label>
 									<div class="input-group w-75">
-										<input type="text" class="form-control" id="c_code"
-											placeholder="Coupon Code" aria-label="Coupon Code"
-											aria-describedby="button-addon2">
+										<input type="text" name="code" placeholder="Nhập mã giảm giá"
+											th:value="${code}">
+
 										<div class="input-group-append">
-											<button class="btn btn-primary btn-sm" type="button"
-												id="button-addon2">Apply</button>
+											<button type="submit" formaction="/searchCodee">Tìm
+												kiếm</button>
+
 										</div>
+
+										
 									</div>
 								</div>
 							</div>

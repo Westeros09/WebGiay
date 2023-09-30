@@ -27,9 +27,28 @@
 				</div>
 				<div class="col-md-6">
 					<p th:text="${prod.name}"></p>
+					<div>
+					
+					
+					
+						<!-- Hiển thị giá gốc (nếu có) -->
+						<p th:if="${prod.discount_sale == null}" class="text-primary h4"
+							th:text="${'$' + prod.price}"  ng-model ='totalAmount'></p>
+
+
+						<!-- Hiển thị giá giảm giá (nếu có) -->
+						<p th:if="${prod.discount_sale != null}"
+							 class="text-primary h4"
+							th:text="${'$' + (prod.price - (prod.price * prod.discount_sale.percentage / 100))} "  ng-model ='totalAmount'></p>
+
+						<!-- Hiển thị giá gốc (nếu có) với gạch ngang -->
+						<p th:if="${prod.discount_sale != null}"
+							class="text-primary h4" style="text-decoration: line-through;"
+							th:text="${'$' + prod.price}"></p>
+					</div>
 					<p>
-						<strong class="text-primary h4" th:text="'$ ' + ${prod.price}">
-						</strong>
+						<!-- <strong class="text-primary h4" th:text="'$ ' + ${prod.price}">
+						</strong> -->
 					</p>
 					<p>
 						<!-- <select >
@@ -42,7 +61,8 @@
 							<option th:each="item : ${prodd}" th:value="${item.sizes}"
 								th:text="${item.sizes}"></option>
 						</select> <a th:attr="ng-click=@{|cart.add(${prod.id})|}"
-							class="mt-5 buy-now btn btn-sm w-100 btn-primary" style="color:white">Add To Cart</a>
+							class="mt-5 buy-now btn btn-sm w-100 btn-primary"
+							style="color: white" ng-click="saveToLocalStorage()">Add To Cart</a>
 					</p>
 
 					<p>
@@ -52,27 +72,28 @@
 
 				</div>
 
-</div>
-				<!--  tab -->
-				<div style="border-bottom: groove; "></div>
-				<h1 style="text-align: center;">Mặt hàng liên quan</h1>
-<div class="row">
-    <div class="col-lg-3 " th:each="item : ${prod.category.products}">
-        <div class="list-item wsk-cp-product">
-            <div class="block-4-image wsk-cp-image">
-                <a th:href="@{|/shop-single.html/${item.id}|}">
-                    <img th:src="@{|/images/${item.image}|}" width="100%" alt="Image placeholder" class="img-thumb">
-                </a>
-            </div>
-            <div class="item-details">
-                <h3 class="text-truncate" th:text="${item.name}"></h3>
-                <p class="price" th:text="${'Giá: ' + item.price + ' VNĐ'}"></p>
-            </div>
-        </div>
-    </div>
-</div>
+			</div>
+			<!--  tab -->
+			<div style="border-bottom: groove;"></div>
+			<h1 style="text-align: center;">Mặt hàng liên quan</h1>
+			<div class="row">
+				<div class="col-lg-3 " th:each="item : ${prod.category.products}">
+					<div class="list-item wsk-cp-product">
+						<div class="block-4-image wsk-cp-image">
+							<a th:href="@{|/shop-single.html/${item.id}|}"> <img
+								th:src="@{|/images/${item.image}|}" width="100%"
+								alt="Image placeholder" class="img-thumb">
+							</a>
+						</div>
+						<div class="item-details">
+							<h3 class="text-truncate" th:text="${item.name}"></h3>
+							<p class="price" th:text="${'Giá: ' + item.price + ' VNĐ'}"></p>
+						</div>
+					</div>
+				</div>
+			</div>
 
-			
+
 		</div>
 	</div>
 </body>

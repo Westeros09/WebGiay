@@ -4,14 +4,30 @@
 <head>
 <title>Shoppers &mdash; Colorlib e-Commerce Template</title>
 <meta charset="utf-8">
+<style>
+.product-image {
+	position: relative;
+}
+
+.product-image .discount-percentage {
+	position: absolute;
+	top: 10px; /* Điều chỉnh vị trí theo ý muốn */
+	left: 10px; /* Điều chỉnh vị trí theo ý muốn */
+	background-color: rgba(255, 0, 0, 0.7); /* Màu nền */
+	color: white; /* Màu chữ */
+	padding: 5px; /* Khoảng cách đến nội dung */
+	border-radius: 5px; /* Góc bo tròn */
+	font-size: 14px; /* Kích thước chữ */
+}
+</style>
 </head>
 <body>
 	<div class="bg-light py-3">
 		<div class="container">
 			<div class="row">
 				<div class="col-md-12 mb-0">
-					<a href="index.html" style="text-decoration: none">Home</a> <span class="mx-2 mb-0">/</span> <strong
-						class="text-black">Shop</strong>
+					<a href="index.html" style="text-decoration: none">Home</a> <span
+						class="mx-2 mb-0">/</span> <strong class="text-black">Shop</strong>
 				</div>
 			</div>
 		</div>
@@ -29,7 +45,8 @@
 								<h2 class="text-black h5">Shop All</h2>
 							</div>
 							<div class="d-flex">
-								<div class="dropdown mr-1 ml-md-auto" style="text-decoration: none">
+								<div class="dropdown mr-1 ml-md-auto"
+									style="text-decoration: none">
 									<button type="button"
 										class="btn btn-secondary btn-sm dropdown-toggle"
 										id="dropdownMenuOffset" data-toggle="dropdown"
@@ -61,40 +78,43 @@
 						</div>
 					</div>
 					<div class="row mb-5">
-						<div th:each="p: ${products}" class="col-md-4">
+						<div th:each="p: ${products}" class="col-md-4 col-6 col-sm-4">
 							<div class="wsk-cp-product">
 								<div class="wsk-cp-img">
 									<a th:href="@{|/shop-single.html/${p.id}|}"> <img
-										th:src="@{|/images/${p.image}|}" style= "height:auto">
+										class="product-image" th:src="@{|/images/${p.image}|}"
+										style="height: auto"> <!-- Hiển thị phần trăm giảm giá trực tiếp trên ảnh -->
+										<div class="discount-percentage"
+											th:if="${p.discount_sale != null}"
+											th:text="${p.discount_sale.percentage + '%'}"></div>
 									</a>
 									<div style="text-align: center; font-size: 20px; top: 10px"
 										th:utext="${p.name}"></div>
 								</div>
 
 								<div class="wsk-cp-text">
-
-									<!-- <div class="category">
-									<span th:attr="ng-click=@{|cart.add(${p.id})|}"
-											class="btn btn-dark">Add to cart</span>
-								</div> -->
-
-
-									<div class="card-footer border-light ">
+									<div class="card-footer border-light">
 										<div style="text-align: center;">
-											<span class="price text-dark">$[[${p.price}]]</span>
+											<!-- Hiển thị giá gốc (nếu có) -->
+											<span class="original-price"
+												th:if="${p.discount_sale == null}"
+												th:text="${'$' + p.price}"></span>
+											<!-- Hiển thị giá giảm giá (nếu có) -->
+											<span class="discounted-price"
+												th:if="${p.discount_sale != null}"
+												th:text="${'$' + (p.price - (p.price * p.discount_sale.percentage / 100))}"></span>
+												      <span class="original-price" th:if="${p.discount_sale != null}" style="text-decoration: line-through;" th:text="${'$' + p.price}"></span>
 										</div>
-
 									</div>
 								</div>
 							</div>
-							
-                        </div> 
+						</div>
 					</div>
 
 					<div class="row" data-aos="fade-up">
 						<div class="col-md-12 text-center">
 							<div class="site-block-27">
-							
+
 								<!-- ĐIỀU HƯỚNG -->
 								<div th:switch="${check}">
 									<ul th:case="1">
@@ -105,51 +125,53 @@
 										<li><a
 											th:href="@{|/shop.html/search?p=${products.totalPages - 1}|}">&gt;</a></li>
 									</ul>
-									
+
 									<ul th:case="2">
-                    <li><a th:href="@{|/shop.html/search?p=0|}">&lt;</a></li>
-                    <li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
-                      <a th:href="@{|/shop.html/findByPrice?p=${i-1}|}" th:text="${i}"></a>
-                    </li>
-                    <li><a
-                      th:href="@{|/shop.html/findByPrice?p=${products.totalPages - 1}|}">&gt;</a></li>
-                  </ul>
-                  
-                  <ul th:case="3">
-                    <li><a th:href="@{|/shop.html/searchBrand?p=0|}">&lt;</a></li>
-                    <li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
-                      <a th:href="@{|/shop.html/searchBrand?p=${i-1}|}" th:text="${i}"></a>
-                    </li>
-                    <li><a
-                      th:href="@{|/shop.html/searchBrand?p=${products.totalPages - 1}|}">&gt;</a></li>
-                  </ul>
-                  
-                  <ul th:case="4">
-                    <li><a th:href="@{|/shop.html/sort?p=0|}">&lt;</a></li>
-                    <li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
-                      <a th:href="@{|/shop.html/sort?p=${i-1}|}" th:text="${i}"></a>
-                    </li>
-                    <li><a
-                      th:href="@{|/shop.html/sort?p=${products.totalPages - 1}|}">&gt;</a></li>
-                  </ul>
-                  
-                  <ul th:case="5">
-                    <li><a th:href="@{|/shop.html/sort1?p=0|}">&lt;</a></li>
-                    <li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
-                      <a th:href="@{|/shop.html/sort1?p=${i-1}|}" th:text="${i}"></a>
-                    </li>
-                    <li><a
-                      th:href="@{|/shop.html/sort1?p=${products.totalPages - 1}|}">&gt;</a></li>
-                  </ul>
-                  
-                  <ul th:case="*">
-                    <li><a th:href="@{|/shop.html?p=0|}">&lt;</a></li>
-                    <li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
-                      <a th:href="@{|/shop.html?p=${i-1}|}" th:text="${i}"></a>
-                    </li>
-                    <li><a
-                      th:href="@{|/shop.html?p=${products.totalPages - 1}|}">&gt;</a></li>
-                  </ul>
+										<li><a th:href="@{|/shop.html/search?p=0|}">&lt;</a></li>
+										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
+											<a th:href="@{|/shop.html/findByPrice?p=${i-1}|}"
+											th:text="${i}"></a>
+										</li>
+										<li><a
+											th:href="@{|/shop.html/findByPrice?p=${products.totalPages - 1}|}">&gt;</a></li>
+									</ul>
+
+									<ul th:case="3">
+										<li><a th:href="@{|/shop.html/searchBrand?p=0|}">&lt;</a></li>
+										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
+											<a th:href="@{|/shop.html/searchBrand?p=${i-1}|}"
+											th:text="${i}"></a>
+										</li>
+										<li><a
+											th:href="@{|/shop.html/searchBrand?p=${products.totalPages - 1}|}">&gt;</a></li>
+									</ul>
+
+									<ul th:case="4">
+										<li><a th:href="@{|/shop.html/sort?p=0|}">&lt;</a></li>
+										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
+											<a th:href="@{|/shop.html/sort?p=${i-1}|}" th:text="${i}"></a>
+										</li>
+										<li><a
+											th:href="@{|/shop.html/sort?p=${products.totalPages - 1}|}">&gt;</a></li>
+									</ul>
+
+									<ul th:case="5">
+										<li><a th:href="@{|/shop.html/sort1?p=0|}">&lt;</a></li>
+										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
+											<a th:href="@{|/shop.html/sort1?p=${i-1}|}" th:text="${i}"></a>
+										</li>
+										<li><a
+											th:href="@{|/shop.html/sort1?p=${products.totalPages - 1}|}">&gt;</a></li>
+									</ul>
+
+									<ul th:case="*">
+										<li><a th:href="@{|/shop.html?p=0|}">&lt;</a></li>
+										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
+											<a th:href="@{|/shop.html?p=${i-1}|}" th:text="${i}"></a>
+										</li>
+										<li><a
+											th:href="@{|/shop.html?p=${products.totalPages - 1}|}">&gt;</a></li>
+									</ul>
 								</div>
 
 							</div>
@@ -160,16 +182,19 @@
 				<div class="col-md-3 order-1 mb-5 mb-md-0">
 					<div class="border p-4 rounded mb-4">
 						<h3 class="mb-3 h6 text-uppercase text-black d-block">Categories</h3>
-						<ul class="list-unstyled mb-0" >
-							<li class="mb-1"><a href="/shop.html?brand=Adidas"style="text-decoration: none"
-								class="d-flex"><span>Adidas</span> <span
-									class="text-black ml-auto">(2,220)</span></a></li>
-							<li class="mb-1"><a style="text-decoration: none" href="/shop.html?brand=MLB"
-								class="d-flex"><span>MLB</span> <span
-									class="text-black ml-auto">(2,550)</span></a></li>
-							<li class="mb-1"><a style="text-decoration: none" href="/shop.html?brand=Nike"
-								class="d-flex"><span>Nike</span> <span
-									class="text-black ml-auto">(2,124)</span></a></li>
+						<ul class="list-unstyled mb-0">
+							<li class="mb-1"><a href="/shop.html?brand=Adidas"
+								style="text-decoration: none" class="d-flex"><span>Adidas</span>
+									<span class="text-black ml-auto"><span
+										th:text="${countAD}"></span></a></li>
+							<li class="mb-1"><a style="text-decoration: none"
+								href="/shop.html?brand=MLB" class="d-flex"><span>MLB</span>
+									<span class="text-black ml-auto"><span
+										th:text="${count}"></span></a></li>
+							<li class="mb-1"><a style="text-decoration: none"
+								href="/shop.html?brand=Nike" class="d-flex"><span>Nike</span>
+									<span class="text-black ml-auto"><span
+										th:text="${countNK}"></span></a></li>
 						</ul>
 					</div>
 
@@ -195,7 +220,7 @@
 												th:value="${param.max}" placeholder="Giá cao">
 										</div>
 									</div>
-									
+
 									<div class="col-12 mt-2" style="">
 										<button type="submit" class="btn btn-warning"
 											style="height: 30px;">
@@ -225,14 +250,17 @@
 							<a href="/shop.html/Red" style="text-decoration: none"
 								class="d-flex color-item align-items-center"> <span
 								class="bg-danger color d-inline-block rounded-circle mr-2"></span>
-								<span class="text-black" >Red (2,429)</span>
-							</a> <a style="text-decoration: none" href="#" class="d-flex color-item align-items-center"> <span
+								<span class="text-black">Red (2,429)</span>
+							</a> <a style="text-decoration: none" href="#"
+								class="d-flex color-item align-items-center"> <span
 								class="bg-success color d-inline-block rounded-circle mr-2"></span>
 								<span class="text-black">Green (2,298)</span>
-							</a> <a style="text-decoration: none" href="#" class="d-flex color-item align-items-center"> <span
+							</a> <a style="text-decoration: none" href="#"
+								class="d-flex color-item align-items-center"> <span
 								class="bg-info color d-inline-block rounded-circle mr-2"></span>
 								<span class="text-black">Blue (1,075)</span>
-							</a> <a style="text-decoration: none" href="#" class="d-flex color-item align-items-center"> <span
+							</a> <a style="text-decoration: none" href="#"
+								class="d-flex color-item align-items-center"> <span
 								class="bg-primary color d-inline-block rounded-circle mr-2"></span>
 								<span class="text-black">Purple (1,075)</span>
 							</a>

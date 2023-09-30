@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{/layout/layout.html::dynamic(~{::title}, ~{::body})}">
+<head>
+<title>Tạo mã giảm giá</title>
+<!-- Đường dẫn đến thư viện Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+	<div class="container mt-5">
+		<h1 class="mb-4 text-center">Tạo mã giảm giá</h1>
+
+		<form action="/discount" th:object="${item}" method="post"
+			onsubmit="return validateDiscountAmount()">
+			<div th:if="${successMessage}" class="alert alert-success">
+				<span th:text="${successMessage}"></span>
+			</div>
+			<div th:if="${errorMessage}" class="alert alert-danger">
+				<span th:text="${errorMessage}"></span>
+			</div>
+
+
+			<div class="form-group">
+				<input type="hidden" class="form-control" id="code" th:field="*{id}"
+					name="id" required>
+			</div>
+
+			<div class="form-group">
+				<label for="code">Mã giảm giá:</label> <input type="text"
+					class="form-control" id="code" th:field="*{code}" name="code"
+					required>
+			</div>
+			<div class="form-group">
+				<label for="discountAmount">Giảm giá:</label> <input type="number"
+					class="form-control" id="discountAmount"
+					th:field="*{discountAmount}" name="discountAmount" step="10"
+					required> <small id="amountError" class="text-danger"></small>
+			</div>
+			<!-- <div class="form-group">
+				<label for="expirationDate">Ngày hết hạn:</label> <input type="date"
+					class="form-control" id="expirationDate"
+					th:field="*{expirationDate}" required>
+			</div> -->
+			<div class="form-group">
+				<label for="expirationDate">Ngày hết hạn:</label> <input type="date"
+					class="form-control" id="expirationDate"
+					th:field="${item.expirationDate}" required>
+			</div>
+
+
+
+			<button type="submit" class="btn btn-primary"
+				formaction="/discount/create-discount">Create</button>
+
+			<button type="submit" class="btn btn-primary"
+				formaction="/discount/update-discount">Update</button>
+
+		</form>
+	</div>
+	<table class="table table-striped container mt-5">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Mã giảm giá</th>
+				<th>Giảm giá</th>
+				<th>Ngày hết hạn</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- Sử dụng Thymeleaf để lặp qua danh sách mã giảm giá -->
+			<tr th:each="discountCode : ${discount}">
+				<td th:text="${discountCode.id}"></td>
+				<td th:text="${discountCode.code}"></td>
+				<td th:text="${discountCode.discountAmount}"></td>
+				<td th:text="${discountCode.expirationDate}"></td>
+				<td><a
+					th:href="@{/discount/edit-discount/{id}(id=${discountCode.id})}">Edit</a>
+					<a
+					th:href="@{/discount/delete-discount/{id}(id=${discountCode.id})}">Delete</a></td>
+			</tr>
+		</tbody>
+	</table>
+	<nav aria-label="Page navigation">
+		<ul class="pagination justify-content-center">
+			<li class="page-item" th:if="${discount.hasPrevious()}"><a
+				class="page-link"
+				th:href="@{'/discount?p=' + ${discount.previousPageable().pageNumber}}">Trang
+					trước</a></li>
+			<li class="page-item"
+				th:each="pageNumber : ${#numbers.sequence(0, discount.totalPages - 1)}">
+				<a class="page-link" th:href="@{'/discount?p=' + ${pageNumber}}">[[${pageNumber
+					+ 1}]]</a>
+			</li>
+			<li class="page-item" th:if="${discount.hasNext()}"><a
+				class="page-link"
+				th:href="@{'/discount?p=' + ${discount.nextPageable().pageNumber}}">Trang
+					sau</a></li>
+		</ul>
+	</nav>
+	
+
+	<!-- Đường dẫn đến thư viện Bootstrap JS và jQuery (nếu cần) -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

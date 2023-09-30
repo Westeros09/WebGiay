@@ -22,7 +22,7 @@
 					<td>{{item.address}}</td>
 					<td>{{item.nguoinhan}}</td>
 					<td>{{item.tongtien}}</td>
-					<td>{{item.available?'Yes':'No'}}</td>
+					<td ng-class="{'btn-show':item.available,'btn-hide':!item.available}">{{item.available?'Đã giao hàng':'Chưa giao hàng'}}</td>
 				<td>
 					<div class="btn-group btn-group-xs">
 						<a ng-click="edit(item)" href="" class="btn btn-warning">
