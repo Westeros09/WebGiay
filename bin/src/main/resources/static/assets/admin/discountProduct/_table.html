@@ -4,6 +4,7 @@
 		<thead class="bg-success" style="font-variant: small-caps;">
 			<tr>
 				<th>Id</th>
+				<th>Product Id</th>
 				<th>Name</th>
 				<th>Start Date</th>
 				<th>End Date</th>
@@ -16,11 +17,12 @@
 		<tbody>
 			<tr ng-repeat="item in pager.items">
 				<td>{{item.id}}</td>
+				<td>{{item.product.id  }} {{item.product.name}}</td>
 				<td>{{item.name}}</td>
-				<td>{{item.startDate}}</td>
-				<td>{{item.endDate}}</td>
+				<td>{{item.start_Date}}</td>
+				<td>{{item.end_Date}}</td>
 				<td>{{item.percentage}}</td>
-				<td>{{item.activate ? 'Hoạt Động' : 'Ngưng Hoạt Động '}}</td>
+				<td>{{item.active ? 'Hoạt Động' : 'Ngưng Hoạt Động '}}</td>
 				<td>
 					<div class="btn-group btn-group-xs">
 						<a ng-click="edit(item)" href="" class="btn btn-warning"> <i

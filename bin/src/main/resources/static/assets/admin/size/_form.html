@@ -13,7 +13,7 @@
 						<div>Product Id</div>
 						<select ng-model="form.product.id" class="form-control">
 							<option value="" disabled selected>Select Product Id</option>
-							<option ng-repeat="p in products" ng-value="p.id">{{p.name}}</option>
+							<option ng-repeat="p in products" ng-value="p.id">{{p.id}} {{p.name}}</option>
 						</select>
 					</div>
 				</div>

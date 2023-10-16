@@ -63,29 +63,24 @@ app.controller("size-ctrl", function($scope, $http) {
 		}
 	}
 
+
 	$scope.update = function() {
 		var item = angular.copy($scope.form);
 
 		// Kiểm tra nếu một mục với cùng productid và size đã tồn tại trong $scope.items
-		var existingItem = $scope.items.find(function(existing) {
-			return existing.productid === item.productid && existing.size === item.size;
+
+
+
+		// Thực hiện cập nhật trên mục đã tồn tại
+		$http.put(`/rest/sizeManager/${item.id}`, item).then(resp => {
+			var index = $scope.items.findIndex(p => p.id == item.id);
+			$scope.items[index] = item;
+			alert("Cập nhật size thành công!");
+		}).catch(function(error) {
+			alert("Lỗi cập nhật size!");
+			console.log("Lỗi", error);
 		});
 
-		if (existingItem) {
-			// Nếu đã tồn tại một mục với cùng productid và size, thực hiện phép cộng quantity
-			existingItem.quantity = parseInt(existingItem.quantity) + parseInt(item.quantity);
-
-			// Thực hiện cập nhật trên mục đã tồn tại
-			$http.put(`/rest/sizeManager/${existingItem.id}`, existingItem).then(function(resp) {
-				alert("Cập nhật size thành công!");
-			}).catch(function(error) {
-				alert("Lỗi cập nhật size!");
-				console.log("Lỗi", error);
-			});
-		} else {
-			// Nếu không tìm thấy mục phù hợp, thông báo lỗi
-			alert("Không tìm thấy mục để cập nhật. Hãy tạo mục mới hoặc kiểm tra thông tin.");
-		}
 	}
 
 

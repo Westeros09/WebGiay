@@ -18,11 +18,11 @@ app.controller("discount-ctrl", function($scope, $http) {
 	$scope.create = function() {
 		var item = angular.copy($scope.form);
 
-		// Sử dụng moment.js để định dạng ngày và chuyển đổi thành định dạng mong muốn (ví dụ: "YYYY-MM-DD")
-		var formattedDate = moment(item.expirationDate).format("YYYY-MM-DD");
 
-		// Gán giá trị đã định dạng lại vào item.expirationDate
-		item.expirationDate = formattedDate;
+		if (item.start_Date > item.end_Date) {
+			alert("Ngày bắt đầu phải nhỏ hơn ngày kết thúc!");
+			return; // Ngừng hàm và không tiến hành tạo mới
+		}
 
 		$http.post(`/rest/discountCode`, item).then(resp => {
 			$scope.items.push(resp.data);
@@ -38,7 +38,8 @@ app.controller("discount-ctrl", function($scope, $http) {
 
 	$scope.edit = function(item) {
 		$scope.form = angular.copy(item);
-		$scope.form.expirationDate = new Date(item.expirationDate);
+		$scope.form.start_Date = new Date(item.start_Date);
+		$scope.form.end_Date = new Date(item.end_Date);
 		$(".nav-tabs a:eq(0)").tab("show");
 	}
 
@@ -50,6 +51,11 @@ app.controller("discount-ctrl", function($scope, $http) {
 
 	$scope.update = function() {
 		var item = angular.copy($scope.form);
+		if (item.start_Date > item.end_Date) {
+			alert("Ngày bắt đầu phải nhỏ hơn ngày kết thúc!");
+			return; // Ngừng hàm và không tiến hành tạo mới
+		}
+		
 		$http.put(`/rest/discountCode/${item.id}`, item).then(resp => {
 			var index = $scope.items.findIndex(p => p.id == item.id);
 			$scope.items[index] = item;

@@ -3,28 +3,56 @@
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-sm-12">
+				<div class="form-group col-sm-6">
+
+					<input ng-model="form.id" class="form-control"
+						disabled="disabled">
+				</div>
 				<div class="row">
-					<div class="form-group col-sm-6">
-						<div>Id</div>
-						<input ng-model="form.id" class="form-control" disabled="disabled">
-					</div>
+
 					<div class="form-group col-sm-6">
 						<div>Code</div>
 						<input ng-model="form.code" class="form-control">
 					</div>
-				</div>
-				<div class="row">
 					<div class="form-group col-sm-6">
 						<div>Discount Amount</div>
 						<input ng-model="form.discountAmount" class="form-control">
 					</div>
-					<div class="form-group col-sm-6">
-						<div>Expiration Date</div>
-						<input ng-model="form.expirationDate" 
-							class="form-control"  type="date">
-					</div>
+
 				</div>
-				
+				<div class="row">
+
+					<div class="form-group col-sm-6">
+						<div>Discount Quantity</div>
+						<input ng-model="form.quantity" class="form-control">
+					</div>
+
+					<div class="form-group col-sm-6">
+						<div>Active?</div>
+						<div class="form-control">
+							<label class="radio-inline"> <input
+								ng-model="form.activate" ng-value="true" name="available"
+								type="radio">Hoạt Động
+							</label> <label class="radio-inline"> <input
+								ng-model="form.activate" ng-value="false" name="available"
+								type="radio">Ngưng Hoạt Động
+							</label>
+						</div>
+					</div>
+
+				</div>
+				<div class="row">
+					<div class="form-group col-sm-6">
+						<div>Start Date</div>
+						<input ng-model="form.start_Date" class="form-control" type="date">
+					</div>
+					<div class="form-group col-sm-6">
+						<div>End Date</div>
+						<input ng-model="form.end_Date" class="form-control" type="date">
+					</div>
+
+				</div>
+
 			</div>
 		</div>
 	</div>
