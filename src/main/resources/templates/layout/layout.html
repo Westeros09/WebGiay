@@ -28,7 +28,8 @@
 	crossorigin="anonymous"></script>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-	<script src="https://kit.fontawesome.com/2ddd33de1c.js" crossorigin="anonymous"></script>
+<script src="https://kit.fontawesome.com/2ddd33de1c.js"
+	crossorigin="anonymous"></script>
 </head>
 <body ng-app="app" ng-controller="cart-ctrl">
 	<div class="site-wrap">
@@ -50,8 +51,8 @@
 						<div
 							class="col-12 mb-3 mb-md-0 col-md-4 order-1 order-md-2 text-center">
 							<div class="site-logo">
-								<img th:src="@{../../images/logo.png}"
-									alt="Image placeholder" class="img-fluid rounded" style="width:30%">
+								<img th:src="@{../../images/logo.png}" alt="Image placeholder"
+									class="img-fluid rounded" style="width: 30%">
 
 							</div>
 						</div>
@@ -59,11 +60,24 @@
 							<div class="site-top-icons">
 								<ul>
 
-									<li><a href="/login" style="text-decoration: none"
+									<li><div style="text-decoration: none" class="dropdown"
 										th:if="${#request.remoteUser != null}"> <span
-											th:text="${#request.remoteUser}"></span> <span
-											class="icon icon-person text-truncate"></span>
-									</a></li>
+											 th:text="${#request.remoteUser}"></span>
+											 <span class="icon icon-person text-truncate" data-bs-toggle="dropdown"></span>
+											 <ul class="dropdown-menu">
+													<li
+														th:if="${#request.isUserInRole('DIRE') or #request.isUserInRole('STAF')}">
+														<a class="dropdown-item" th:href="@{/admin/home/index}">Admin</a>
+													</li>
+													<li><a class="dropdown-item" href="/ChangeInfomation.html">Thông tin cá
+															nhân</a></li>
+													<li><a class="dropdown-item" href="/TrangThai">Trạng thái đơn hàng</a></li>
+													<li><a class="dropdown-item" href="/ChangePassword.html">Thay đổi mật
+															khẩu</a></li>
+
+												</ul>
+												 
+									</div></li>
 									<li><a href="/login" style="text-decoration: none"
 										th:unless="${#request.remoteUser != null}"> <span
 											class="icon icon-person"></span>
@@ -105,21 +119,10 @@
 							<ul class="dropdown">
 								<li><a href="/register.html" th:text="#{nav.register}">Register</a></li>
 							</ul></li>
-							<li class="has-children">
-							<i class="fa-solid fa-gear"></i>
-							
-							
-							<ul class="dropdown">
-							<li
-							th:if="${#request.isUserInRole('DIRE') or #request.isUserInRole('STAF')}">
-							<a th:href="@{/admin/home/index}">Admin</a>
-						</li>
-								<li><a href="/ChangeInfomation.html">Thông tin cá nhân</a></li>
-								<li><a href="/TrangThai">Trạng thái đơn hàng</a></li>
-								<li><a href="/ChangePassword.html">Thay đổi mật khẩu</a></li>
-								
-								</ul>
-						<!--<li th:if="${#request.isUserInRole('DIRE') or #request.isUserInRole('STAF')}"
+						
+
+
+			 <!--<li th:if="${#request.isUserInRole('DIRE') or #request.isUserInRole('STAF')}"
 							class="has-children"><a href="/account.html">Admin</a>
 							<ul class="dropdown">
 								<li><a href="/history">History</a></li>
@@ -131,11 +134,7 @@
 								<li><a href="/report">Report</a></li>
 							</ul>
 						</li>-->
-
-						<li
-							th:if="${#request.isUserInRole('DIRE') or #request.isUserInRole('STAF')}">
-							<a th:href="@{/admin/home/index}" th:text="#{nav.admin}">Admin</a>
-						</li>
+					
 						<!-- <th:block th:with="showVietnamese=${false}">
 							<li th:if="${lang != 'en' && showVietnamese == true}"><a
 								href="?lang=vi" th:attr="onclick='|${showVietnamese} = false|'">Tiếng
@@ -144,8 +143,7 @@
 								href="?lang=en" th:attr="onclick='|${showVietnamese} = true|'">English</a>
 							</li>
 						</th:block> -->
-						<li class="has-children"><a
-							href="?lang=vi" >Tiếng Việt</a>
+						<li class="has-children"><a href="?lang=vi">Tiếng Việt</a>
 							<ul class="dropdown">
 								<li><a href="?lang=en">English</a></li>
 							</ul></li>
@@ -167,20 +165,22 @@
 							</div>
 							<div class="col-md-6 col-lg-4">
 								<ul class="list-unstyled">
-									<li><a href="#"  th:text="#{footer.sell}">Sell online</a></li>
+									<li><a href="#" th:text="#{footer.sell}">Sell online</a></li>
 									<li><a href="#" th:text="#{footer.features}">Features</a></li>
 									<li><a href="#" th:text="#{footer.cart}">Shopping cart</a></li>
 								</ul>
 							</div>
 							<div class="col-md-6 col-lg-4">
 								<ul class="list-unstyled">
-									<li><a href="#" th:text="#{footer.mobilecommerce}">Mobile commerce</a></li>
+									<li><a href="#" th:text="#{footer.mobilecommerce}">Mobile
+											commerce</a></li>
 									<li><a href="#" th:text="#{footer.dropshipping}">Dropshipping</a></li>
 								</ul>
 							</div>
 							<div class="col-md-6 col-lg-4">
 								<ul class="list-unstyled">
-									<li><a href="#" th:text="#{footer.pointofsale}">Point of sale</a></li>
+									<li><a href="#" th:text="#{footer.pointofsale}">Point
+											of sale</a></li>
 								</ul>
 							</div>
 						</div>
@@ -190,14 +190,16 @@
 						<a href="#" class="block-6"> <img
 							th:src="@{../../images/a1.webp}" alt="Image placeholder"
 							class="img-fluid rounded mb-4">
-							<h3 class="font-weight-light  mb-0" th:text="#{footer.findingyourperfectshoes}">Finding Your Perfect
-								Shoes</h3>
+							<h3 class="font-weight-light  mb-0"
+								th:text="#{footer.findingyourperfectshoes}">Finding Your
+								Perfect Shoes</h3>
 							<p>Promo from nuary 15 &mdash; 25, 2019</p>
 						</a>
 					</div>
 					<div class="col-md-6 col-lg-3">
 						<div class="block-5 mb-5">
-							<h3 class="footer-heading mb-4" th:text="#{nav.contact}">Contact Info</h3>
+							<h3 class="footer-heading mb-4" th:text="#{nav.contact}">Contact
+								Info</h3>
 							<ul class="list-unstyled">
 								<li class="address">Tòa nhà QTSC9 (toà T), đường Tô Ký,
 									phường Tân Chánh Hiệp, quận 12, TP HCM</li>
