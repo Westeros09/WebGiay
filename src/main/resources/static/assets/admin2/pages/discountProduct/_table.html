@@ -1,0 +1,54 @@
+<div class="panel panel-default" ng-if="items">
+	<div class="panel-heading">HISTORY LIST</div>
+	<table class="table table-condensed">
+		<thead class="bg-success" style="font-variant: small-caps;">
+			<tr>
+				<th>Id</th>
+				<th>Product Id</th>
+				<th>Name</th>
+				<th>Start Date</th>
+				<th>End Date</th>
+				<th>Percentage</th>
+				<th>Activate</th>
+				<th>Action</th>
+
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="item in pager.items">
+				<td>{{item.id}}</td>
+				<td>{{item.product.id  }} {{item.product.name}}</td>
+				<td>{{item.name}}</td>
+				<td>{{item.start_Date}}</td>
+				<td>{{item.end_Date}}</td>
+				<td>{{item.percentage}}</td>
+				<td>{{item.active ? 'Hoạt Động' : 'Ngưng Hoạt Động '}}</td>
+				<td>
+					<div class="btn-group btn-group-xs">
+						<a ng-click="edit(item)" href="" class="btn btn-warning"> <i
+							class="fa-solid fa-pen-to-square fa-2xs"></i>
+						</a> <a ng-click="delete(item)" href="" class="btn btn-danger"> <i
+							class="fa-solid fa-trash fa-2xs"></i>
+						</a>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="panel-footer text-center">
+		<button ng-click="pager.first()" class="btn " style="width: 60px;">
+			<i class="fa-solid fa-backward-step"></i>
+		</button>
+		<button ng-click="pager.prev()" class="btn " style="width: 60px;">
+			<i class="fa-solid fa-backward"></i>
+		</button>
+		<button class="btn btn-success">{{pager.page + 1}} of
+			{{pager.count}}</button>
+		<button ng-click="pager.next()" class="btn " style="width: 60px;">
+			<i class="fa-solid fa-forward"></i>
+		</button>
+		<button ng-click="pager.last()" class="btn" style="width: 60px;">
+			<i class="fa-solid fa-forward-step"></i>
+		</button>
+	</div>
+</div>

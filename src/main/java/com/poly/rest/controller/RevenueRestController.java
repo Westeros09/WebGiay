@@ -35,4 +35,10 @@ public class RevenueRestController {
 	public List<Object[]> showRevenueByYear(@PathVariable(value = "year", required = false) Integer year) {
 		return dao.findByDoanhThuNam(year);
 	}
+	
+	@GetMapping("/today")
+	public Double getDailyRevenue() {
+	   
+	    return dao.getTotalRevenueToday(); 
+	}
 }

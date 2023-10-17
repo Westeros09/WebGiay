@@ -57,6 +57,7 @@ app.controller("revenue-ctrl", function($scope, $http, $location) {
 						indexLabelFontColor: "#5A5757", //màu
 						indexLabelFontSize: 16, //font
 						indexLabelPlacement: "outside", //Cho chữ ở đâu
+						indexLabelWrap: true,
 						dataPoints: dataPoints
 					}],
 				});
