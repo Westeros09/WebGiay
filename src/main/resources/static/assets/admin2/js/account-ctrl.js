@@ -91,12 +91,16 @@ $scope.reset = function(){
 	}
 
 
+$scope.generateRandomPassword = function() {
+    const randomPassword = Math.random().toString(36).slice(-8);
+    $scope.form.password = randomPassword;
+};
+
 
       
     
 	$scope.create = function() {
     var item = angular.copy($scope.form);
-    item.photo = "hieu.jpg";
     $http.post(`/rest/accounts`, item).then(resp => {
         $scope.items.unshift(resp.data);
         $scope.reset();

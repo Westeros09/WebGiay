@@ -1,6 +1,7 @@
 package com.poly.service.impl;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,7 +66,6 @@ public class AccountServiceImpl implements AccountService{
 		Account account = dao.findById(username).orElse(null);
 
         if (account != null) {
-            // Cập nhật thông tin cá nhân
             account.setFullname(newFullname);
             account.setEmail(newEmail);
             account.setPhoto(photo);
@@ -120,9 +120,10 @@ public class AccountServiceImpl implements AccountService{
 	public List<Account> findAllWithPasswordEncoder() {
 		// TODO Auto-generated method stub
 		 List<Account> accounts = dao.findAll();
+		 accounts.sort(Comparator.comparing(Account::getUsername));
 	        for (Account account : accounts) {
 	        String encryptedPassword = passwordEncoder.encode(account.getPassword());
-	   	    account.setPassword(encryptedPassword.substring(0, 25));
+	   	    account.setPassword(encryptedPassword.substring(0, 9));
 	        }
 	        Collections.reverse(accounts);
 	        return accounts;
