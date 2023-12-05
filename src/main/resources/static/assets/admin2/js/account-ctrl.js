@@ -77,22 +77,30 @@ $scope.reset = function(){
             });
         }
     };
+    
 	$scope.update = function(){
-		var item = angular.copy($scope.form);
-		$http.put(`/rest/accounts/${item.username}`, item).then(resp => {
-			var index = $scope.items.findIndex(p => p.id == item.id);
-			$scope.items[index] = item;
-			alert("Cập nhật tài khoản thành công!");
-		})
-		.catch(error => {
-			alert("Lỗi cập nhật tài khoản!");
-			console.log("Error", error);
-		});
-	}
+    var item = angular.copy($scope.form);
+    $http.put(`/rest/accounts/${item.username}`, item)
+        .then(resp => {
+            var index = $scope.items.findIndex(p => p.id == item.id);
+            $scope.items[index] = item;
+            alert("Cập nhật tài khoản thành công!");
+        })
+        .catch(error => {
+            if (error.status === 409) {
+                alert("Email đã tồn tại trong cơ sở dữ liệu.Vui lòng chọn địa chỉ email khác.");
+            } else {
+                alert("Lỗi rồi");
+                 console.log("Error", error);
+            }
+           
+        });
+};
+
 
 
 $scope.generateRandomPassword = function() {
-    const randomPassword = Math.random().toString(36).slice(-8);
+    const randomPassword = Math.random().toString(36).slice(8);
     $scope.form.password = randomPassword;
 };
 
@@ -101,32 +109,45 @@ $scope.generateRandomPassword = function() {
     
 	$scope.create = function() {
     var item = angular.copy($scope.form);
-    $http.post(`/rest/accounts`, item).then(resp => {
-        $scope.items.unshift(resp.data);
-        $scope.reset();
-        alert("Thêm mới tài khoản thành công!");
-    }).catch(error => {
-        alert("Lỗi thêm mới tài khoản!");
-        console.log("Error", error);
-    });
+    $http.post(`/rest/accounts`, item)
+        .then(resp => {
+            $scope.items.unshift(resp.data);
+            $scope.reset();
+            alert("Thêm mới tài khoản thành công!");
+        })
+        .catch(error => {
+            if (error.status === 409) {
+                alert("Địa chỉ email đã tồn tại. Vui lòng chọn địa chỉ email khác.");
+            } else {
+                alert("Lỗi thêm mới tài khoản!");
+                console.log("Error", error);
+            }
+        });
+};
+
+
+
+
+
+	$scope.delete = function(item) {
+    if (confirm("Bạn muốn xóa người dùng này?")) {
+        $http.delete(`/rest/accounts/${item.username}`).then(resp => {
+            var index = $scope.items.findIndex(p => p.id == item.id);
+            $scope.items.splice(index, 1);
+            $scope.reset();
+            alert("Xóa người dùng thành công!");
+        }).catch(error => {
+            if (error.data) {
+                alert("Lỗi xóa người dùng: " + error.data.message);
+            } else {
+                alert("Xóa người dùng thành công!");
+            }
+            console.log("Error", error);
+        })
+    }
 }
 
-
-
-
-	$scope.delete = function(item){
-		if(confirm("Bạn muốn xóa người dùng này?")){
-			$http.delete(`/rest/accounts/${item.username}`).then(resp => {
-				var index = $scope.items.findIndex(p => p.id == item.id);
-				$scope.items.splice(index, 1);
-				$scope.reset();
-				alert("Xóa người dùng thành công!");
-			}).catch(error => {
-				alert("Lỗi xóa người dùng!");
-				console.log("Error", error);
-			})
-		}
-	}
+	
     $scope.pager = {
         page: 0,
         size: 10,

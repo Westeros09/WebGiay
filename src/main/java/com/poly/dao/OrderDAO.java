@@ -71,7 +71,7 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
 			+ "WHERE o.username = ?1 AND o.available = 0 "
 			+ "order by o.id DESC;", nativeQuery = true)
 	List<Object[]> findUnshippedOrdersByAccount(String username);
-	
+	boolean existsByAccount_Username(String username);
 	@Transactional
 	List<Order> findOrdersByAccount_Username(String username);
 }

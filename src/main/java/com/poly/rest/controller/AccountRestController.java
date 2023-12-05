@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,9 +25,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.poly.dao.AccountDAO;
 import com.poly.dao.OrderDAO;
 import com.poly.entity.Account;
 import com.poly.entity.Authority;
@@ -52,7 +56,8 @@ public class AccountRestController {
 	ImageService imageService;
 	@Autowired
 	AuthorityService authorityService;
-
+	@Autowired
+	AccountDAO dao;
 	@Autowired
     OrderDAO OrderDAO;
 	@Autowired
@@ -61,6 +66,7 @@ public class AccountRestController {
 	JavaMailSender emailSender;
 	@Autowired
 	MailerService mailerService;
+	
 	@GetMapping
 	public List<Account> getAccounts() {
 	    return accountService.findAllWithPasswordEncoder();
@@ -70,23 +76,45 @@ public class AccountRestController {
 	public Account getOne(@PathVariable("username") String username) {
 		return accountService.findById(username);
 	}
-	
+
 	@PutMapping("{username}")
 	public Account put(@PathVariable("username") String username, @RequestBody Account account) {
-		return accountService.update(account);
+	   
+	        return accountService.update(account);	    
 	}
+
+	
+		
+
+
 	
 	@DeleteMapping("{username}")
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public void delete(@PathVariable("username") String username) {
-	    accountService.deleteAccountAndRelatedData(username);
+	    Account AccountGet = accountService.findById(username);
+	    if (AccountGet != null) {
+	        if (AccountGet.getOrders() == null || AccountGet.getOrders().isEmpty()) {
+	            accountService.deleteAccountAndRelatedData(username);
+	        } else {
+	            throw new RuntimeException("Người dùng có đơn hàng, không thể xóa.");
+	        }
+	    }
 	}
+
+
+	
 
 
 	@PostMapping
-	public Account post(@RequestBody Account account) {   
-      accountService.create(account);
-	    return account;  
+	public ResponseEntity<Account> post(@RequestBody Account account) {
+	    if (accountService.isEmailExists(account.getEmail())) {
+	        return ResponseEntity.status(HttpStatus.CONFLICT)
+	                .body(null);
+	    }
+	    Account createdAccount = accountService.create(account);
+	    return ResponseEntity.ok(createdAccount);
 	}
+
 
 	
 
@@ -108,11 +136,9 @@ public class AccountRestController {
 	    String userEmail = requestData.get("email");
 	    Account account = accountService.findByEmail(userEmail);
 	    if (account != null) {
-	    	double randomDouble = Math.random();
-            randomDouble = randomDouble * 1000 + 1;
-            int newPassword = (int) randomDouble;
-	        account.setPassword(String.valueOf(newPassword));
-	        accountService.update(account);
+	    	String newPassword = accountService.generateRandomPassword();
+	    	 account.setPassword(String.valueOf(newPassword));
+		     accountService.update(account); 
 	        MailInfo mail = new MailInfo(account.getEmail(), "Mật khẩu mới", "Hi " + account.getUsername() + ", mật khẩu mới của bạn là: " + newPassword);
 	        try {
 	            mailerService.send(mail);

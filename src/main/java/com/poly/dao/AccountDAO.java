@@ -19,9 +19,7 @@ public interface AccountDAO extends JpaRepository<Account, String> {
 	Optional<Account> findByEmail(String email);
 	@Query("SELECT a FROM Account a WHERE a.email LIKE ?1")
 	Account getAccountByEmail(String email);
-	
 //	 List<Account> findByEmail(String email);
-	 
 	 public boolean existsByusername(String username);
 
 	@Procedure
