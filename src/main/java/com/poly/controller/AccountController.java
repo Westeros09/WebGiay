@@ -33,56 +33,53 @@ public class AccountController {
 	}
 
 	@PostMapping("/forgetPassword/success")
-	public String forgetPassword(Model model, @RequestParam("email") String email,
-			@Valid @ModelAttribute("account") Account form, Errors errors) {
-		if (errors.hasErrors()) {
-			return "forget";
-		}
+	public String forgetPassword(Model model, @RequestParam("email") String email) {
+
 		if (email != null) {
-			MailInfo mail = new MailInfo();
-			
-			if (dao.findByEmail(email).isEmpty()) {
+			Account account = dao.getAccountByEmail(email);
+
+			if (account == null) {
 				model.addAttribute("message", "Địa chỉ email không tồn tại trong hệ thống");
 				return "forget";
-			} else {
-				Account account = dao.getAccountByEmail(email);
-				// random mk moi
-				double randomDouble = Math.random();
-				randomDouble = randomDouble * 1000 + 1;
-				int randomInt = (int) randomDouble;
-
-				account.setPassword(String.valueOf(randomInt));
-
-				mail.setTo(email);
-				mail.setSubject("Khôi phục mật khẩu thành công");
-				// Tạo nội dung email
-				StringBuilder bodyBuilder = new StringBuilder();
-				bodyBuilder.append("Mật khẩu đã được reset. Đây là thông tin tài khoản của bạn").append("<br><br>");
-
-				// Tạo bảng với CSS
-				bodyBuilder.append("<table style=\"border-collapse: collapse;\">");
-				bodyBuilder.append("<tr><th style=\"border: 1px solid black; padding: 8px;\">Fullname</th>"
-						+ "<th style=\"border: 1px solid black; padding: 8px;\">Username</th>"
-						+ "<th style=\"border: 1px solid black; padding: 8px;\">Password</th></tr>");
-
-				// Lấy thông tin chi tiết của từng sản phẩm trong giỏ hàng và thêm vào bảng
-				bodyBuilder.append("<tr>");
-				bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
-						.append(account.getFullname()).append("</td>");
-				bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
-						.append(account.getUsername()).append("</td>");
-				bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
-						.append(account.getPassword()).append("</td>");
-				bodyBuilder.append("</tr>");
-
-				bodyBuilder.append("</table>");
-				mail.setBody(bodyBuilder.toString());
-
-				dao.save(account);
-
-				mailerService.queue(mail);
 			}
+			// random mk moi
+			double randomDouble = Math.random();
+			randomDouble = randomDouble * 1000 + 1;
+			int randomInt = (int) randomDouble;
+
+			account.setPassword(String.valueOf(randomInt));
+
+			MailInfo mail = new MailInfo();
+			mail.setTo(account.getEmail());
+			mail.setSubject("Khôi phục mật khẩu thành công");
+
+			// Tạo nội dung email
+			StringBuilder bodyBuilder = new StringBuilder();
+			bodyBuilder.append("Mật khẩu đã được reset. Đây là thông tin tài khoản của bạn").append("<br><br>");
+
+			// Tạo bảng với CSS
+			bodyBuilder.append("<table style=\"border-collapse: collapse;\">");
+			bodyBuilder.append("<tr><th style=\"border: 1px solid black; padding: 8px;\">Fullname</th>"
+					+ "<th style=\"border: 1px solid black; padding: 8px;\">Username</th>"
+					+ "<th style=\"border: 1px solid black; padding: 8px;\">Password</th></tr>");
+
+			// Lấy thông tin chi tiết của từng sản phẩm trong giỏ hàng và thêm vào bảng
+			bodyBuilder.append("<tr>");
+			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
+					.append(account.getFullname()).append("</td>");
+			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
+					.append(account.getUsername()).append("</td>");
+			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
+					.append(account.getPassword()).append("</td>");
+			bodyBuilder.append("</tr>");
+
+			bodyBuilder.append("</table>");
+			mail.setBody(bodyBuilder.toString());
+
+			dao.save(account);
+			mailerService.queue(mail);
 		}
+
 		return "redirect:/login";
 	}
 }
