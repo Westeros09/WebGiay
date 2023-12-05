@@ -1,25 +1,23 @@
 package com.poly.controller;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.poly.dao.AccountDAO;
 import com.poly.dao.AuthorityDAO;
@@ -50,6 +48,7 @@ public class LoginController2 {
 
 	@RequestMapping("/login")
 	public String loginForm(Model model) {
+	
 		return "/login";
 	}
 
@@ -86,7 +85,8 @@ public class LoginController2 {
 	}
 
 	@RequestMapping("/register.html")
-	public String register() {
+	public String register(Model model) {
+		model.addAttribute("account", new Account());
 		return "register";
 	}
 
@@ -99,30 +99,36 @@ public class LoginController2 {
 	@RequestMapping("/register/success")
 	public String register1(Model model, @RequestParam String username, @RequestParam String password,
 			@RequestParam String fullname, @RequestParam String email, @RequestParam String confirmPassword,
-			HttpServletRequest request, @RequestParam(required = false) String otp) throws MessagingException {
+			HttpServletRequest request, @RequestParam(required = false) String otp,
+			@Valid @ModelAttribute("account") Account form, Errors errors) throws MessagingException {
 		model.addAttribute("username", username); // Thêm vào Controller
 		model.addAttribute("fullname", fullname);
 		model.addAttribute("email", email);
 
-		// Kiểm tra điều kiện đăng ký, như bạn đã thực hiện
-		if (accountDAO.findById(username).isPresent()) {
-			model.addAttribute("error", "Vui lòng đặt tên username khác!");
+		if (errors.hasErrors()) {
+			model.addAttribute("message", "Vui lòng sửa các lỗi");
 			return "register";
 		} else {
-			if (accountDAO.findByEmail(email).isPresent()) {
-				model.addAttribute("error", "Địa chỉ email đã được sử dụng. Vui lòng chọn địa chỉ email khác!");
-				return "register";
-			} else if (!password.equals(confirmPassword)) {
-				model.addAttribute("error", "Mật khẩu và xác nhận mật khẩu không khớp. Vui lòng nhập lại.");
+			// Kiểm tra điều kiện đăng ký, như bạn đã thực hiện
+			if (accountDAO.findById(username).isPresent()) {
+				model.addAttribute("error", "Vui lòng đặt tên username khác!");
 				return "register";
 			} else {
-				String generatedOtp = generateOtp();
-				otpMap.put(username, generatedOtp);
-				// Lưu trữ otpMap trong phiên
-				sessionService.setAttribute("otpMap", otpMap);
-				sessionService.setAttribute("account", new Account(username, password, fullname, email));
-				mailerService.sendOtpEmail(email, "Xác nhận đăng ký", "Mã OTP của bạn là: " + generatedOtp);
-				return "otp";
+				if (accountDAO.findByEmail(email).isPresent()) {
+					model.addAttribute("errorm", "Địa chỉ email đã được sử dụng. Vui lòng chọn địa chỉ email khác!");
+					return "register";
+				} else if (!password.equals(confirmPassword)) {
+					model.addAttribute("errorp", "Mật khẩu và xác nhận mật khẩu không khớp. Vui lòng nhập lại.");
+					return "register";
+				} else {
+					String generatedOtp = generateOtp();
+					otpMap.put(username, generatedOtp);
+					// Lưu trữ otpMap trong phiên
+					sessionService.setAttribute("otpMap", otpMap);
+					sessionService.setAttribute("account", new Account(username, password, fullname, email));
+					mailerService.sendOtpEmail(email, "Xác nhận đăng ký", "Mã OTP của bạn là: " + generatedOtp);
+					return "otp";
+				}
 			}
 		}
 
@@ -131,7 +137,7 @@ public class LoginController2 {
 	@PostMapping("/verify-otp")
 	public String verifyOtp(Model model, @RequestParam String username, @RequestParam String otp,
 			@RequestParam String password, @RequestParam String fullname, @RequestParam String email,
-			@RequestParam String confirmPassword, HttpServletRequest request) {
+			@RequestParam String confirmPassword, HttpServletRequest request, RedirectAttributes redirectAttributes) {
 
 		// Kiểm tra mã OTP nhập vào có khớp với mã đã gửi hay không
 		Map<String, String> map = sessionService.getAttribute("otpMap");
@@ -156,8 +162,8 @@ public class LoginController2 {
 
 			authority.setRole(role);
 			authorityDAO.save(authority);
-			model.addAttribute("message", "Đăng kí thành công!");
-			return "register";
+			 redirectAttributes.addFlashAttribute("message", "Đăng ký thành công!");
+			return "redirect:/register.html";
 		} else {
 			// Nếu không khớp, hiển thị thông báo lỗi
 			model.addAttribute("error", "Mã OTP không hợp lệ!");

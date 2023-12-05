@@ -1,8 +1,12 @@
 package com.poly.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,46 +19,53 @@ import com.poly.service.MailerService;
 
 @Controller
 public class AccountController {
-	
+
 	@Autowired
 	AccountDAO dao;
-	
+
 	@Autowired
 	MailerService mailerService;
-	
+
 	@RequestMapping("/forgetPassword")
 	public String forgetHome(Model model) {
-		
+		model.addAttribute("account", new Account());
 		return "forget";
 	}
-	@PostMapping("/forgetPassword/success")
-	public String forgetPassword(Model model, @RequestParam("email") String email) {
-		if(email != null) {
-			MailInfo mail = new MailInfo();
-			Account account = dao.getAccountByEmail(email);
-			
-			
-			// random mk moi
-			double randomDouble = Math.random();
-            randomDouble = randomDouble * 1000 + 1;
-            int randomInt = (int) randomDouble;
-            
-            account.setPassword(String.valueOf(randomInt));
-            
-			mail.setTo(email);
-			mail.setSubject("Khôi phục mật khẩu thành công");
-			// Tạo nội dung email
-			StringBuilder bodyBuilder = new StringBuilder();
-			bodyBuilder.append("Mật khẩu đã được reset. Đây là thông tin tài khoản của bạn").append("<br><br>");
-			
-			// Tạo bảng với CSS
-			bodyBuilder.append("<table style=\"border-collapse: collapse;\">");
-			bodyBuilder.append(
-					"<tr><th style=\"border: 1px solid black; padding: 8px;\">Fullname</th>"
-					+ "<th style=\"border: 1px solid black; padding: 8px;\">Username</th>"
-					+ "<th style=\"border: 1px solid black; padding: 8px;\">Password</th></tr>");
 
-			// Lấy thông tin chi tiết của từng sản phẩm trong giỏ hàng và thêm vào bảng
+	@PostMapping("/forgetPassword/success")
+	public String forgetPassword(Model model, @RequestParam("email") String email,
+			@Valid @ModelAttribute("account") Account form, Errors errors) {
+		if (errors.hasErrors()) {
+			return "forget";
+		}
+		if (email != null) {
+			MailInfo mail = new MailInfo();
+			
+			if (dao.findByEmail(email).isEmpty()) {
+				model.addAttribute("message", "Địa chỉ email không tồn tại trong hệ thống");
+				return "forget";
+			} else {
+				Account account = dao.getAccountByEmail(email);
+				// random mk moi
+				double randomDouble = Math.random();
+				randomDouble = randomDouble * 1000 + 1;
+				int randomInt = (int) randomDouble;
+
+				account.setPassword(String.valueOf(randomInt));
+
+				mail.setTo(email);
+				mail.setSubject("Khôi phục mật khẩu thành công");
+				// Tạo nội dung email
+				StringBuilder bodyBuilder = new StringBuilder();
+				bodyBuilder.append("Mật khẩu đã được reset. Đây là thông tin tài khoản của bạn").append("<br><br>");
+
+				// Tạo bảng với CSS
+				bodyBuilder.append("<table style=\"border-collapse: collapse;\">");
+				bodyBuilder.append("<tr><th style=\"border: 1px solid black; padding: 8px;\">Fullname</th>"
+						+ "<th style=\"border: 1px solid black; padding: 8px;\">Username</th>"
+						+ "<th style=\"border: 1px solid black; padding: 8px;\">Password</th></tr>");
+
+				// Lấy thông tin chi tiết của từng sản phẩm trong giỏ hàng và thêm vào bảng
 				bodyBuilder.append("<tr>");
 				bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
 						.append(account.getFullname()).append("</td>");
@@ -63,14 +74,14 @@ public class AccountController {
 				bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
 						.append(account.getPassword()).append("</td>");
 				bodyBuilder.append("</tr>");
-		
 
-			bodyBuilder.append("</table>");
-			mail.setBody(bodyBuilder.toString());
-			
-			dao.save(account);
+				bodyBuilder.append("</table>");
+				mail.setBody(bodyBuilder.toString());
 
-			mailerService.queue(mail);
+				dao.save(account);
+
+				mailerService.queue(mail);
+			}
 		}
 		return "redirect:/login";
 	}
