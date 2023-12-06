@@ -85,6 +85,7 @@ app.controller("account-ctrl", function($scope, $http) {
 			var index = $scope.items.findIndex(p => p.id == item.id);
 			$scope.items[index] = item;
 			alert("Cập nhật tài khoản thành công!");
+			$scope.reset();
 		})
 			.catch(error => {
 				alert("Lỗi cập nhật tài khoản!");
