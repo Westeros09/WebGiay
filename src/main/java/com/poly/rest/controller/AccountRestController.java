@@ -76,12 +76,16 @@ public class AccountRestController {
 	public Account getOne(@PathVariable("username") String username) {
 		return accountService.findById(username);
 	}
-
+	
 	@PutMapping("{username}")
 	public Account put(@PathVariable("username") String username, @RequestBody Account account) {
-	   
-	        return accountService.update(account);	    
+			return accountService.update(account);	
 	}
+
+
+
+
+
 
 	
 		

@@ -65,9 +65,106 @@ public class PasswordController {
 	            return "redirect:/login";
 	        }
 	    }
-	
+	 /*
+	 @PostMapping("/addAddressToProfile")
+	 public String addAddressToProfile(Model model, @RequestParam String address,RedirectAttributes redirectAttributes,
+	         @RequestParam(value = "provinceLabel", required = false) String provinceLabel,
+	         @RequestParam(value = "districtLabel", required = false) String districtLabel,
+	         @RequestParam(value = "wardLabel", required = false) String wardLabel, HttpServletRequest request) {
+	     String username = SecurityContextHolder.getContext().getAuthentication().getName();
+	     Account user = dao.findById(username).orElse(null);
 
+	     if (user == null) {
+	         // Xử lý khi không tìm thấy người dùng
+	         return "redirect:/login";
+	     }
+
+	     if (provinceLabel == null || provinceLabel.isEmpty() 
+	             || districtLabel == null || districtLabel.isEmpty()
+	             || wardLabel == null || wardLabel.isEmpty() 
+	             || address == null || address.isEmpty()) {
+	    	 redirectAttributes.addFlashAttribute("error", "Không thể thêm địa chỉ. Vui lòng kiểm tra lại.");
+	         return "redirect:/ChangeInfomation";
+	     } else {
+	         Address ad = new Address();
+	         ad.setAccount(user);
+	         ad.setAddressDetail(address + ", " + wardLabel + ", " + districtLabel + ", " + provinceLabel);
+	         ad.setCity(provinceLabel);
+	         ad.setDistrict(districtLabel);
+	         ad.setWard(wardLabel);
+	         ad.setStreet(address);
+	         addressDAO.save(ad);
+	         redirectAttributes.addFlashAttribute("success", "Thêm địa chỉ thành công.");
+	         return "redirect:/ChangeInfomation";
+	     }
+	 }*/
 	 @PostMapping("/profile")
+	 public String updateUserProfile(
+	         @ModelAttribute Account updatedAccount,
+	         @RequestParam("image") MultipartFile imageFile,
+	         @RequestParam(value = "address", required = false) String address,
+	         @RequestParam(value = "provinceLabel", required = false) String provinceLabel,
+	         @RequestParam(value = "districtLabel", required = false) String districtLabel,
+	         @RequestParam(value = "wardLabel", required = false) String wardLabel,
+	         RedirectAttributes redirectAttributes) {
+
+	     String username = SecurityContextHolder.getContext().getAuthentication().getName();
+	     try {
+	         if (!imageFile.isEmpty()) {
+	             String originalFilename = imageFile.getOriginalFilename();
+	             String fileName = uploadservice.save(imageFile, "images").getPath();
+	             File savedFile = new File(fileName);
+	             String imagePath = savedFile.getName();
+	             updatedAccount.setPhoto(imagePath);
+	             boolean success = acdao.updateProfile(username, updatedAccount.getFullname(), updatedAccount.getEmail(), updatedAccount.getPhoto());
+	             if (success) {
+	                 redirectAttributes.addFlashAttribute("success", "Thông tin cá nhân đã được cập nhật thành công.");
+	             } else {
+	                 redirectAttributes.addFlashAttribute("error", "Không thể cập nhật thông tin cá nhân. Vui lòng kiểm tra lại.");
+	             }
+	         }
+
+	         if (address != null && !address.isEmpty()
+	                 && provinceLabel != null && !provinceLabel.isEmpty()
+	                 && districtLabel != null && !districtLabel.isEmpty()
+	                 && wardLabel != null && !wardLabel.isEmpty()) {
+
+	             Account user = dao.findById(username).orElse(null);
+
+	             if (user != null) {
+	                 Address ad = new Address();
+	                 ad.setAccount(user);
+	                 ad.setAddressDetail(address + ", " + wardLabel + ", " + districtLabel + ", " + provinceLabel);
+	                 ad.setCity(provinceLabel);
+	                 ad.setDistrict(districtLabel);
+	                 ad.setWard(wardLabel);
+	                 ad.setStreet(address);
+	                 addressDAO.save(ad);
+	                 redirectAttributes.addFlashAttribute("success", "Địa chỉ đã được cập nhật thành công");
+	             } else {
+	                 redirectAttributes.addFlashAttribute("error", "Cập nhật không thành công. Vui lòng kiểm tra lại.");
+	             }
+	         }
+
+	         boolean successWithoutPhoto = acdao.updateProfileWithoutPhoto(username, updatedAccount.getFullname(), updatedAccount.getEmail());
+
+	         if (successWithoutPhoto) {
+	             redirectAttributes.addFlashAttribute("success", "Thông tin cá nhân đã được cập nhật thành công.");
+	         } else {
+	             redirectAttributes.addFlashAttribute("error", "Không thể cập nhật thông tin cá nhân. Vui lòng kiểm tra lại.");
+	         }
+
+	     } catch (Exception e) {
+	         redirectAttributes.addFlashAttribute("error", "Không thể cập nhật thông tin cá nhân. Vui lòng kiểm tra lại.");
+	     }
+
+	     return "redirect:/ChangeInfomation";
+	 }
+
+	 /*
+
+đây là postmapping của thêm địa chỉ
+ @PostMapping("/profile")
 	 public String updateUserProfile(@ModelAttribute Account updatedAccount, @RequestParam("image") MultipartFile imageFile, RedirectAttributes redirectAttributes) {
 	     String username = SecurityContextHolder.getContext().getAuthentication().getName();
 	     if (!imageFile.isEmpty()) {
@@ -99,6 +196,8 @@ public class PasswordController {
 
 	     return "redirect:/ChangeInfomation";
 	 }
+	 */
+
 
 
 	 @PostMapping("/updateAddressToProfile")
@@ -141,38 +240,7 @@ public class PasswordController {
 
 
 	 
-	 @PostMapping("/addAddressToProfile")
-	 public String addAddressToProfile(Model model, @RequestParam String address,RedirectAttributes redirectAttributes,
-	         @RequestParam(value = "provinceLabel", required = false) String provinceLabel,
-	         @RequestParam(value = "districtLabel", required = false) String districtLabel,
-	         @RequestParam(value = "wardLabel", required = false) String wardLabel, HttpServletRequest request) {
-	     String username = SecurityContextHolder.getContext().getAuthentication().getName();
-	     Account user = dao.findById(username).orElse(null);
-
-	     if (user == null) {
-	         // Xử lý khi không tìm thấy người dùng
-	         return "redirect:/login";
-	     }
-
-	     if (provinceLabel == null || provinceLabel.isEmpty() 
-	             || districtLabel == null || districtLabel.isEmpty()
-	             || wardLabel == null || wardLabel.isEmpty() 
-	             || address == null || address.isEmpty()) {
-	    	 redirectAttributes.addFlashAttribute("error", "Không thể thêm địa chỉ. Vui lòng kiểm tra lại.");
-	         return "redirect:/ChangeInfomation";
-	     } else {
-	         Address ad = new Address();
-	         ad.setAccount(user);
-	         ad.setAddressDetail(address + ", " + wardLabel + ", " + districtLabel + ", " + provinceLabel);
-	         ad.setCity(provinceLabel);
-	         ad.setDistrict(districtLabel);
-	         ad.setWard(wardLabel);
-	         ad.setStreet(address);
-	         addressDAO.save(ad);
-	         redirectAttributes.addFlashAttribute("success", "Thêm địa chỉ thành công.");
-	         return "redirect:/ChangeInfomation";
-	     }
-	 }
+	
 
 	
 

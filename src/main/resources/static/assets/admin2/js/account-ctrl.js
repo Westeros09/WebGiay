@@ -88,9 +88,9 @@ $scope.reset = function(){
         })
         .catch(error => {
             if (error.status === 409) {
-                alert("Email đã tồn tại trong cơ sở dữ liệu.Vui lòng chọn địa chỉ email khác.");
+                alert("Vui lòng chọn địa chỉ email khác.Địa chỉ email đã tồn tại!");
             } else {
-                alert("Lỗi rồi");
+                alert("Lỗi xóa tài khoản.");
                  console.log("Error", error);
             }
            
@@ -138,7 +138,7 @@ $scope.generateRandomPassword = function() {
             alert("Xóa người dùng thành công!");
         }).catch(error => {
             if (error.data) {
-                alert("Lỗi xóa người dùng: " + error.data.message);
+                alert("Xóa thất bại. Người dùng đang có đơn hàng.");
             } else {
                 alert("Xóa người dùng thành công!");
             }
