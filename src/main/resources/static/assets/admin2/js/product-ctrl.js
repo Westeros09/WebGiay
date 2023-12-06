@@ -22,6 +22,7 @@ app.controller("product-ctrl", function($scope, $http) {
 		$scope.reset(); //để có hình mây lyc1 mới đầu
 		$scope.loadCurrentUser();
 	}
+	
 	$scope.loadCurrentUser = function() {
     $http.get("/rest/accounts/current-account").then(resp => {
         $scope.account = resp.data;

@@ -9,7 +9,7 @@ app.controller("account-ctrl", function($scope, $http) {
 				
 			};
 			
-             $scope.reset(); 
+             $scope.reset();
              $scope.loadCurrentUser();
         });
 
@@ -84,7 +84,9 @@ $scope.reset = function(){
         .then(resp => {
             var index = $scope.items.findIndex(p => p.id == item.id);
             $scope.items[index] = item;
+             $scope.initialize();
             alert("Cập nhật tài khoản thành công!");
+           
         })
         .catch(error => {
             if (error.status === 409) {
@@ -111,7 +113,6 @@ $scope.generateRandomPassword = function() {
     var item = angular.copy($scope.form);
     $http.post(`/rest/accounts`, item)
         .then(resp => {
-            $scope.items.unshift(resp.data);
             $scope.reset();
             alert("Thêm mới tài khoản thành công!");
         })
