@@ -89,8 +89,6 @@ public class AccountRestController {
 	}
 
 	
-
-	
 	@GetMapping("/current-account")
 	public ResponseEntity<Account> getCurrentAccount() {
 	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -125,10 +123,6 @@ public class AccountRestController {
 	    }
 	}
 
-
-
-	
-	
 
 
 

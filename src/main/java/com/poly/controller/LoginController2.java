@@ -154,6 +154,7 @@ public class LoginController2 {
 			user.setFullname(userSession.getFullname());
 			user.setEmail(userSession.getEmail());
 			user.setPhoto("nv01.jpg");
+			user.setAvailable(true);
 
 			accountDAO.save(user);
 			Authority authority = new Authority();

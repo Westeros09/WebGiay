@@ -40,7 +40,9 @@ public class Account implements Serializable {
 	@NotBlank(message = "Email không được để trống")
 	@Email(message = "Email không hợp lệ")
 	String email;
+	
 	String photo;
+	Boolean available;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "account")

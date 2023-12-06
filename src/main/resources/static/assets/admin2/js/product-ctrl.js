@@ -128,10 +128,6 @@ app.controller("product-ctrl", function($scope, $http) {
 
 
 
-
-
-
-
 	$scope.editImg = function(image) {
 		$scope.formImg = angular.copy(image);
 		$scope.formImg.image = image.image;
@@ -174,17 +170,7 @@ app.controller("product-ctrl", function($scope, $http) {
 	};
 
 	$scope.updateImg = function() {
-		/*var image = angular.copy($scope.form);
-		var index = $scope.images.findIndex(i => i.id == image.id);
 
-
-		$http.put(`/rest/images/${image.id}`, image).then(resp => {
-			$scope.images[index] = image;
-			alert("Cập nhật hình ảnh thành công!");
-		}).catch(error => {
-			alert("Lỗi cập nhật hình ảnh!");
-			console.log("Error", error);
-		});*/
 		var image = angular.copy($scope.formImg);
 		var existingImageIndex = -1;
 
@@ -297,81 +283,7 @@ app.controller("product-ctrl", function($scope, $http) {
 		}
 	}
 
-	/*$scope.getProductCounts = function() {
-		$http.get('http://localhost:8080/rest/products/counts').then(function(response) {
-			$scope.productCounts = response.data;
-			renderChart();
-		}, function(error) {
-			console.error('Error fetching product counts', error);
-		});
-	};
-	$scope.getProductCounts();*/
-
-	/*function renderChart() {
-		var labels = Object.keys($scope.productCounts);
-		var counts = Object.values($scope.productCounts);
-
-		var data = {
-			labels: labels,
-			datasets: [{
-				data: counts,
-				backgroundColor: [
-					'#FF6384',
-					'#36A2EB',
-					'#FFCE56'
-				]
-			}]
-		};
-
-		var ctx = document.getElementById('myChart').getContext('2d');
-		var myChart = new Chart(ctx, {
-			type: 'pie',
-			data: data
-		});
-	}*/
-
-	/*	$http.get("/rest/products/quantities")
-			.then(function(response) {
-				console.log(response.data); // Log the response data to check for any issues
 	
-				var data = response.data;
-				var labelsBar = data.map(function(product) {
-					return product.name;
-				});
-				var valuesBar = data.map(function(product) {
-					return product.quantity;
-				});
-				var backgroundColorsBar = [
-					'#FF6384',
-					'#36A2EB',
-					'#FFCE56',
-					'#33FF99',
-					'#FF99FF',
-					'#9966FF',
-					'#FF9933',
-					'#99CCFF',
-					'#FF6699',
-					'#66FF99',
-					'#FFCC99',
-					'#66CCFF',
-					'#FF99CC',
-					'#99FFCC',
-					'#FF6666'
-				]; // Colors can be customized
-	
-				var ctxBar = document.getElementById('myChartBar').getContext('2d');
-				var myChartBar = new Chart(ctxBar, {
-					type: 'bar', // Change the type to 'bar' for quantities
-					data: {
-						labels: labelsBar,
-						datasets: [{
-							data: valuesBar,
-							backgroundColor: backgroundColorsBar
-						}]
-					}
-				});
-			});
-	*/
 	$http.get("http://localhost:8080/rest/products/counts")
 		.then(function(response) {
 			var data = response.data;
@@ -393,35 +305,7 @@ app.controller("product-ctrl", function($scope, $http) {
 		});
 
 
-
-
-
-
-
-
-	/*	var data = {
-			labels: ["Nike", "Adidas", "Puma"],
-			datasets: [{
-				data: [30, 20, 15, 10],
-				backgroundColor: [
-					"#FF6384",
-					"#36A2EB",
-					"#FFCE56"
-		
-				]
-			}]
-		};
-		
-		var ctx = document.getElementById('myCharttt').getContext('2d');
-		var myChart = new Chart(ctx, {
-			type: 'pie',
-			data: data
-		});
-	*/
 	$scope.initialize();
-
-
-
 
 
 });
