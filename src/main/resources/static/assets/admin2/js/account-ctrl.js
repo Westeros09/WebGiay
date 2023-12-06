@@ -62,7 +62,6 @@ app.controller("account-ctrl", function($scope, $http) {
 
 	$scope.edit = function(item) {
 		$scope.form = angular.copy(item);
-		$(".nav-tabs a:eq(0)").tab("show");
 
 	}
 	$scope.deleteSaveData = function(item) {
@@ -81,6 +80,7 @@ app.controller("account-ctrl", function($scope, $http) {
 	};
 	$scope.update = function() {
 		var item = angular.copy($scope.form);
+		console.log(item);
 		$http.put(`/rest/accounts/${item.username}`, item).then(resp => {
 			var index = $scope.items.findIndex(p => p.id == item.id);
 			$scope.items[index] = item;
