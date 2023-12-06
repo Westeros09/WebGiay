@@ -77,27 +77,48 @@ $scope.reset = function(){
             });
         }
     };
-    
-	$scope.update = function(){
+    /* 
+	$scope.update = function() {
     var item = angular.copy($scope.form);
     $http.put(`/rest/accounts/${item.username}`, item)
         .then(resp => {
             var index = $scope.items.findIndex(p => p.id == item.id);
             $scope.items[index] = item;
-             $scope.initialize();
             alert("Cập nhật tài khoản thành công!");
-           
         })
         .catch(error => {
             if (error.status === 409) {
-                alert("Vui lòng chọn địa chỉ email khác.Địa chỉ email đã tồn tại!");
+                alert("Vui lòng chọn địa chỉ email khác. Địa chỉ email đã tồn tại!");
             } else {
                 alert("Lỗi xóa tài khoản.");
-                 console.log("Error", error);
+                console.log("Error", error);
             }
-           
+        });
+};*/
+$scope.update = function() {
+    var item = angular.copy($scope.form);
+    $http.put(`/rest/accounts/${item.username}`, item)
+        .then(resp => {
+            var index = $scope.items.findIndex(p => p.id == item.id);
+            $scope.items[index] = item;
+            $http.get("/rest/accounts").then(resp => {
+                $scope.items = resp.data;
+            });
+
+            alert("Cập nhật tài khoản thành công!");
+        })
+        .catch(error => {
+            if (error.status === 409) {
+                alert("Vui lòng chọn địa chỉ email khác. Địa chỉ email đã tồn tại!");
+            } else {
+                alert("Lỗi cập nhật tài khoản.");
+                console.log("Error", error);
+            }
         });
 };
+
+
+
 
 
 
@@ -113,7 +134,9 @@ $scope.generateRandomPassword = function() {
     var item = angular.copy($scope.form);
     $http.post(`/rest/accounts`, item)
         .then(resp => {
-            $scope.reset();
+			$http.get("/rest/accounts").then(resp => {
+                $scope.items = resp.data;
+            });
             alert("Thêm mới tài khoản thành công!");
         })
         .catch(error => {
@@ -135,6 +158,9 @@ $scope.generateRandomPassword = function() {
         $http.delete(`/rest/accounts/${item.username}`).then(resp => {
             var index = $scope.items.findIndex(p => p.id == item.id);
             $scope.items.splice(index, 1);
+            $http.get("/rest/accounts").then(resp => {
+                $scope.items = resp.data;
+            });
             $scope.reset();
             alert("Xóa người dùng thành công!");
         }).catch(error => {
@@ -144,10 +170,13 @@ $scope.generateRandomPassword = function() {
                 alert("Xóa người dùng thành công!");
             }
             console.log("Error", error);
-        })
-    }
+        }).finally(()=>{
+			$http.get("/rest/accounts").then(resp => {
+                $scope.items = resp.data;
+		});
+    });
 }
-
+};
 	
     $scope.pager = {
         page: 0,

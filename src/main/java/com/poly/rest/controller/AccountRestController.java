@@ -81,17 +81,6 @@ public class AccountRestController {
 	public Account put(@PathVariable("username") String username, @RequestBody Account account) {
 			return accountService.update(account);	
 	}
-
-
-
-
-
-
-	
-		
-
-
-	
 	@DeleteMapping("{username}")
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public void delete(@PathVariable("username") String username) {
@@ -104,11 +93,6 @@ public class AccountRestController {
 	        }
 	    }
 	}
-
-
-	
-
-
 	@PostMapping
 	public ResponseEntity<Account> post(@RequestBody Account account) {
 	    if (accountService.isEmailExists(account.getEmail())) {
@@ -118,11 +102,6 @@ public class AccountRestController {
 	    Account createdAccount = accountService.create(account);
 	    return ResponseEntity.ok(createdAccount);
 	}
-
-
-	
-
-	
 	@GetMapping("/current-account")
 	public ResponseEntity<Account> getCurrentAccount() {
 	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
