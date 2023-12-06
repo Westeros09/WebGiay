@@ -66,8 +66,9 @@ public class LoginController2 {
 	}
 
 	@RequestMapping("/login/error")
-	public String error(Model model) {
+	public String error(Model model, HttpServletRequest request) {
 		model.addAttribute("message", "Sai thông tin đăng nhập!");
+		
 		return "forward:/login";
 	}
 
