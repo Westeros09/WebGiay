@@ -34,6 +34,6 @@ public interface OrderService {
 	public List<Object[]> getUnshippedOrdersForCurrentAccount(String username);
 	
 	public List<Order> findOrdersByAccount(String username);
-
+	public boolean hasOrders(String username);
 	
 }

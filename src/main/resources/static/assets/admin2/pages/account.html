@@ -23,13 +23,7 @@
 						<li class="nav-item d-flex align-items-center">
 							<a href="javascript:;" class="nav-link text-white font-weight-bold px-0">
 							<img style="max-width: 50%; height: 50px" class="border-radius-lg shadow-sm" id="imagePreview" ng-src="{{'/images/'+account.photo}}"  alt="Avatar">
-								
-								
-	
-								
-								
-								<i class="fa fa-user me-sm-1"></i>
-								<span class="d-sm-inline d-none">Sign In</span>
+								<span class="d-sm-inline d-none mx-2">{{account.username}}</span>
 							</a>
 						</li>
 						<li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -155,6 +149,8 @@
 
 				<div class="card-body">
 					<div class="text-center text-secondary">ACCOUNT EDITION</div>
+					 <p th:if="${errorMessage}" th:text="${errorMessage}"></p>
+                     <p th:if="${successMessage}" th:text="${successMessage}"></p>
 					<div class="row">
 						<div class="col-sm-4 text-center">
 							<label for="image"> <img ng-src="{{'/images/'+form.photo}}"
@@ -167,21 +163,25 @@
 							<div class="row">
 								<div class="form-group col-sm-4">
 									<div>Username</div>
-									<input ng-model="form.username" class="form-control">
+									<input ng-model="form.username" class="form-control"required>
+									
 								</div>
 								<div class="form-group col-sm-4">
 									<div>Password</div>
-									<input ng-value=" " type="password" disabled class="form-control" > 
+									<input ng-value="form.password" type="password" disabled class="form-control"required>  
 									
 								</div>			
 								<div class="row"></div>
 								<div class="form-group col-sm-4">
 									<div>Fullname</div>
-									<input ng-model="form.fullname" class="form-control">
+									<input ng-model="form.fullname" class="form-control"required>
+									<div ng-show="myForm.fullname.$dirty && myForm.fullname.$error.required" class="text-danger">
+        Fullname is required.
+    </div>
 								</div>
 								<div class="form-group col-sm-4">
 									<div>Email</div>
-									<input id="email" type="email" ng-model="form.email" class="form-control">
+									<input id="email" type="email" ng-model="form.email" class="form-control"required>
 								</div>
 							
 							<div class="row">
@@ -201,10 +201,10 @@
 		</div>
 	</div>
 		<div class="panel-footer text-center">
-		<button ng-click="create()" ng-disabled="!form.username"
-			class="btn btn-primary">
-			<b class="glyphicon glyphicon-plus"></b> Create
-		</button>
+	<button ng-click="generateRandomPassword(); create()" ng-disabled="!form.username" class="btn btn-primary">
+    <b class="glyphicon glyphicon-plus"></b> Create
+</button>
+
 		<button ng-click="update()" ng-disabled="!form.username"
 			class="btn btn-success">
 			<b class="glyphicon glyphicon-save"></b> Update
@@ -345,9 +345,10 @@
         <div class="modal-content">
           <div class="modal-header">
         <h5 class="modal-title"id="resetPasswordModalLabel" style="text-align:center">Reset Form</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+  <span aria-hidden="true">&times;</span>
+</button> -->
+       
       </div>
       <div class="modal-footer">
         
@@ -360,5 +361,5 @@
     </div>
 </div>
 <!--modal van  -->
-	
+
 			
