@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.poly.dao.AccountDAO;
 import com.poly.dao.AddressDAO;
@@ -41,6 +42,7 @@ import com.poly.entity.Size;
 import com.poly.service.MailerService;
 import com.poly.service.OrderService;
 import com.poly.service.SessionService;
+import com.poly.service.ShoppingCartService;
 
 import lombok.var;
 
@@ -68,20 +70,31 @@ public class OrderController {
 	AddressDAO addressDAO;
 	@Autowired
 	ShoppingCartDAO shoppingCartDAO;
+	@Autowired
+	ShoppingCartService cartService;
 	String city;
 	String fulladdress;
 
 	@RequestMapping("/check")
 	public String checkout(Model model, @RequestParam(value = "totalAmount", required = false) String totalAmount,
-			HttpServletRequest request) {
+			HttpServletRequest request, RedirectAttributes redirectAttributes) {
 
 		String username = request.getRemoteUser();
 		Account user = accountDAO.findById(username).orElse(null);
 
-		List<Address> userAddresses = addressDAO.getAddressesByUsername(username);
-		model.addAttribute("userAddresses", userAddresses);
-		model.addAttribute("user", user);
-		return "checkout.html";
+		// Kiểm tra trạng thái sản phẩm trong giỏ hàng
+		boolean allProductsAreFalse = cartService.allProductsAreFalse(username);
+
+		if (!allProductsAreFalse) {
+			List<Address> userAddresses = addressDAO.getAddressesByUsername(username);
+			model.addAttribute("userAddresses", userAddresses);
+			model.addAttribute("user", user);
+			return "checkout.html";
+		} else {
+			 redirectAttributes.addFlashAttribute("message", "Bạn chưa có sản phẩm để thanh toán.");
+			// Nếu tất cả sản phẩm có trạng thái là false, chuyển hướng đến trang cart
+			return "redirect:/cart.html";
+		}
 	}
 
 	@RequestMapping("/searchCodee")
@@ -146,7 +159,7 @@ public class OrderController {
 	public String checkout1(Model model, @RequestParam String address, @RequestParam String[] productId,
 			@RequestParam(value = "address2", required = false) Integer address2, @RequestParam String[] sizeId,
 			@RequestParam String[] countProduct, @RequestParam String email, @RequestParam String fullname,
-			@RequestParam (value = "total", required = false)  double total, HttpServletRequest request,
+			@RequestParam(value = "total", required = false) double total, HttpServletRequest request,
 			@RequestParam(value = "provinceLabel", required = false) String provinceLabel,
 			@RequestParam(value = "districtLabel", required = false) String districtLabel,
 			@RequestParam(value = "wardLabel", required = false) String wardLabel,

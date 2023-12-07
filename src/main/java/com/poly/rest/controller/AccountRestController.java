@@ -102,6 +102,8 @@ public class AccountRestController {
 	    Account createdAccount = accountService.create(account);
 	    return ResponseEntity.ok(createdAccount);
 	}
+
+	
 	@GetMapping("/current-account")
 	public ResponseEntity<Account> getCurrentAccount() {
 	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -134,10 +136,6 @@ public class AccountRestController {
 	    }
 	}
 
-
-
-	
-	
 
 
 

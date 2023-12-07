@@ -46,8 +46,6 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
 		// demo 1
 		http.authorizeRequests()
 
-//		.antMatchers("/history", "/revenue", "/account.html", "/orderDetail", "/productAdmin",
-//			"/categoryAdmin", "/report").hasAnyRole("DIRE", "STAF")
 		.antMatchers("/assets/**").hasAnyRole("STAF", "DIRE")
 		.antMatchers("/check/**").authenticated()
 		.antMatchers("/shop.html/addComments/**").authenticated()

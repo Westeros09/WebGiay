@@ -12,6 +12,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,15 +28,45 @@ import lombok.Data;
 @Entity
 @Table(name = "Accounts")
 public class Account implements Serializable {
-	
+
 	@Id
-	String username;	
+	@NotBlank(message = "Tên đăng nhập không được để trống")
+	@Column(unique = true)
+	String username;
+	@NotBlank(message = "Mật khẩu không được để trống")
 	String password;
+	@NotBlank(message = "Họ và tên không được để trống")
 	String fullname;
+	@NotBlank(message = "Email không được để trống")
+	@Email(message = "Email không hợp lệ")
 	String email;
+	
 	String photo;
-	
-	
+	Boolean available;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "account")
+	List<Order> orders;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "account")
+	List<Address> addresses;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
+	List<Authority> authorities;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "account")
+	List<ShoppingCart> shoppingCarts;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "account")
+	private List<Comment> comments;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "account")
+	private List<Reply> reply;
 
 	public Account(String username, String password, String fullname, String email) {
 		super();
@@ -47,31 +80,4 @@ public class Account implements Serializable {
 		super();
 	}
 
-	
-	@JsonIgnore
-	@OneToMany(mappedBy = "account")
-	List<Order> orders;
-
-	@JsonIgnore
-	@OneToMany(mappedBy = "account")
-	List<Address> addresses;
-
-	@JsonIgnore
-	@OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
-	List<Authority> authorities;
-	
-	@JsonIgnore
-	@OneToMany(mappedBy = "account")
-    List<ShoppingCart> shoppingCarts;
-
-	@JsonIgnore
-	@OneToMany(mappedBy = "account")
-	private List<Comment> comments;
-	
-	@JsonIgnore
-	@OneToMany(mappedBy = "account")
-	private List<Reply> reply;
-	
-	
 }
-
