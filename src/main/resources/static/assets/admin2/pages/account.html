@@ -41,33 +41,20 @@
 								class="sidenav-toggler-line bg-white"></i> <i
 								class="sidenav-toggler-line bg-white"></i>
 						</div>
-				</a>
-				</li>
-				<li class="nav-item px-3 d-flex align-items-center"><a
-					href="javascript:;" class="nav-link text-white p-0"> <i
-						class="fa fa-cog fixed-plugin-button-nav cursor-pointer"></i>
-				</a></li>
-				<li class="nav-item dropdown pe-2 d-flex align-items-center"><a
-					href="javascript:;" class="nav-link text-white p-0"
-					id="dropdownMenuButton" data-bs-toggle="dropdown"
-					aria-expanded="false"> <i class="fa fa-bell cursor-pointer"></i>
-				</a>
-					<ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4"
-						aria-labelledby="dropdownMenuButton">
-						<li class="mb-2"><a class="dropdown-item border-radius-md"
-							href="javascript:;">
-								<div class="d-flex py-1">
-									<div class="my-auto">
-										<img src="img/team-2.jpg" class="avatar avatar-sm  me-3 ">
-									</div>
-									<div class="d-flex flex-column justify-content-center">
-										<h6 class="text-sm font-weight-normal mb-1">
-											<span class="font-weight-bold">New message</span> from Laur
-										</h6>
-										<p class="text-xs text-secondary mb-0">
-											<i class="fa fa-clock me-1"></i> 13 minutes ago
-										</p>
-									</div>
+					</div>
+					<ul class="navbar-nav  justify-content-end">
+						<li class="nav-item d-flex align-items-center">
+							<a href="javascript:;" class="nav-link text-white font-weight-bold px-0">
+							<img style="max-width: 50%; height: 50px" class="border-radius-lg shadow-sm" id="imagePreview" ng-src="{{'/images/'+account.photo}}"  alt="Avatar">
+								<span class="d-sm-inline d-none mx-2">{{account.username}}</span>
+							</a>
+						</li>
+						<li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+							<a href="javascript:;" class="nav-link text-white p-0" id="iconNavbarSidenav">
+								<div class="sidenav-toggler-inner">
+									<i class="sidenav-toggler-line bg-white"></i>
+									<i class="sidenav-toggler-line bg-white"></i>
+									<i class="sidenav-toggler-line bg-white"></i>
 								</div>
 						</a></li>
 						<li class="mb-2"><a class="dropdown-item border-radius-md"
@@ -170,6 +157,43 @@
 									class="form-control">
 							</div>
 
+				<div class="card-body">
+					<div class="text-center text-secondary">ACCOUNT EDITION</div>
+					 <p th:if="${errorMessage}" th:text="${errorMessage}"></p>
+                     <p th:if="${successMessage}" th:text="${successMessage}"></p>
+					<div class="row">
+						<div class="col-sm-4 text-center">
+							<label for="image"> <img ng-src="{{'/images/'+form.photo}}"
+									style="max-width: 100%; height: 200px">
+							</label>
+						</div>
+						
+						
+						<div class="col-sm-8">
+							<div class="row">
+								<div class="form-group col-sm-4">
+									<div>Username</div>
+									<input ng-model="form.username" class="form-control"required>
+									
+								</div>
+								<div class="form-group col-sm-4">
+									<div>Password</div>
+									<input ng-value="form.password" type="password" disabled class="form-control"required>  
+									
+								</div>			
+								<div class="row"></div>
+								<div class="form-group col-sm-4">
+									<div>Fullname</div>
+									<input ng-model="form.fullname" class="form-control"required>
+									<div ng-show="myForm.fullname.$dirty && myForm.fullname.$error.required" class="text-danger">
+        Fullname is required.
+    </div>
+								</div>
+								<div class="form-group col-sm-4">
+									<div>Email</div>
+									<input id="email" type="email" ng-model="form.email" class="form-control"required>
+								</div>
+							
 							<div class="row">
 								<div class="form-group col-sm-4">
 									<div>Image</div>
@@ -198,11 +222,11 @@
 			</div>
 		</div>
 	</div>
-	<div class="panel-footer text-center">
-		<button ng-click="create()" ng-disabled="!form.username"
-			class="btn btn-primary">
-			<b class="glyphicon glyphicon-plus"></b> Create
-		</button>
+		<div class="panel-footer text-center">
+	<button ng-click="generateRandomPassword(); create()" ng-disabled="!form.username" class="btn btn-primary">
+    <b class="glyphicon glyphicon-plus"></b> Create
+</button>
+
 		<button ng-click="update()" ng-disabled="!form.username"
 			class="btn btn-success">
 			<b class="glyphicon glyphicon-save"></b> Update
@@ -295,66 +319,27 @@
 				</div>
 			</div>
 		</div>
-	</div>
-</div>
-<footer class="footer pt-3  ">
-	<div class="container-fluid">
-		<div class="row align-items-center justify-content-lg-between">
-			<div class="col-lg-6 mb-lg-0 mb-4">
-				<div class="copyright text-center text-sm text-muted text-lg-start">
-					©
-					<script>
-						document.write(new Date().getFullYear())
-					</script>
-					, made with <i class="fa fa-heart"></i> by <a
-						href="https://www.creative-tim.com" class="font-weight-bold"
-						target="_blank">Creative Tim</a> for a better web.
-				</div>
-			</div>
-			<div class="col-lg-6">
-				<ul
-					class="nav nav-footer justify-content-center justify-content-lg-end">
-					<li class="nav-item"><a href="https://www.creative-tim.com"
-						class="nav-link text-muted" target="_blank">Creative Tim</a></li>
-					<li class="nav-item"><a
-						href="https://www.creative-tim.com/presentation"
-						class="nav-link text-muted" target="_blank">About Us</a></li>
-					<li class="nav-item"><a
-						href="https://www.creative-tim.com/blog"
-						class="nav-link text-muted" target="_blank">Blog</a></li>
-					<li class="nav-item"><a
-						href="https://www.creative-tim.com/license"
-						class="nav-link pe-0 text-muted" target="_blank">License</a></li>
-				</ul>
-			</div>
-		</div>
-	</div>
-</footer>
-</div>
-<!--modal van  -->
-<div class="modal fade" id="secondModal" tabindex="-1"
-	aria-labelledby="secondModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="resetPasswordModalLabel"
-					style="text-align: center">Reset Form</h5>
-				<button type="button" class="close" data-dismiss="modal"
-					aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-footer">
-
-				<button type="button" class="btn btn-danger" ng-click="reset()"
-					data-dismiss="modal">Reset Form</button>
-				<form action="/sendEmail">
-					<button type="button" ng-click="sendEmail()"
-						class="btn btn-secondary">Reset Password</button>
-				</form>
-			</div>
-		</div>
-	</div>
+	<!--modal van  -->
+<div class="modal fade" id="secondModal" tabindex="-1" aria-labelledby="secondModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+        <h5 class="modal-title"id="resetPasswordModalLabel" style="text-align:center">Reset Form</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+  <span aria-hidden="true">&times;</span>
+</button> -->
+       
+      </div>
+      <div class="modal-footer">
+        
+        <button type="button" class="btn btn-danger" ng-click="reset()" data-dismiss="modal">Reset Form</button>
+      <form action="/sendEmail">
+    <button type="button" ng-click="sendEmail()" class="btn btn-secondary">Reset Password</button>
+</form>
+      </div>
+        </div>
+    </div>
 </div>
 <!--modal van  -->
 
+			

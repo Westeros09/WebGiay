@@ -10,6 +10,28 @@
     overflow-y: auto;
     max-height: 200px; 
 }
+.btn-primary {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+    font-size: 12px;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out;
+}
+.btn-update {
+    margin-top: 10px;
+}
+
+.btn-update:hover {
+    background-color: #0056b3;
+}
+.btn-delete {
+    margin-top: 10px;
+}
+
+.btn-delete:hover {
+    background-color: #dc3545;
+}
 </style>
 <body>
     <div class="container-md">      
@@ -184,11 +206,9 @@
         </div>
     </div>
 
-    <div class="btn-group w-45" role="group" aria-label="Basic example">
-        <button class="btn btn-primary my-3 py-3 btn-block mx-1" formaction="/addAddressToProfile" formmethod="post">Thêm</button>
-        <button class="btn btn-primary my-3 py-3 btn-block mx-1" formaction="/updateAddressToProfile" formmethod="post">Sửa</button>
-        <button class="btn btn-primary my-3 py-3 btn-block mx-1" formaction="/deleteAddressFromProfile" formmethod="post">Xóa</button>
-        
+    <div class="btn-group w-20" role="group" aria-label="Basic example">
+        <button class="btn btn-primary mx-3 btn-sm ms-auto" formaction="/updateAddressToProfile" formmethod="post">Update</button>
+        <button class="btn btn-primary btn-sm ms-auto" formaction="/deleteAddressFromProfile" formmethod="post">Delete</button>
     </div>
 </div>
              
