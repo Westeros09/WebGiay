@@ -15,7 +15,10 @@ app.controller("account-ctrl", function($scope, $http) {
 		});
 
 	};
-
+$scope.encryptPassword = function(password) {
+    const encryptedPassword = '*'.repeat(10);
+    return encryptedPassword;
+};
 	$scope.reset = function() {
 		$scope.form = {
 			photo: "cloud-upload.jpg"
