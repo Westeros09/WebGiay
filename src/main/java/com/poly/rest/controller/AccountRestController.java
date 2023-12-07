@@ -69,7 +69,7 @@ public class AccountRestController {
 	
 	@GetMapping
 	public List<Account> getAccounts() {
-	    return accountService.findAllWithPasswordEncoder();
+	    return accountService.findAll();
 	}
 	 
 	@GetMapping("{username}")

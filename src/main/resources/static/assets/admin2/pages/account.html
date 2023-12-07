@@ -292,7 +292,7 @@
 						<tbody class="text-xs font-weight-bolder text-center ">
 							<tr ng-repeat="item in pager.items">
 								<td>{{item.username}}</td>
-								<td>{{item.password}}</td>
+								<td>{{encryptPassword(item.password)}}</td>
 								<td>{{item.fullname}}</td>
 								<td>{{item.email}}</td>
 								<td>{{item.photo}}</td>
