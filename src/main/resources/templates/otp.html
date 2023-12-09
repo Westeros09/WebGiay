@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{/layout/layout.html::dynamic(~{::title}, ~{::body})}">
+<head>
+<title>Shoe Galaxy</title>
+<meta charset="utf-8">
+</head>
+<body>
+	<div class="bg-light py-3">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 mb-0">
+					<a href="/index.html">Home</a> <span class="mx-2 mb-0">/</span> <strong
+						class="text-black">OTP</strong>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="site-section">
+		<div class="container">
+			<!-- Form-->
+			<div class="form">
+				<div class="form-toggle"></div>
+				<div class="form-panel one">
+					<div class="form-header">
+						<h1>OTP</h1>
+					</div>
+					<div class="form-content">
+						<form action="/verify-otp" method="post">
+							<p class="text-danger">[[${message}]] [[${param.error}]]</p>
+							<div class="form-group">
+								<label for="otp">OTP</label> <input id="otp"
+									placeholder="Nhập mã OTP" type="text" name="otp"
+									required="required" />
+							</div>
+						 <input type="hidden" name="username" value="[[${username}]]" />
+							<input type="hidden" name="password" value="[[${password}]]" />
+							<input type="hidden" name="fullname" value="[[${fullname}]]" />
+							<input type="hidden" name="email" value="${email}" />
+							<input type="hidden" name="confirmPassword" value="[[${confirmPassword}]]" /> 
+							
+							<c:if test="${not empty error}">
+								<div class="form-text text-danger">[[${error}]]</div>
+							</c:if>
+					
+					<div class="form-group">
+						<button type="submit">Xác nhận</button>
+					</div>
+
+					</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+</html>

@@ -8,6 +8,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,9 +19,13 @@ import com.poly.entity.MailInfo;
 
 @Service
 public class MailerServiceImp  implements MailerService{
+
+	  
 	@Autowired
 	JavaMailSender sender;
-	
+	@Autowired
+	MailerService mailerService;
+   
 	@Override
 	public void send(MailInfo mail) throws MessagingException {
 		// TODO Auto-generated method stub
@@ -87,5 +92,26 @@ public class MailerServiceImp  implements MailerService{
 	public void setMailBody(MailInfo mail, String body) {
 	    mail.setBody(body);
 	}
+	public void sendOtp(String to, String otp) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("your_email@gmail.com");
+        message.setTo(to);
+        message.setSubject("OTP Verification");
+        message.setText("Your OTP is: " + otp);
+
+        sender.send(message);
+    }
+
+	@Override
+	public void sendOtpEmail(String to, String subject, String body) {
+		 SimpleMailMessage message = new SimpleMailMessage();
+	        message.setTo(to);
+	        message.setSubject(subject);
+	        message.setText(body);
+	        sender.send(message);
+	    }
+		
 	
+
+	 
 }

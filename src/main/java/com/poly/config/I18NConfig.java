@@ -2,6 +2,7 @@ package com.poly.config;
 
 import java.util.Locale;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,12 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 @Configuration
 
 public class I18NConfig implements WebMvcConfigurer{
+	
+	@Value("${file.upload-dir}")
+    private String uploadDir;
+
+    
+
 	@Bean("messageSource")
 	public MessageSource getMessageSource() {
 		ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
@@ -42,10 +49,10 @@ public class I18NConfig implements WebMvcConfigurer{
 			.addPathPatterns("/**")
 			.excludePathPatterns("/images/**");
 	}
-	 @Override
-	    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-	        registry.addResourceHandler("/i18n/**")
-	                .addResourceLocations("classpath:/i18n/");
-	    }
-	
+//	 @Override
+//	    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//		 registry.addResourceHandler("/uploads/**")
+//         .addResourceLocations("file:" + uploadDir + "/");
+//	
+//}
 }

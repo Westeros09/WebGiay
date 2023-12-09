@@ -57,7 +57,11 @@ public class OrderServiceImpl implements OrderService{
 	public Order update(Order order) {
 		return dao.save(order);
 	}
-
+	
+	public boolean hasOrders(String username) {
+        // Kiểm tra xem có đơn hàng nào của người dùng có username không
+        return dao.existsByAccount_Username(username);
+    }
 	@Override
 	public void deleteOrderDetailByOrderId(Long id) {
 		// TODO Auto-generated method stub

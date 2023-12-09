@@ -62,7 +62,7 @@
 	<div class="container mt-5" data-aos="fade-up" th:if="${not #lists.isEmpty(discountProducts)}">
 		<div class="row">
 			<div class="col-12">
-				<h1 class="big-sale">BIG SALES</h1>
+				<h1 class="big-sale" th:text="#{body.bigsale}">BIG SALES</h1>
 			</div>
 			<div class="col-md-3 col-6 col-sm-6"
 				th:each="discountProduct : ${discountProducts}"
@@ -108,7 +108,7 @@
 	<div class="container mt-5 mb-3" data-aos="fade-up">
 		<div class="row">
 			<div class="col-12 ">
-				<h1 class="big-sale">POPULAR SHOES</h1>
+				<h1 class="big-sale"  th:text="#{body.popular}">POPULAR SHOES</h1>
 			</div>
 			<div class="col-md-3 col-6 col-sm-6"
 				th:each="pro, iterStart : ${pro}"
@@ -173,7 +173,7 @@
 	<div class="container mt-5 mb-3" data-aos="fade-up">
 		<div class="row">
 			<div class="col-12 ">
-				<h1 class="big-sale">NEW PRODUCTS</h1>
+				<h1 class="big-sale" th:text="#{body.product}">NEW PRODUCTS</h1>
 			</div>
 			<div th:each="newProduct : ${newProduct}"
 				class="col-md-3 col-6 col-sm-6"
@@ -233,7 +233,7 @@
 	<div class="container mt-5 mb-3" data-aos="fade-up">
 		<div class="row">
 			<div class="col-12 ">
-				<h1 class="big-sale">Best Selling Products</h1>
+				<h1 class="big-sale" th:text="#{body.bestsale}">Best Selling Products</h1>
 			</div>
 			<div th:each="detail : ${orderDetails}"
 				class="col-md-3 col-6 col-sm-6" th:if="${detail[4]} ">
@@ -473,7 +473,7 @@
 						<span class="icon-truck"></span>
 					</div>
 					<div class="text">
-						<h2 class="text-uppercase">Free Shipping</h2>
+						<h2 class="text-uppercase" th:text="#{footer.freeshipping}">Free Shipping</h2>
 						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 							Phasellus at iaculis quam. Integer accumsan tincidunt fringilla.</p>
 					</div>
@@ -484,7 +484,7 @@
 						<span class="icon-refresh2"></span>
 					</div>
 					<div class="text">
-						<h2 class="text-uppercase">Free Returns</h2>
+						<h2 class="text-uppercase"th:text="#{footer.freereturns}">Free Returns</h2>
 						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 							Phasellus at iaculis quam. Integer accumsan tincidunt fringilla.</p>
 					</div>
@@ -495,7 +495,7 @@
 						<span class="icon-help"></span>
 					</div>
 					<div class="text">
-						<h2 class="text-uppercase">Customer Support</h2>
+						<h2 class="text-uppercase" th:text="#{footer.custsup}">Customer Support</h2>
 						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 							Phasellus at iaculis quam. Integer accumsan tincidunt fringilla.</p>
 					</div>

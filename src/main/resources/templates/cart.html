@@ -24,10 +24,11 @@
 	</div>
 	<div class="site-sectionn">
 		<div class="container">
-			<div class="row mb-5">
-				<!-- <div th:if="${messages != null}" class="alert alert-danger">
-					<p th:text="${messages}"></p>
-				</div> -->
+		
+			 <div th:if="${message}" class="alert alert-danger" role="alert">
+					<span th:text="${message}"></span>
+				</div> 
+
 				<!-- <form class="col-md-12" action="/cart.html/update" method="post"> -->
 				<div class="site-blocks-table">
 					<div th:if="${messages != null}" class="alert alert-danger">

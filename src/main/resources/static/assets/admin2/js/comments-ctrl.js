@@ -59,7 +59,13 @@ app.controller("comments-ctrl", function($scope, $http, $window) {
 		});
 
 		$scope.resetForm();
+		$scope.loadCurrentUser();
 	}
+	$scope.loadCurrentUser = function() {
+    $http.get("/rest/accounts/current-account").then(resp => {
+        $scope.account = resp.data;
+    }); 
+};
 	$scope.deleteComment = function(comment) {
 		if (confirm("Bạn có chắc muốn xóa bình luận này?")) {
 			$scope.resetPager = function() {

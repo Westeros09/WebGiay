@@ -36,7 +36,6 @@ app.controller("history-ctrl", function($scope, $http,$window,$timeout) {
 		}
 		
     };
-
     // Watch for changes in filteredItems and update pagination
     $scope.$watch('filteredItems', function (newValue, oldValue) {
 		if (newValue !== oldValue) {
@@ -172,11 +171,13 @@ app.controller("history-ctrl", function($scope, $http,$window,$timeout) {
 		$scope.reset(); //để có hình mây lyc1 mới đầu
 		$scope.loadCurrentUser();
 	}
+	
 	$scope.loadCurrentUser = function() {
     $http.get("/rest/accounts/current-account").then(resp => {
         $scope.account = resp.data;
     }); 
 };
+
 	$scope.edit = function(item) {
 		$scope.form = angular.copy(item);
 		$(".nav-tabs a:eq(0)").tab("show");

@@ -66,4 +66,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 		shoppingCartDAO.deleteAll(shoppingCarts);
 	}
 
+	@Override
+	public boolean allProductsAreFalse(String username) {
+		 List<ShoppingCart> cartItems = shoppingCartDAO.findShoppingCartsByUsername(username);
+		return cartItems.stream().allMatch(cartItem -> !cartItem.getStatus());
+	}
+
+
 }

@@ -1,14 +1,19 @@
 package com.poly.service.impl;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
+import javax.security.auth.login.AccountNotFoundException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +28,7 @@ import com.poly.entity.OrderDetail;
 import com.poly.entity.Product;
 import com.poly.service.AccountService;
 import com.poly.service.OrderService;
+import com.poly.service.ProductService;
 
 
 @Service
@@ -39,6 +45,8 @@ public class AccountServiceImpl implements AccountService{
 	OrderService OrderService;
 	@Autowired
 	OrderDetailDAO orderdetailDAO;
+	@Autowired
+	ProductService productService;
 	public List<Account> findAll() {
 		return dao.findAll();
 	}
@@ -65,7 +73,6 @@ public class AccountServiceImpl implements AccountService{
 		Account account = dao.findById(username).orElse(null);
 
         if (account != null) {
-            // Cập nhật thông tin cá nhân
             account.setFullname(newFullname);
             account.setEmail(newEmail);
             account.setPhoto(photo);
@@ -82,11 +89,10 @@ public class AccountServiceImpl implements AccountService{
 	        return dao.findByUsername(username);
 	}
 
-	@Override
-	public Account update(Account account) {
-		
-		return dao.save(account);
-	}
+	 @Override
+	    public Account update(Account account) {
+	        return dao.save(account);
+	    }
 
 	@Override
 	public Account create(Account account) {
@@ -100,7 +106,7 @@ public class AccountServiceImpl implements AccountService{
 		// TODO Auto-generated method stub
 		dao.deleteById(username);
 	}
-
+	
 	@Override
 	public boolean updateProfileWithoutPhoto(String username, String newFullname, String newEmail) {
 		Account account = dao.findById(username).orElse(null);
@@ -118,16 +124,18 @@ public class AccountServiceImpl implements AccountService{
 	
 	@Override
 	public List<Account> findAllWithPasswordEncoder() {
-		// TODO Auto-generated method stub
-		 List<Account> accounts = dao.findAll();
-	        for (Account account : accounts) {
-	        String encryptedPassword = passwordEncoder.encode(account.getPassword());
-	   	    account.setPassword(encryptedPassword.substring(0, 25));
-	        }
-	        Collections.reverse(accounts);
-	        return accounts;
-	
+	    List<Account> accounts = dao.findAll();
+	    for (Account account : accounts) {
+	        String email = account.getEmail();
+	        String salt = BCrypt.gensalt(10);
+	        String encryptedPassword = passwordEncoder.encode(email + salt);
+	        account.setPassword(encryptedPassword.substring(Math.max(0, encryptedPassword.length() - 7)));
+	    }
+
+	    return accounts;
 	}
+	
+
 
 	@Override
 	 public void deleteAddressesByAccount(Account account) {
@@ -161,13 +169,16 @@ public class AccountServiceImpl implements AccountService{
 	    List<Account> accounts = dao.findAll();
 	    for (Account account : accounts) {
 	        if (email.equals(account.getEmail())) {
-	            return true; // Email đã tồn tại trong hệ thống
+	            return true;
 	        }
 	    }
-	    return false; // Email chưa tồn tại
+	    return false;
 	}
-
-
-	
+	@Override
+	public String generateRandomPassword() {
+	    Random random = new Random();
+	    int newPassword = random.nextInt(900000) + 100000;
+	    return String.valueOf(newPassword);
+	}
 	
 }

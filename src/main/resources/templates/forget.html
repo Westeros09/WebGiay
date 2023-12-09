@@ -25,15 +25,15 @@
 				<div class="form-panel one">
 					<div class="form-header">
 						<h1>Forget Password</h1>
+						<i class="text-dark">*Lưu ý: Mật khẩu mới sẽ được gửi qua gmail của bạn.</i>
 					</div>
 					<div class="form-content">
 						<form action="/forgetPassword/success" method="post">
-							<p class="text-danger">[[${message}]] [[${param.error}]]</p>
+							<p class="text-danger">[[${message}]]</p>
 							<div class="form-group">
-								<label for="email">Email</label> <input id="email"
-									type="text" name="email" required="required" />
+								<label for="email">Email</label> <input id="email" type="email"
+									name="email"  />
 							</div>
-							
 							<div class="form-group">
 								<button type="submit">Send New Password</button>
 							</div>

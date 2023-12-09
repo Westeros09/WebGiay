@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,13 +51,20 @@ public class UserService implements UserDetailsService{
 			Account account = accDAO.findByUsername(username);
 			
 			// tạo UserDetail từ Account
-			String password = account.getPassword();
-			String[] roles = account.getAuthorities().stream()
-					.map(au -> au.getRole().getId())
-					.collect(Collectors.toList()).toArray(new String[0]);
-			return User.withUsername(username)
-					.password(pe.encode(password))
-					.roles(roles).build();
+			if(account != null && account.getAvailable() == true) {
+				String password = account.getPassword();
+				String[] roles = account.getAuthorities().stream()
+						.map(au -> au.getRole().getId())
+						.collect(Collectors.toList()).toArray(new String[0]);
+				
+				return User.withUsername(username)
+						.password(pe.encode(password))
+						.roles(roles).build();
+			}else {
+				// Nếu tài khoản không "available", đưa ra thông báo lỗi
+	            throw new LockedException(username);
+			}
+			
 		} catch (Exception e) {
 			throw new UsernameNotFoundException(username + "not found");
 		}
@@ -81,6 +89,7 @@ public class UserService implements UserDetailsService{
 	        account.setFullname(name);
 	        account.setPassword(password); // Mã hóa mật khẩu trước khi lưu
 	        account.setEmail(email);
+	        account.setPhoto("nv01.jpg");
 	        accountDAO.save(account);
 	        Authority authority = new Authority();
 			authority.setAccount(account);

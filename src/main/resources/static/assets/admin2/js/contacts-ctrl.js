@@ -8,6 +8,7 @@ app.controller("contacts-ctrl", function($scope, $http) {
 			$scope.items = resp.data;
 		});
 		$scope.reset(); //để có hình mây lyc1 mới đầu
+		$scope.loadCurrentUser();
 	}
 	$scope.create = function() {
 		var item = angular.copy($scope.form);
@@ -21,7 +22,11 @@ app.controller("contacts-ctrl", function($scope, $http) {
 			console.log("Error", error);
 		});
 	}
-
+$scope.loadCurrentUser = function() {
+    $http.get("/rest/accounts/current-account").then(resp => {
+        $scope.account = resp.data;
+    }); 
+};
 
 	$scope.edit = function(item) {
 		$scope.form = angular.copy(item);

@@ -388,8 +388,6 @@ app.controller("cart-ctrl", function($scope, $http, $window) {
 	}
 	$cart.loadFromDatabase();
 
-
-
 	// Đặt hàng
 	$scope.order = {
 		get account() {
