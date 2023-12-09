@@ -78,6 +78,7 @@
 
 
 
+
 					<div class="btn-group" role="group" aria-label="Chọn Size">
 						<th:block th:each="size : ${#numbers.sequence(36, 44)}">
 
@@ -112,11 +113,24 @@
 						<option value="" disabled selected>Chọn Size</option>
 						<option th:each="item : ${prodd}" th:if="${item.quantity > 0}"
 							th:value="${item.sizes}" th:text="${item.sizes}"></option>
+							
+							
+							
 					</select> -->
-					<span class="text-uppercase" style="font-weight: bold">Quantity
-						: </span> <input name="count" class="mt-3" type="number" min="1"
-						style="width: 60px; border: none" ng-model="quantity"
+
+
+
+					<span class="text-uppercase text-danger" style="font-weight: bold">
+						<input name="count" type="text" min="1"
+						style="border: none; color: red" ng-model="quantityy" />
+
+					</span> <br> <span class="text-uppercase" style="font-weight: bold">Quantity
+						: </span> <input name="count" type="number" min="1"
+						style="width: 60px; border: none;" ng-model="quantity"
 						ng-init="quantity = 1" />
+
+
+
 					<div class="cart mt-4 align-items-center">
 						<button th:attr="ng-click=@{|cart.add(${prod.id})|}"
 							class="addCart btn btn-outline-dark text-uppercase mr-2 px-4"
@@ -500,9 +514,12 @@
 								th:alt="${pro.name}"></a>
 							<div class="discount-badge-shoe"
 								th:if="${pro.discountProduct != null and not #lists.isEmpty(pro.discountProduct) and
-                             (T(java.time.LocalDate).now().isAfter(pro.discountProduct[0].start_Date) and
-                             (T(java.time.LocalDate).now().isBefore(pro.discountProduct[0].end_Date) or
-                             T(java.time.LocalDate).now().isEqual(pro.discountProduct[0].end_Date)))} and ${pro.discountProduct[0].active}">
+         pro.discountProduct[0].active and
+         ((T(java.time.LocalDate).now().isAfter(pro.discountProduct[0].start_Date) and
+         (T(java.time.LocalDate).now().isBefore(pro.discountProduct[0].end_Date) or
+         T(java.time.LocalDate).now().isEqual(pro.discountProduct[0].end_Date))) or
+         (T(java.time.LocalDate).now().isEqual(pro.discountProduct[0].start_Date) and
+         T(java.time.LocalDate).now().isBefore(pro.discountProduct[0].end_Date)))}">
 								<span th:text="${pro.discountProduct[0].percentage + '%'}"></span>
 
 							</div>
@@ -512,10 +529,12 @@
 								th:text="${pro.name}"></div>
 							<div
 								th:if="${pro.discountProduct != null and not #lists.isEmpty(pro.discountProduct) and
-                             pro.discountProduct[0].active and
-                             (T(java.time.LocalDate).now().isAfter(pro.discountProduct[0].start_Date) and
-                             (T(java.time.LocalDate).now().isBefore(pro.discountProduct[0].end_Date) or
-                             T(java.time.LocalDate).now().isEqual(pro.discountProduct[0].end_Date)))} and ${pro.discountProduct[0].active}">
+         pro.discountProduct[0].active and
+         ((T(java.time.LocalDate).now().isAfter(pro.discountProduct[0].start_Date) and
+         (T(java.time.LocalDate).now().isBefore(pro.discountProduct[0].end_Date) or
+         T(java.time.LocalDate).now().isEqual(pro.discountProduct[0].end_Date))) or
+         (T(java.time.LocalDate).now().isEqual(pro.discountProduct[0].start_Date) and
+         T(java.time.LocalDate).now().isBefore(pro.discountProduct[0].end_Date)))}">
 
 								<span class="product-price-shoe"
 									th:text="${'$' + (pro.price - (pro.price * pro.discountProduct[0].percentage / 100))}"></span>

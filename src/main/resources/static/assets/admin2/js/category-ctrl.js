@@ -11,26 +11,52 @@ app.controller("category-ctrl", function($scope, $http) {
 		$scope.reset(); //để có hình mây lyc1 mới đầu
 		$scope.loadCurrentUser();
 	}
-	$scope.create = function() {
-		var item = angular.copy($scope.form);
 
 
+	function validateForm() {
+		if (!$scope.form.id) {
+			alert("Vui lòng nhập Id!");
+			return false;
+		}
 
-		$http.post(`/rest/categories`, item).then(resp => {
-			$scope.items.push(resp.data);
-			$scope.reset();
+		if (!$scope.form.name) {
+			alert("Vui lòng nhập Name!");
+			return false;
+		}
 
-			alert("Thêm mới thành công!");
-		}).catch(error => {
-			alert("Lỗi thêm mới !");
-			console.log("Error", error);
-		});
+		if ($scope.form.available !== true && $scope.form.available !== false) {
+			alert("Vui lòng chọn trạng thái Available!");
+			return false;
+		}
+
+		// Thêm các điều kiện kiểm tra khác nếu cần
+
+		return true;
 	}
-$scope.loadCurrentUser = function() {
-    $http.get("/rest/accounts/current-account").then(resp => {
-        $scope.account = resp.data;
-    }); 
-};
+
+
+	$scope.create = function() {
+		if (validateForm()) {
+			var item = angular.copy($scope.form);
+			$http.post(`/rest/categories`, item)
+				.then(resp => {
+					$scope.items.push(resp.data);
+					$scope.reset();
+					alert("Thêm mới danh mục thành công!");
+				})
+				.catch(error => {
+					alert("Lỗi thêm mới danh mục!");
+					console.error("Error creating item:", error);
+				});
+		}
+	};
+
+
+	$scope.loadCurrentUser = function() {
+		$http.get("/rest/accounts/current-account").then(resp => {
+			$scope.account = resp.data;
+		});
+	};
 
 	$scope.edit = function(item) {
 		$scope.form = angular.copy(item);
@@ -44,17 +70,20 @@ $scope.loadCurrentUser = function() {
 	}
 
 	$scope.update = function() {
-		var item = angular.copy($scope.form);
 
-		$http.put(`/rest/categories/${item.id}`, item).then(resp => {
-			var index = $scope.items.findIndex(p => p.id == item.id);
-			$scope.items[index] = item;
-			alert("Cập nhật thành công!");
-		})
-			.catch(error => {
-				alert("Lỗi cập nhật !");
-				console.log("Error", error);
-			});
+		if (validateForm()) {
+			var item = angular.copy($scope.form);
+
+			$http.put(`/rest/categories/${item.id}`, item).then(resp => {
+				var index = $scope.items.findIndex(p => p.id == item.id);
+				$scope.items[index] = item;
+				alert("Cập nhật thành công!");
+			})
+				.catch(error => {
+					alert("Lỗi cập nhật !");
+					console.log("Error", error);
+				});
+		}
 	}
 
 	$scope.delete = function(item) {
