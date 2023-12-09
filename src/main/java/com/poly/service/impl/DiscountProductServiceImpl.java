@@ -1,5 +1,6 @@
 package com.poly.service.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,13 @@ public class DiscountProductServiceImpl implements DiscountProductService {
 	public List<DiscountProduct>  findByIdProductDiscount(Integer productId) {
 		// TODO Auto-generated method stub
 		return discountProductDAO.findByIdProductDiscount(productId);
+	}
+
+
+
+	@Override
+	public List<DiscountProduct> findDiscountProductsInDateRange(LocalDate startDate, LocalDate endDate) {
+		return discountProductDAO.findDiscountProductsInDateRange(startDate, endDate);
 	}
 
 

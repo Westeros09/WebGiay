@@ -8,7 +8,7 @@
 </head>
 <body>
 
-	<div class="site-sectionn" >
+	<div class="site-sectionn">
 		<div class="container ">
 			<div class="row">
 				<div class="col-md-9 order-2">
@@ -51,7 +51,6 @@
 					</div>
 					<div class="container mb-3 mt-3">
 						<div class="row">
-
 							<div th:each="product : ${products}"
 								class="col-md-4 col-6 col-sm-4"
 								th:if="${product.available and product.category.available}">
@@ -66,13 +65,12 @@
 										<div>
 											<span th:if="${not #lists.isEmpty(discountProducts)}">
 												<span th:each="discountProduct : ${discountProducts}"
-												th:if="${discountProduct.product.id == product.id and discountProduct.active and T(java.time.LocalDate).now().isAfter(discountProduct.start_Date) and (T(java.time.LocalDate).now().isBefore(discountProduct.end_Date) or T(java.time.LocalDate).now() == discountProduct.start_Date or T(java.time.LocalDate).now() == discountProduct.end_Date)}">
+												th:if="${discountProduct.product.id == product.id and discountProduct.active and T(java.time.LocalDate).now().isAfter(discountProduct.start_Date.minusDays(1)) and (T(java.time.LocalDate).now().isBefore(discountProduct.end_Date.plusDays(1)) or T(java.time.LocalDate).now() == discountProduct.start_Date or T(java.time.LocalDate).now() == discountProduct.end_Date)}">
 													<span class="discount-badge-shoe"
 													th:text="${discountProduct.percentage + '%'}"></span>
 											</span>
 											</span>
 										</div>
-
 									</div>
 									<div class="product-details-shoe">
 										<div
@@ -82,23 +80,20 @@
 											<span
 												th:if="${product.discountProduct != null and not #lists.isEmpty(product.discountProduct) and product.discountProduct[0].active}">
 												<span
-												th:if="${T(java.time.LocalDate).now().isAfter(product.discountProduct[0].start_Date) and (T(java.time.LocalDate).now().isBefore(product.discountProduct[0].end_Date) or T(java.time.LocalDate).now() == product.discountProduct[0].end_Date)}">
+												th:if="${T(java.time.LocalDate).now().isAfter(product.discountProduct[0].start_Date.minusDays(1)) and (T(java.time.LocalDate).now().isBefore(product.discountProduct[0].end_Date.plusDays(1)) or T(java.time.LocalDate).now() == product.discountProduct[0].end_Date or T(java.time.LocalDate).now() == product.discountProduct[0].start_Date)}">
 													<span class="product-price-shoe"
 													th:text="${'$' + (product.price - (product.price * product.discountProduct[0].percentage / 100))}"></span>
 													<del class="original-price-shoe"
 														th:text="${'$' + product.price}"></del>
-
 											</span> <span
-												th:unless="${T(java.time.LocalDate).now().isAfter(product.discountProduct[0].start_Date) and (T(java.time.LocalDate).now().isBefore(product.discountProduct[0].end_Date) or T(java.time.LocalDate).now() == product.discountProduct[0].end_Date)}">
+												th:unless="${T(java.time.LocalDate).now().isAfter(product.discountProduct[0].start_Date.minusDays(1)) and (T(java.time.LocalDate).now().isBefore(product.discountProduct[0].end_Date.plusDays(1)) or T(java.time.LocalDate).now() == product.discountProduct[0].end_Date or T(java.time.LocalDate).now() == product.discountProduct[0].start_Date)}">
 													<span class="product-price-shoe"
 													th:text="${'$' + product.price}"></span>
-
 											</span>
 											</span> <span
 												th:unless="${product.discountProduct != null and not #lists.isEmpty(product.discountProduct) and product.discountProduct[0].active}">
 												<span class="product-price-shoe"
 												th:text="${'$' + product.price}"></span>
-
 											</span>
 										</div>
 									</div>
@@ -106,6 +101,7 @@
 							</div>
 						</div>
 					</div>
+
 
 
 
@@ -180,7 +176,7 @@
 										<li><a
 											th:href="@{|/findSizeProducts?size=${size}&page=${products.totalPages - 1}|}">&gt;</a></li>
 									</ul>
- 	
+
 
 
 
@@ -288,7 +284,7 @@
 
 
 
-	<div class="container-fluid col-sm-10 mt-5"  data-aos="fade-up">
+	<div class="container-fluid col-sm-10 mt-5" data-aos="fade-up">
 		<img src="/images/bannerIndex.jpg" style="height: 350px; width: 100%"
 			alt="...">
 	</div>

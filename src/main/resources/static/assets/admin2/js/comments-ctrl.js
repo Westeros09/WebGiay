@@ -83,22 +83,51 @@ app.controller("comments-ctrl", function($scope, $http, $window) {
 		}
 	}
 
+	$scope.validateCommentForm = function() {
+		if (!$scope.commentForm.description) {
+			alert("Vui lòng nhập mô tả!");
+			return false;
+		}
+
+		if (!$scope.commentForm.create_Date) {
+			alert("Vui lòng chọn ngày bắt đầu!");
+			return false;
+		}
+
+		if (!$scope.commentForm.product || !$scope.commentForm.product.id) {
+			alert("Vui lòng chọn Product Id!");
+			return false;
+		}
+
+		if (!$scope.commentForm.account || !$scope.commentForm.account.username) {
+			alert("Vui lòng chọn Account!");
+			return false;
+		}
+
+		// Thêm các điều kiện kiểm tra khác nếu cần
+
+		return true;
+	};
 
 
 	$scope.createComment = function() {
 		var newComment = angular.copy($scope.commentForm);
 
+		if ($scope.validateCommentForm()) {
+			$http.post("/rest/comments", newComment).then(resp => {
+				$scope.comments.push(resp.data);
+				$scope.resetForm();
+				alert("Thêm mới bình luận thành công!");
+			}).catch(error => {
+				alert("Lỗi thêm mới bình luận!");
+				console.log("Error", error);
+			});
+
+		}
 
 
-		$http.post("/rest/comments", newComment).then(resp => {
-			$scope.comments.push(resp.data);
-			$scope.resetForm();
-			alert("Thêm mới bình luận thành công!");
-		}).catch(error => {
-			alert("Lỗi thêm mới bình luận!");
-			console.log("Error", error);
-		});
 	}
+
 
 	$scope.editComment = function(comment) {
 		$scope.commentForm = angular.copy(comment);
@@ -158,8 +187,8 @@ app.controller("comments-ctrl", function($scope, $http, $window) {
 			this.page--;
 		}
 	};
-	
+
 
 	$scope.initialize();
-	
+
 });

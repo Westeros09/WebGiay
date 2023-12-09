@@ -49,30 +49,31 @@ public class LoadPage {
 	ImageDAO imageDAO;
 	@Autowired
 	OrderDetailDAO orderDetailDAO;
-	
 
 	@Autowired
 	ReplyDAO replyDAO;
 
-	@GetMapping({ "/contact.html", "/about.html", "/ChangeInfomation.html","/ChangeInfomation2.html" , "/TrangThai.html", "/ChangePassword.html"})
-	public String loadPage(HttpServletRequest request) {
+	@GetMapping({ "/contact.html", "/about.html", "/ChangeInfomation.html", "/ChangeInfomation2.html",
+			"/TrangThai.html", "/ChangePassword.html" })
+	public String loadPage(HttpServletRequest request, Model model) {
 		String path = request.getServletPath();
+		List<Object[]> results = productDAO.countProductsByCategory();
+		model.addAttribute("results", results);
 
 		if ("/contact.html".equals(path)) {
 			return "contact";
-
 		} else if ("/about.html".equals(path)) {
 			return "about";
 		} else if ("/ChangeInfomation.html".equals(path)) {
 			return "ChangeInfomation";
 		} else if ("/ChangeInfomation2.html".equals(path)) {
 			return "ChangeInfomation2";
-		}else if ("/TrangThai.html".equals(path)) {
+		} else if ("/TrangThai.html".equals(path)) {
 			return "TrangThai";
 		} else if ("/ChangePassword.html".equals(path)) {
 			return "ChangePassword";
 		}
-		 
+
 		return "error";
 	}
 
@@ -86,22 +87,18 @@ public class LoadPage {
 
 		List<Product> newProduct = productDAO.NewProduct();
 		List<Object[]> orderDetails = orderDetailDAO.findByAllTopProductOrderDetail();
-        model.addAttribute("orderDetails", orderDetails);
+		model.addAttribute("orderDetails", orderDetails);
 		model.addAttribute("pro", pro);
 		model.addAttribute("newProduct", newProduct);
 		model.addAttribute("images", images);
 		model.addAttribute("products", products);
 		model.addAttribute("discountProducts", discountProducts);
-		
-		  // Truy vấn danh sách hãng và số lượng sản phẩm tương ứng
-	    List<Object[]> results = productDAO.countProductsByCategory();
-	    model.addAttribute("results", results);
-	
-		
+
+		// Truy vấn danh sách hãng và số lượng sản phẩm tương ứng
+		List<Object[]> results = productDAO.countProductsByCategory();
+		model.addAttribute("results", results);
 
 		return "index";
 	}
-	
-
 
 }

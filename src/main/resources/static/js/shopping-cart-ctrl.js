@@ -13,21 +13,26 @@ app.controller("cart-ctrl", function($scope, $http, $window) {
 			var modal = document.getElementById('myModal');
 			modal.classList.remove('show');
 			modal.style.display = 'none';
-			/*	var modalBackdrop = document.querySelector('.modal-backdrop');*/
-			/*	modalBackdrop.parentNode.removeChild(modalBackdrop);*/
+
 		}, 700);
 	}
 
 
 
 	$scope.getSize = function(event) {
+		var urlParts = window.location.href.split('/');
+		var id = urlParts[urlParts.length - 1];
 		var size = event.target.innerText;
 		$scope.selectedSize = size.trim();
-
-
-
 		var buttons = document.getElementsByClassName('btn');
 		var size = event.target.innerText.trim();
+		/*		console.log('size' + size);*/
+		$http.get(`/rest/sizeManager/checkQuantity/${id}/${size}`).then(stockResp => {
+			var availableStock = stockResp.data;
+			/*console.log('quantity' + availableStock);*/
+			$scope.quantityy = 'Remaining Product: ' + ' ' + availableStock;
+
+		});
 
 		for (var i = 0; i < buttons.length; i++) {
 			if (buttons[i].innerText.trim() === size) {
@@ -39,7 +44,6 @@ app.controller("cart-ctrl", function($scope, $http, $window) {
 				buttons[i].classList.add('text-light');
 			}
 		}
-
 
 	}
 	$scope.totalCount = 0; // Khai báo biến totalCount trong $scope
@@ -92,7 +96,7 @@ app.controller("cart-ctrl", function($scope, $http, $window) {
 									console.log(orderDetail);
 									$scope.cart.items.push(orderDetail);
 								})(orderDetails[j]);
-								
+
 							}
 						} else {
 							console.log("No order details found");
@@ -121,7 +125,9 @@ app.controller("cart-ctrl", function($scope, $http, $window) {
 			if (spanText == null) {
 				try {
 					alert("Vui lòng đăng nhập");
+					
 					window.location.href = "/login";
+					return;
 				} catch (error) {
 					console.error('Thông báo lỗi: ' + error);
 					// Xử lý lỗi ở đây, ví dụ: ghi lỗi vào một file log
@@ -135,18 +141,31 @@ app.controller("cart-ctrl", function($scope, $http, $window) {
 				if (existingItem) {
 					existingItem.qty += $scope.quantity;
 					existingItem.total = existingItem.qty * existingItem.price;
-					$http.put(`/rest/carts/${existingItem.id}`, existingItem)
-						.then(response => {
-							console.log("Dữ liệu đã được cập nhật trong cơ sở dữ liệu", response.data);
-							this.loadFromDatabase();
-							console.log(existingItem.qty);
-							$window.location.reload();
-							displayModal();
+					$http.get(`/rest/sizeManager/checkQuantity/${id}/${$scope.selectedSize}`).then(stockResp => {
+						var availableStock = stockResp.data;
+						if (availableStock >= existingItem.qty) {
+							$http.put(`/rest/carts/${existingItem.id}`, existingItem)
+								.then(response => {
+									console.log('quantity' + existingItem.qty);
+									console.log("Dữ liệu đã được cập nhật trong cơ sở dữ liệu", response.data);
+									this.loadFromDatabase();
+									$window.location.reload();
+									displayModal();
 
-						})
-						.catch(error => {
-							console.error("Lỗi khi cập nhật dữ liệu trong cơ sở dữ liệu: ", error);
-						});
+								})
+								.catch(error => {
+									console.error("Lỗi khi cập nhật dữ liệu trong cơ sở dữ liệu: ", error);
+								});
+
+						} else {
+							alert('Sản phẩm bạn thêm vào giỏ hàng đã vượt quá số lượng tồn kho.');
+							return;
+						}
+					});
+
+
+
+
 				} else {
 					$http.get(`/rest/products/${id}`).then(resp => {
 						// Fetch product images 
@@ -168,10 +187,14 @@ app.controller("cart-ctrl", function($scope, $http, $window) {
 								// Check stock quantity before adding to cart
 								$http.get(`/rest/sizeManager/checkQuantity/${id}/${$scope.selectedSize}`).then(stockResp => {
 									var availableStock = stockResp.data;
+									console.log('quantityyy' + availableStock);
 
 									if (availableStock >= resp.data.qty) {
+										console.log('quantity ' + resp.data.qty);
 										this.items.push(resp.data);
+										this.saveToDatabase(resp.data);
 										displayModal();
+
 									} else {
 										alert('Số lượng vượt quá số lượng tồn kho.');
 										return;
@@ -180,7 +203,7 @@ app.controller("cart-ctrl", function($scope, $http, $window) {
 								// Set the quantity and selected size based on user input
 								resp.data.qty = $scope.quantity;
 								resp.data.sizes = $scope.selectedSize;
-								this.saveToDatabase(resp.data);
+
 
 
 

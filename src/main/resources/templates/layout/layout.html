@@ -51,6 +51,10 @@
 
 
 <style>
+
+
+
+
 .list-unstyled li a {
 	color: black;
 }
@@ -59,36 +63,7 @@
 	color: red;
 	/* Màu sẽ thay đổi khi hover vào */
 }
-/* 
-/* Adjust styles as needed */
-.left-banner {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 170px; /* Adjust the width as needed */
-	height: 100vh;
-	background-color: #f2f2f2; /* Adjust the background color */
-	z-index: 1000;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin-top: 190px;
-	background-color: red;
-}
 
-.right-banner {
-	position: fixed;
-	top: 0;
-	right: 0;
-	width: 170px; /* Adjust the width as needed */
-	height: 100vh;
-	background-color: #f2f2f2; /* Adjust the background color */
-	z-index: 1000;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin-top: 190px;
-}
 
 /* Add your custom styles here */
 #scrollToTopBtn {
@@ -155,24 +130,20 @@
 								class="form-control border-0" placeholder="Search">
 						</form>
 					</div>
-
 					<div class="col-12 mb-md-0 col-md-4 order-1 order-md-2 text-center">
 						<div class="site-logo">
 
 							<img th:src="@{../../images/logowebsite.jpg}"
 								alt="Image placeholder" class="img-fluid rounded"
 								style="width: 40%; height: 10%">
-
 						</div>
 					</div>
 					<div class="col-6 col-md-4 order-3 order-md-3 text-right">
 						<div class="site-top-icons">
 							<ul>
-
 								<li>
 									<div style="text-decoration: none" class="dropdown"
 										th:if="${#request.remoteUser != null}">
-
 										<span th:if="${#strings.contains(#request.remoteUser, '@')}"
 											id="remoteU"
 											th:text="${#strings.substring(#request.remoteUser, 0, #strings.indexOf(#request.remoteUser, '@'))}"></span>
@@ -180,24 +151,14 @@
 											th:unless="${#strings.contains(#request.remoteUser, '@')}"
 											id="remoteU" th:text="${#request.remoteUser}"></span> <span
 											data-bs-toggle="dropdown"><i
-											class="fa-solid fa-user c"></i></span> 
-											
-											<span
-										
-											id="remoteUi"
-											th:text="${#request.remoteUser}"  style="display: none;"></span>
-
-
-										
-
-
+											class="fa-solid fa-user c"></i></span> <span id="remoteUi"
+											th:text="${#request.remoteUser}" style="display: none;"></span>
 										<ul class="dropdown-menu">
 											<li
 												th:if="${#request.isUserInRole('DIRE') or #request.isUserInRole('STAF')}">
 												<a class="dropdown-item" th:href="@{/admin2}"
 												th:text="#{nav.admin}">Admin</a>
 											</li>
-
 											<li><a class="dropdown-item" href="/ChangeInfomation"
 												th:text="#{nav.info}">Personal information</a></li>
 											<li><a class="dropdown-item" href="/waitForConfimation"
@@ -206,12 +167,8 @@
 												th:text="#{nav.changepass}">Change password</a></li>
 											<li th:if="${#request.remoteUser != null}"><a
 												class="dropdown-item" href="/logout" th:text="#{nav.logout}">Logout</a></li>
-
-
 										</ul>
-
 									</div>
-
 								</li>
 								<li><a href="/login" style="text-decoration: none"
 									th:unless="${#request.remoteUser != null}"> <span
@@ -219,9 +176,6 @@
 								</a></li>
 								<li><a href="#" style="text-decoration: none"><span
 										class="icon icon-heart-o c"></span></a></li>
-
-
-
 								<li><a style="text-decoration: none; display: flex"
 									href="/cart.html" class="site-cart "> <i
 										class="fa-solid fa-cart-shopping c"></i>
@@ -238,85 +192,44 @@
 										</ul>
 									</div>
 								</li>
-
-								<li class="d-inline-block d-md-none ml-md-0"><a href="#"
-									class="site-menu-toggle js-menu-toggle"><span
-										class="icon-menu"></span></a></li>
-
 							</ul>
-
-
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-
 		<nav class="site-navigation mt-4 mb-3 text-right text-md-center"
 			role="navigation">
-
-
 			<div class="container">
-			
-			 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-    
-    
-    </div>
-				<ul class="site-menu js-clone-nav d-none d-md-block">
-					<li><a href="/index.html" th:text="#{nav.home}">Home</a>
-					<li><a href="/about.html" th:text="#{nav.about}">About</a></li>
-					<li class="has-children"><a href="/shop.html"
-						th:text="#{nav.shop}">Shop</a>
-						<ul class="dropdown">
-
-							<li th:each="result : ${results}" th:if="${result[2]}"><a
-								th:href="@{'/shop.html/searchBrand?brand=' + ${result[0]}}"
-								th:text="${result[0]}"></a></li>
-						</ul></li>
-
-
-					<li><a href="/newArrivals" th:text="#{nav.newarrivals}">New
-							Arrivals</a></li>
-					<li><a href="/contact.html" th:text="#{nav.contact}">Contact</a></li>
-
-
-
-					<li th:unless="${#request.remoteUser}" class="has-children"><a
-						href="/login" th:text="#{nav.login}">Login</a>
-						<ul class="dropdown">
-							<li><a href="/register.html" th:text="#{nav.register}">Register</a></li>
-						</ul></li>
-
-					<!--<li th:if="${#request.isUserInRole('DIRE') or #request.isUserInRole('STAF')}"
-							class="has-children"><a href="/account.html">Admin</a>
+				<!-- Button for small screens -->
+				<button class="navbar-toggler custom-menu-toggler d-md-none"
+					type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+					aria-controls="navbarNav" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span><i class="fa-solid fa-bars fa-beat fa-xl"
+						style="color: #050505;"></i></span>
+				</button>
+				<!-- Navigation menu for larger screens -->
+				<div class="collapse navbar-collapse d-md-block" id="navbarNav">
+					<ul class="site-menu js-clone-nav">
+						<li><a href="/index.html" th:text="#{nav.home}">Home</a></li>
+						<li><a href="/about.html" th:text="#{nav.about}">About</a></li>
+						<li class="has-children"><a href="/shop.html"
+							th:text="#{nav.shop}">Shop</a>
 							<ul class="dropdown">
-								<li><a href="/history">History</a></li>
-								<li><a href="/revenue">Doanh thu năm</a></li>
-								<li><a href="/account.html">Account</a></li>
-								<li><a href="/orderDetail">OrderDetail</a></li>
-								<li><a href="/productAdmin">Product</a></li>
-								<li><a href="/categoryAdmin">Category</a></li>
-								<li><a href="/report">Report</a></li>
-							</ul>
-						</li>-->
-
-
-					<!-- <th:block th:with="showVietnamese=${false}">
-							<li th:if="${lang != 'en' && showVietnamese == true}"><a
-								href="?lang=vi" th:attr="onclick='|${showVietnamese} = false|'">Tiếng
-									Việt</a></li>
-							<li th:if="${lang != 'vi' && showVietnamese == false}"><a
-								href="?lang=en" th:attr="onclick='|${showVietnamese} = true|'">English</a>
-							</li>
-						</th:block> -->
-
-
-				</ul>
+								<li th:each="result : ${results}" th:if="${result[2]}"><a
+									th:href="@{'/shop.html/searchBrand?brand=' + ${result[0]}}"
+									th:text="${result[0]}"></a></li>
+							</ul></li>
+						<li><a href="/newArrivals" th:text="#{nav.newarrivals}">New
+								Arrivals</a></li>
+						<li><a href="/contact.html" th:text="#{nav.contact}">Contact</a></li>
+						
+					</ul>
+				</div>
 			</div>
 		</nav>
+
 	</header>
 
 	<main th:replace="${view}"></main>
@@ -397,10 +310,10 @@
 				</div>
 			</div>
 		</div>
-		<div class="text-center container-fluid col-sm p-3"
+		<div class="text-center container-fluid col-sm p-3 "
 			style="background-color: #0000;">
-			© 2020 <a href="/" class=" text-decoration-none" style="color: black">Shoe
-				Galaxy Shop - Sneakers</a>
+			© 2023 <a href="/" class=" text-decoration-none" style="color: black">Shoe
+				Galaxy Sneakers Of Team Galaxy Shoe</a>
 		</div>
 
 
