@@ -26,7 +26,7 @@ public class Address implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "address_id")
 	Integer id;
-	@Column(name = "address_detail")
+	@Column(name = "address_detail", nullable = true)
 	String addressDetail;
 	String city;
 	String district;

@@ -1,41 +1,95 @@
 app.controller("address-ctrl", function($scope, $http) {
 	$scope.items = [];
 	$scope.form = {};
+	const host = "https://provinces.open-api.vn/api/";
+	var callAPI = (api) => {
+		return axios.get(api)
+			.then((response) => {
+				renderData(response.data, "province");
+			});
+	}
+	callAPI('https://provinces.open-api.vn/api/?depth=1');
+	var callApiDistrict = (api) => {
+		return axios.get(api)
+			.then((response) => {
+				renderData(response.data.districts, "district");
+			});
+	}
+	var callApiWard = (api) => {
+		return axios.get(api)
+			.then((response) => {
+				renderData(response.data.wards, "ward");
+			});
+	}
 
-	$scope.initialize = function(){
+	var renderData = (array, select) => {
+		let row = ' <option disable value="">chọn</option>';
+		array.forEach(element => {
+			row += `<option data-code="${element.code}" value="${element.name}">${element.name}</option>`
+		});
+		document.querySelector("#" + select).innerHTML = row;
+	}
+
+	$("#province").change(() => {
+		console.log("Province changed");
+		let selectedCode = $("#province option:selected").data("code");
+		callApiDistrict(host + "p/" + selectedCode + "?depth=2");
+	});
+	$("#district").change(() => {
+		let selectedCode = $("#district option:selected").data("code");
+		callApiWard(host + "d/" + selectedCode + "?depth=2");
+	});
+	$scope.initialize = function() {
 		$http.get("/rest/address").then(resp => {
 			$scope.items = resp.data;
 			console.log(resp.data);
 			console.log(resp.data.addressDetail);
 			$scope.form = {
-				available : true,
+				available: true,
 			};
 		})
 
 		$scope.reset(); //để có hình mây lyc1 mới đầu
 		$scope.loadCurrentUser();
 	}
-		$scope.edit = function(item) {
+	$scope.edit = function(item) {
 		$scope.form = angular.copy(item);
 
 	}
 	$scope.create = function() {
-		var item = angular.copy($scope.form);
-		$http.post(`/rest/address`, item).then(resp => {
-			$scope.items.push(resp.data);
-			$scope.reset();
+    var item = angular.copy($scope.form);
+    $http.post(`/rest/address`, item).then(resp => {
+        $scope.items.push(resp.data);
+          console.log($scope.items);
+        $scope.reset();
 
-			alert("Thêm mới thành công!");
-		}).catch(error => {
-			alert("Thêm địa chỉ không thành công");
-			console.log("Error", error);
+        // Thêm code gọi API cập nhật addressdetails
+        var newAddressId = resp.data.id;
+        var addressDetailsData = {
+            // Dữ liệu cần cập nhật vào addressdetails
+            addressId: newAddressId,
+            // Thêm các trường dữ liệu khác nếu cần
+        };
+
+        $http.post(`/rest/addressdetails`, addressDetailsData).then(resp => {
+            // Cập nhật addressdetails thành công
+        }).catch(error => {
+            // Xử lý lỗi khi cập nhật addressdetails
+            console.log("Error updating addressdetails", error);
+        });
+
+        alert("Thêm mới thành công!");
+    }).catch(error => {
+        alert("Thêm địa chỉ không thành công");
+        console.log("Error", error);
+    });
+}
+
+	$scope.loadCurrentUser = function() {
+		$http.get("/rest/accounts/current-account").then(resp => {
+			$scope.account = resp.data;
 		});
-	}
-$scope.loadCurrentUser = function() {
-    $http.get("/rest/accounts/current-account").then(resp => {
-        $scope.account = resp.data;
-    }); 
-};
+	};
 
 	$scope.update = function() {
 		var item = angular.copy($scope.form);
@@ -52,22 +106,22 @@ $scope.loadCurrentUser = function() {
 	}
 
 
-$scope.delete = function(item) {
-    if (confirm("Bạn muốn xóa address này?")) {
-        $http.delete(`/rest/address/${item.id}`).then(resp => {
-            var index = $scope.items.findIndex(p => p.id === item.id);
-            $scope.items.splice(index, 1);
-            $scope.reset();
-            alert("Xóa địa chỉ thành công!");
-        }).catch(error => {
-            if (error.status === 500) {
-                alert("Lỗi máy chủ, vui lòng thử lại sau.");
-            } else {
-                alert("Lỗi xóa !");
-            }
-        });
-    } 
-}
+	$scope.delete = function(item) {
+		if (confirm("Bạn muốn xóa address này?")) {
+			$http.delete(`/rest/address/${item.id}`).then(resp => {
+				var index = $scope.items.findIndex(p => p.id === item.id);
+				$scope.items.splice(index, 1);
+				$scope.reset();
+				alert("Xóa địa chỉ thành công!");
+			}).catch(error => {
+				if (error.status === 500) {
+					alert("Lỗi máy chủ, vui lòng thử lại sau.");
+				} else {
+					alert("Lỗi xóa !");
+				}
+			});
+		}
+	}
 
 	$scope.pager = {
 		page: 0,
@@ -98,48 +152,12 @@ $scope.delete = function(item) {
 			this.page--;
 		}
 	}
-		$scope.reset = function() {
+	$scope.reset = function() {
 		$scope.form = {
 			available: true
 		}
 	}
 	$scope.initialize();
+	
 })
-const host = "https://provinces.open-api.vn/api/";
-var callAPI = (api) => {
-	return axios.get(api)
-		.then((response) => {
-			renderData(response.data, "province");
-		});
-}
-callAPI('https://provinces.open-api.vn/api/?depth=1');
-var callApiDistrict = (api) => {
-	return axios.get(api)
-		.then((response) => {
-			renderData(response.data.districts, "district");
-		});
-}
-var callApiWard = (api) => {
-	return axios.get(api)
-		.then((response) => {
-			renderData(response.data.wards, "ward");
-		});
-}
 
-var renderData = (array, select) => {
-	let row = ' <option disable value="">chọn</option>';
-	array.forEach(element => {
-		row += `<option data-code="${element.code}" value="${element.name}">${element.name}</option>`
-	});
-	document.querySelector("#" + select).innerHTML = row;
-}
-
-$("#province").change(() => {
-	console.log("Province changed");
-	let selectedCode = $("#province option:selected").data("code");
-	callApiDistrict(host + "p/" + selectedCode + "?depth=2");
-});
-$("#district").change(() => {
-	let selectedCode = $("#district option:selected").data("code");
-	callApiWard(host + "d/" + selectedCode + "?depth=2");
-});

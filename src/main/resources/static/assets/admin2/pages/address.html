@@ -144,31 +144,33 @@
 						<div class="panel-body">
 							<div class="row container text-x font-weight-bolder">
 								<div class="col-sm-12">
-								<label
-										for="c_fname" class="text-black">Username<span
-										class="text-danger">*</span>
-									</label>
-									<input ng-model="form.account.username" class="form-control"
-										> <label
-										for="c_fname" class="text-black">Province/City<span
-										class="text-danger">*</span>
-									</label> <select class="form-select mb-3" name="provinceLabel"
-										id="province">
-										<!--<option value="">chọn tỉnh/thành phố</option>-->
-									</select> <label for="c_fname" class="text-black">District<span
-										class="text-danger">*</span>
-									</label> <select class="form-select mb-3" name="districtLabel"
-										id="district">
-										<option value="">chọn quận</option>
-									</select> <label for="c_fname" class="text-black">Ward<span
-										class="text-danger">*</span>
-									</label> <select class="form-select mb-3" name="wardLabel" id="ward">
-										<option value="">chọn phường</option>
-									</select> <label for="c_address" class="text-black">Street Name
-										<span class="text-danger">*</span>
-									</label> <input type="text" class="form-control" id="address"
-										name="address" placeholder="Street Name">
-								</div>
+    <label for="username" class="text-black">Username<span class="text-danger">*</span></label>
+    <input ng-model="form.account.username" class="form-control" id="username" name="username">
+    
+    <label for="province" class="text-black">Province/City<span class="text-danger">*</span></label>
+    <select class="form-select mb-3" ng-model="form.province" id="province" name="provinceLabel">
+        <option value="">Choose province/city</option>
+    </select>
+
+    <label for="district" class="text-black">District<span class="text-danger">*</span></label>
+    <select class="form-select mb-3" ng-model="form.district" ng-options="district.name for district in districts" id="district" name="districtLabel">
+        <option value="">Choose district</option>
+    </select>
+
+    <label for="ward" class="text-black">Ward<span class="text-danger">*</span></label>
+    <select class="form-select mb-3" ng-model="form.ward" ng-options="ward.name for ward in wards" id="ward" name="wardLabel">
+        <option value="">Choose ward</option>
+    </select>
+
+    <label for="address" class="text-black">Street Name<span class="text-danger">*</span></label>
+    <input type="text" class="form-control" id="address" ng-model="form.street" name="address" placeholder="Street Name">
+
+  
+    
+ 
+</div>
+
+								
 							</div>
 
 
@@ -243,10 +245,8 @@
 										Username</th>
 									<th
 										class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ">
-										Address Detail</th>
-									<th
-										class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">
-										City</th>
+										Province/City</th>
+
 
 									<th
 										class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">
@@ -257,7 +257,7 @@
 									<th
 										class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">
 										Street</th>
-
+									
 									<th></th>
 								</tr>
 							</thead>
@@ -265,12 +265,10 @@
 								<tr ng-repeat="item in pager.items">
 									<td>{{item.id}}</td>
 									<td>{{item.account.username}}</td>
-									<td>{{item.addressDetail}}</td>
 									<td>{{item.city}}</td>
 									<td>{{item.district}}</td>
 									<td>{{item.ward}}</td>
 									<td>{{item.street}}</td>
-
 
 									<td>
 										<div class="btn-group btn-group-xs">
