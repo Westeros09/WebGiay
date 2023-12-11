@@ -104,4 +104,42 @@ $scope.delete = function(item) {
 		}
 	}
 	$scope.initialize();
+})
+const host = "https://provinces.open-api.vn/api/";
+var callAPI = (api) => {
+	return axios.get(api)
+		.then((response) => {
+			renderData(response.data, "province");
+		});
+}
+callAPI('https://provinces.open-api.vn/api/?depth=1');
+var callApiDistrict = (api) => {
+	return axios.get(api)
+		.then((response) => {
+			renderData(response.data.districts, "district");
+		});
+}
+var callApiWard = (api) => {
+	return axios.get(api)
+		.then((response) => {
+			renderData(response.data.wards, "ward");
+		});
+}
+
+var renderData = (array, select) => {
+	let row = ' <option disable value="">chọn</option>';
+	array.forEach(element => {
+		row += `<option data-code="${element.code}" value="${element.name}">${element.name}</option>`
+	});
+	document.querySelector("#" + select).innerHTML = row;
+}
+
+$("#province").change(() => {
+	console.log("Province changed");
+	let selectedCode = $("#province option:selected").data("code");
+	callApiDistrict(host + "p/" + selectedCode + "?depth=2");
+});
+$("#district").change(() => {
+	let selectedCode = $("#district option:selected").data("code");
+	callApiWard(host + "d/" + selectedCode + "?depth=2");
 });
