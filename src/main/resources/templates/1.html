@@ -1,149 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <title>Contact Us</title>
-    <style>
-        .contact {
-            background-color: rgb(255, 254, 253);
-            border-radius: 10px;
-
-            border-right: 1px solid rgb(208, 201, 201);
-      
-        }
-
-        .contact-info {
-            background-color: rgb(255, 255, 255);
-            border-radius: 10px;
-            border-left: 10px solid white;
-
-            
-         
-        }
-        
-    </style>
+    <title>Tải Ảnh Lên</title>
 </head>
-
 <body>
 
-    <div class="container allContact  mt-5">
-        <div class="row">
+    <h1>Tải Ảnh Lên</h1>
 
-            <!-- Form Column -->
-            <div class="col-md-6 contact">
-                <div class="col-md-12 text-center mt-3">
-                    <h4> Contact Us</h4>
-                </div>
-                <form action="#" method="post" class="">
-                    <div class="mb-3">
-                        <label for="c_name" class="form-label">Your Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="c_name" name="c_name" placeholder="Your Name"
-                            required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="c_phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
-                        <input type="tel" class="form-control" id="c_phone" name="c_phone"
-                            placeholder="Your Phone Number" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="c_subject" class="form-label">Subject</label>
-                        <input type="text" class="form-control" id="c_subject" name="c_subject" placeholder="Subject">
-                    </div>
-                    <div class="mb-3">
-                        <label for="c_message" class="form-label">Message <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="c_message" name="c_message" rows="5"
-                            placeholder="Your Message" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-dark container mt-3">Send Message</button>
-                </form>
-            </div>
-            <div class="col-md-6">
+    <form id="imageForm" enctype="multipart/form-data">
+        <input type="file" id="imageInput" multiple>
+        <button type="button" onclick="uploadImages()">Tải Ảnh Lên</button>
+    </form>
 
-                <div class="row contact-info">
-                    <div class="col-md-12 text-center mt-3 mb-3">
-                        <h4> Contact Info</h4>
-                    </div>
+    <div id="selectedImages"></div>
 
-                    <div class="col-md-10" style="margin-left:10px;">
-                        <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.4439805401216!2d106.62348867583898!3d10.853796757760167!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752b684ce076f3%3A0x4da1cf0078f423fa!2zRlBUIFBvbHl0ZWNobmljIEjhu5MgQ2jDrSBNaW5oIC0gVG_DoCBU!5e0!3m2!1svi!2s!4v1700220344989!5m2!1svi!2s"
-                            width="600" height="400" style="border:0;" allowfullscreen="" loading="lazy"
-                            referrerpolicy="no-referrer-when-downgrade"></iframe>
-                    </div>
-                    <div class="col-md-4">
-                        <p>
-                            <i class="fas fa-map-marker-alt fa-sm" style="color: #ff0000;"></i>
-                            QTSC Building 1, Quang Trung Software City, Tan Chanh Hiep Ward, District 12, Ho
-                            Chi
-                            Minh City, Vietnam
-                        </p>
-                    </div>
-                    <div class="col-md-4">
-                        <p>
-                            <i class="fas fa-envelope-open fa-sm" style="color: #10549d;"></i>
-                            ShoeGalaxy@gmail.com
-                        </p>
-                    </div>
-                    <div class="col-md-4">
-                        <p>
-                            <i class="fas fa-phone-alt fa-sm" style="color: #11e82b;"></i>
-                                (84-28) 3715 8888
-                        </p>
-                    </div>
-                  
+    <script>
+        function uploadImages() {
+            var selectedImagesDiv = document.getElementById('selectedImages');
+            selectedImagesDiv.innerHTML = ''; // Xóa nội dung trước đó
 
-                </div>
+            var files = document.getElementById('imageInput').files;
+            var formData = new FormData();
 
-            </div>
+            for (var i = 0; i < files.length; i++) {
+                formData.append('images', files[i]);
 
-            <div class="site-section site-section-sm site-blocks-1 border-0"
-		data-aos="fade">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4"
-					data-aos="fade-up" data-aos-delay="">
-					<div class="icon mr-4 align-self-start">
-						<span class="icon-truck"></span>
-					</div>
-					<div class="text">
-						<h2 class="text-uppercase">Free Shipping</h2>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-							Phasellus at iaculis quam. Integer accumsan tincidunt fringilla.</p>
-					</div>
-				</div>
-				<div class="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4"
-					data-aos="fade-up" data-aos-delay="100">
-					<div class="icon mr-4 align-self-start">
-						<span class="icon-refresh2"></span>
-					</div>
-					<div class="text">
-						<h2 class="text-uppercase">Free Returns</h2>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-							Phasellus at iaculis quam. Integer accumsan tincidunt fringilla.</p>
-					</div>
-				</div>
-				<div class="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4"
-					data-aos="fade-up" data-aos-delay="200">
-					<div class="icon mr-4 align-self-start">
-						<span class="icon-help"></span>
-					</div>
-					<div class="text">
-						<h2 class="text-uppercase">Customer Support</h2>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-							Phasellus at iaculis quam. Integer accumsan tincidunt fringilla.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-        </div>
-    </div>
+                var image = document.createElement('img');
+                image.src = URL.createObjectURL(files[i]);
+                image.style.width = '100px'; // Điều chỉnh kích thước ảnh nếu cần
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                selectedImagesDiv.appendChild(image);
+            }
+
+            // Simulate uploading to the server (In a real scenario, you would send this data to the server)
+            console.log("Images to be uploaded:", formData.getAll('images'));
+        }
+    </script>
+
 </body>
-
 </html>
