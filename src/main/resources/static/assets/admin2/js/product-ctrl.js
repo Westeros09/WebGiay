@@ -3,6 +3,7 @@ app.controller("product-ctrl", function($scope, $http) {
 	$scope.form = {};
 	$scope.formImg = {};
 	$scope.productCounts = {};
+	$scope.uploadedImageNames = [];
 
 	$scope.initialize = function() {
 		$http.get("/rest/categories").then(resp => {
@@ -20,14 +21,64 @@ app.controller("product-ctrl", function($scope, $http) {
 		});
 
 		$scope.reset(); //để có hình mây lyc1 mới đầu
+		$scope.resetImages();
 		$scope.loadCurrentUser();
+		$scope.uploadedImageNames = []; // Reset số lượng file
+        $scope.form.images = []; // Reset số lượng file
+        $scope.filenames = [];
 	}
-	
+
+	var url = `http://localhost:8080/rest/files/images`;
+	$scope.url = function(filename) {
+		return `${url}/${filename}`;
+	};
+
+	$scope.list = function() {
+		$http
+			.get(url)
+			.then((resp) => {
+				$scope.filenames = resp.data;
+			})
+			.catch((error) => {
+				console.log("Error", error);
+			});
+	};
+	$scope.deleteImage = function(filename) {
+		$http.delete(`${url}/${filename}`)
+			.then((resp) => {
+				let i = $scope.filenames.findIndex((name) => name == filename);
+				$scope.filenames.splice(i, 1);
+			})
+			.catch((error) => {
+				console.log("Error", error);
+			});
+	};
+	$scope.upload = function(files) {
+		var form = new FormData();
+		for (let i = 0; i < files.length; i++) {
+			form.append("files", files[i]);
+		}
+		$http
+			.post(url, form, {
+				transformRequest: angular.identity,
+				headers: { "Content-Type": undefined },
+			})
+			.then((resp) => {
+				$scope.filenames.push(...resp.data);
+				$scope.uploadedImageNames.push(...resp.data);
+			})
+			.catch((error) => {
+				console.log("Error", error);
+			});
+	};
+
+	$scope.list();
+
 	$scope.loadCurrentUser = function() {
-    $http.get("/rest/accounts/current-account").then(resp => {
-        $scope.account = resp.data;
-    }); 
-};
+		$http.get("/rest/accounts/current-account").then(resp => {
+			$scope.account = resp.data;
+		});
+	};
 	$scope.edit = function(item) {
 		$scope.form = angular.copy(item);
 		$scope.form.images = []; // Khởi tạo thuộc tính images là một mảng trống
@@ -59,39 +110,88 @@ app.controller("product-ctrl", function($scope, $http) {
 	$scope.reset = function() {
 		$scope.form = {
 			available: true,
-			image: "cloud-upload.jpg"
 		}
-		$scope.formImg = {
-			available: true,
-			image: "cloud-upload.jpg"
-		}
+		$scope.filenames = []; // Làm cho $scope.filenames trở thành một mảng rỗng
+		$scope.uploadedImageNames = []; // Reset số lượng file
+		$scope.form.images = []; // Reset số lượng file
+
+		// Thêm xử lý reset ảnh vào đây
+		$scope.resetImages();
 	}
 
 	$scope.create = function() {
 		var item = angular.copy($scope.form);
 		$http.post(`/rest/products`, item).then(resp => {
+			console.log("Thông tin sản phẩm mới:", resp.data); // Log thông tin sản phẩm mới vào console
+
 			$scope.items.push(resp.data);
+			console.log("Tên của các ảnh đã được upload:", $scope.uploadedImageNames);
+
+			$scope.createImg(resp.data.id);
+			console.log(resp.data.id);
+
 			$scope.reset();
 
 			alert("Thêm mới sản phẩm thành công!");
-
 		}).catch(error => {
 			alert("Lỗi thêm mới sản phẩm!");
 			console.log("Error", error);
 		});
-	}
+	};
 
 	$scope.update = function() {
 		var item = angular.copy($scope.form);
 		$http.put(`/rest/products/${item.id}`, item).then(resp => {
 			var index = $scope.items.findIndex(p => p.id == item.id);
 			$scope.items[index] = item;
+
+			// Thực hiện xóa ảnh cũ và upload 3 ảnh mới
+			$scope.deleteOldImages(item.id);
+			$scope.uploadNewImages(item.id);
+
 			alert("Cập nhật sản phẩm thành công!");
-		})
-			.catch(error => {
-				alert("Lỗi cập nhật sản phẩm!");
-				console.log("Error", error);
+		}).catch(error => {
+			alert("Lỗi cập nhật sản phẩm!");
+			console.log("Error", error);
+		});
+	}
+
+	$scope.deleteOldImages = function(product_id) {
+		// Lấy danh sách ảnh cũ từ cơ sở dữ liệu và xóa chúng
+		$http.get(`/rest/images/products/${product_id}`).then(resp => {
+			var oldImages = resp.data;
+
+			oldImages.forEach(oldImage => {
+				$http.delete(`/rest/images/${oldImage.id}`).then(resp => {
+					console.log("Đã xóa ảnh cũ:", oldImage.id);
+				}).catch(error => {
+					console.log("Lỗi xóa ảnh cũ:", error);
+				});
 			});
+		}).catch(error => {
+			console.log("Lỗi lấy danh sách ảnh cũ:", error);
+		});
+	}
+
+	$scope.uploadNewImages = function(product_id) {
+		// Lấy danh sách 3 ảnh mới từ giao diện người dùng và upload chúng
+		var newImages = angular.copy($scope.uploadedImageNames);
+
+		newImages.forEach(newImage => {
+			if (newImage) {
+				var imageCopy = {
+					image: newImage,
+					product: { id: product_id }
+					// Các thông tin khác nếu cần
+				};
+
+				$http.post(`/rest/images`, imageCopy).then(resp => {
+					console.log("Đã upload ảnh mới:", newImage);
+				}).catch(error => {
+					console.log("Lỗi upload ảnh mới:", error);
+				});
+			}
+		});
 	}
 
 	$scope.delete = function(item) {
@@ -129,45 +229,44 @@ app.controller("product-ctrl", function($scope, $http) {
 
 
 
-	$scope.editImg = function(image) {
-		$scope.formImg = angular.copy(image);
-		$scope.formImg.image = image.image;
-	}
 
-	$scope.createImg = function() {
-		/*var imageCopy = angular.copy($scope.form);
-		$http.post(`/rest/images`, imageCopy).then(resp => {
-			$scope.images.push(resp.data);
-			$scope.reset();
-			alert("Thêm mới hình ảnh thành công!");
-		}).catch(error => {
-			alert("Lỗi thêm mới hình ảnh!");
-			console.log("Error", error);
-		});*/
-		var imageCopy = angular.copy($scope.formImg);
-		var existingImageIndex = -1;
+	$scope.createImg = function(product_id) {
+		var imagesCopy = angular.copy($scope.uploadedImageNames);
+		$http.get(`/rest/products/${product_id}`)
+			.then(response => {
+				var product = response.data;
+				// Sử dụng thông tin sản phẩm nếu cần
+				console.log("Thông tin sản phẩm:", product);
 
-		// Kiểm tra xem hình ảnh đã tồn tại hay chưa
-		for (var i = 0; i < $scope.images.length; i++) {
-			if ($scope.images[i].image === imageCopy.image) {
-				existingImageIndex = i;
-				break;
-			}
-		}
-		if (existingImageIndex > -1) {
-			// Nếu hình ảnh đã tồn tại, cập nhật hình ảnh
-			alert('Ảnh này đã tồn tại trong sản phẩm bạn thêm!');
-		} else {
-			// Nếu hình ảnh chưa tồn tại, thêm hình ảnh mới
-			$http.post(`/rest/images`, imageCopy).then(resp => {
-				$scope.images.push(resp.data);
-				$scope.reset();
-				alert("Thêm mới hình ảnh thành công!");
-			}).catch(error => {
-				alert("Lỗi thêm mới hình ảnh!");
-				console.log("Error", error);
+				// Kiểm tra xem có hình ảnh nào để thêm hay không
+				if (imagesCopy && imagesCopy.length > 0) {
+					// Sử dụng vòng lặp để thêm từng ảnh vào cơ sở dữ liệu
+					for (var i = 0; i < imagesCopy.length; i++) {
+						var imageCopy = {
+							image: imagesCopy[i],
+							product: product  // Gán productId cho mỗi ảnh
+							// Các thông tin khác nếu cần
+						};
+						$http.post(`/rest/images`, imageCopy)
+							.then(resp => {
+								console.log("Phản hồi từ API khi thêm ảnh:", resp.data);
+								$scope.images.push(resp.data);
+								$scope.reset();
+							})
+							.catch(error => {
+								alert("Lỗi thêm mới hình ảnh!");
+								console.log("Error", error);
+							});
+					}
+				} else {
+					alert("Không có hình ảnh để thêm!");
+				}
+
+			})
+			.catch(error => {
+				console.error("Lỗi khi lấy thông tin sản phẩm:", error);
+				// Xử lý lỗi nếu cần
 			});
-		}
 	};
 
 	$scope.updateImg = function() {
@@ -199,58 +298,10 @@ app.controller("product-ctrl", function($scope, $http) {
 		}
 	};
 
-	$scope.deleteImg = function(image) {
-		if (confirm("Bạn muốn xóa ảnh của sản phẩm này?")) {
-			$http.delete(`/rest/images/${image.id}`).then(resp => {
-				var index = $scope.items.findIndex(p => p.id == image.id);
-				$scope.items.splice(index, 1);
-				$scope.reset();
-				$scope.initialize();
-				alert("Xóa ảnh thành công!");
-			}).catch(error => {
-				console.log("Error occurred while deleting the image:", error);
-				alert("Lỗi xóa ảnh!");
-				console.log("Error", error);
-			})
-		}
-	};
+	$scope.resetImages = function() {
+		$scope.uploadedImageNames = [];
+		$scope.form.images = [];
 
-	$scope.pagerImg = {
-		page: 0,
-		size: 3,
-		get images() {
-			if (this.page < 0) {
-				this.lastImg();
-			}
-			if (this.page >= this.countImg) {
-				this.firstImg();
-			}
-			var start = this.page * this.size;
-			if ($scope.images && Array.isArray($scope.images)) {
-				return $scope.images.slice(start, start + this.size);
-			} else {
-				return [];
-			}
-		},
-		get countImg() {
-			if ($scope.images && $scope.images.length) {
-				return Math.ceil(1.0 * $scope.images.length / this.size);
-			} else {
-				return 0;
-			}
-		},
-		firstImg() {
-			this.page = 0;
-		},
-		lastImg() {
-			this.page = this.countImg - 1;
-		},
-		nextImg() {
-			this.page++;
-		},
-		prevImg() {
-			this.page--;
-		}
 	};
 
 
@@ -284,7 +335,7 @@ app.controller("product-ctrl", function($scope, $http) {
 		}
 	}
 
-	
+
 	$http.get("http://localhost:8080/rest/products/counts")
 		.then(function(response) {
 			var data = response.data;
