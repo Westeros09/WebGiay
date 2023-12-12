@@ -1,11 +1,14 @@
 package com.poly.rest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.poly.service.FileManagerService;
 
+import java.io.File;
 import java.util.List;
 
 @CrossOrigin("*")
@@ -35,18 +38,6 @@ public class FileManagerRestController {
         fileService.delete(folder, file);
     }
 
-    @DeleteMapping("/rest/files/{folder}/deleteAll")
-    public void deleteAll(@PathVariable String folder) {
-        fileService.deleteAll(folder);
-    }
 
-    @DeleteMapping("/rest/files/images/deleteAll")
-    public void deleteAllImages() {
-        // Lấy danh sách tất cả các ảnh và xóa chúng
-        List<String> allImages = fileService.list("images");
-
-        for (String image : allImages) {
-            fileService.delete("images", image);
-        }
-    }
+   
 }

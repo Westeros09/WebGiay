@@ -79,18 +79,6 @@ public class FileManagerService {
 		return filenames;
 	}
 
-	public void deleteAll(String folder) {
-		File dir = Paths.get(app.getRealPath("/files/"), folder).toFile();
-		if (dir.exists() && dir.isDirectory()) {
-			File[] files = dir.listFiles();
-			for (File file : files) {
-				try {
-					Files.delete(file.toPath());
-				} catch (IOException e) {
-					e.printStackTrace();
-					// Xử lý lỗi nếu cần
-				}
-			}
-		}
-	}
+	
+
 }

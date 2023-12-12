@@ -4,6 +4,7 @@ app.controller("product-ctrl", function($scope, $http) {
 	$scope.formImg = {};
 	$scope.productCounts = {};
 	$scope.uploadedImageNames = [];
+	$scope.filenames = [];
 
 	$scope.initialize = function() {
 		$http.get("/rest/categories").then(resp => {
@@ -21,12 +22,13 @@ app.controller("product-ctrl", function($scope, $http) {
 		});
 
 		$scope.reset(); //để có hình mây lyc1 mới đầu
-		$scope.resetImages();
 		$scope.loadCurrentUser();
-		$scope.uploadedImageNames = []; // Reset số lượng file
-        $scope.form.images = []; // Reset số lượng file
-        $scope.filenames = [];
+		$scope.uploadedImageNames = []; // Reset the number of uploaded files
+		$scope.form.images = []; // Reset the number of uploaded files
+		$scope.filenames = [];
+
 	}
+
 
 	var url = `http://localhost:8080/rest/files/images`;
 	$scope.url = function(filename) {
@@ -72,8 +74,8 @@ app.controller("product-ctrl", function($scope, $http) {
 			});
 	};
 
-	$scope.list();
-
+	/*	$scope.list();
+	*/
 	$scope.loadCurrentUser = function() {
 		$http.get("/rest/accounts/current-account").then(resp => {
 			$scope.account = resp.data;
@@ -114,10 +116,10 @@ app.controller("product-ctrl", function($scope, $http) {
 		$scope.filenames = []; // Làm cho $scope.filenames trở thành một mảng rỗng
 		$scope.uploadedImageNames = []; // Reset số lượng file
 		$scope.form.images = []; // Reset số lượng file
-
-		// Thêm xử lý reset ảnh vào đây
-		$scope.resetImages();
+		$scope.images = [];
+		
 	}
+
 
 	$scope.create = function() {
 		var item = angular.copy($scope.form);
@@ -148,7 +150,7 @@ app.controller("product-ctrl", function($scope, $http) {
 			// Thực hiện xóa ảnh cũ và upload 3 ảnh mới
 			$scope.deleteOldImages(item.id);
 			$scope.uploadNewImages(item.id);
-
+			$scope.reset();
 			alert("Cập nhật sản phẩm thành công!");
 		}).catch(error => {
 			alert("Lỗi cập nhật sản phẩm!");
@@ -298,11 +300,6 @@ app.controller("product-ctrl", function($scope, $http) {
 		}
 	};
 
-	$scope.resetImages = function() {
-		$scope.uploadedImageNames = [];
-		$scope.form.images = [];
-
-	};
 
 
 	$scope.pager = {
