@@ -11,14 +11,40 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 			$location.path("/unauthorized");
 		})
 		// 4 BẢNG
-		// Gọi API để lấy tổng doanh thu trong ngày
+		// Gọi API để lấy tổng doanh thu trong ngày, ngày hôm qua
 		$http.get("/rest/revenue/today")
 			.then(function(response) {
-				$scope.dailyRevenue = response.data; // Gán tổng doanh thu trong ngày vào biến $scope.dailyRevenue
+				if (response.data) {
+					$scope.dailyRevenue = response.data;
+				} else {
+					$scope.dailyRevenue = 0;
+				}
+				
 			})
 			.catch(function(error) {
 				console.error('Error fetching daily revenue data:', error);
 			});
+		$http.get("/rest/revenue/yesterday")
+			.then(function(response) {
+				$scope.yesterdayRevenue = response.data;
+				var profitPercentage;
+				if ($scope.yesterdayRevenue != 0) {
+					profitPercentage = calculateProfitPercentage($scope.dailyRevenue, $scope.yesterdayRevenue);
+				} else {
+					profitPercentage = 100;
+				}
+				profitPercentage = Math.round(profitPercentage);
+				$scope.profitPercentage = profitPercentage;
+
+			})
+			.catch(function(error) {
+				console.error('Error fetching yesterday revenue data:', error);
+			});
+		// Hàm tính toán phần trăm lợi nhuận
+		function calculateProfitPercentage(dailyRevenue, yesterdayRevenue) {
+			return ((dailyRevenue - yesterdayRevenue) / yesterdayRevenue) * 100;
+		}
+
 		// Gọi API để lấy  tổng số lượng sản phẩm bán ra trong tháng
 		$http.get("/rest/revenue/saleVolume")
 			.then(function(response) {
@@ -52,13 +78,13 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 			.then(function(response) {
 				$scope.cities = response.data;
 				console.log('cities:', $scope.cities);
-			})	
+			})
 			.catch(function(error) {
 				console.error('Error fetching total quantity by category data:', error);
 			});
-		
 
-		
+
+
 		// BẢNG CATEGORY
 		// Gọi API để lấy tổng số lượng hàng tồn kho theo danh mục
 		$http.get("/rest/revenue/totalQuantityByCategory")
@@ -90,7 +116,7 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 				angular.forEach($scope.totalQuantityByCategory, function(category) {
 					var categoryId = category[0];
 					var quantityInStock = category[1];
-					var soldQuantity ;
+					var soldQuantity;
 					// Tìm số lượng đã bán tương ứng với danh mục
 					angular.forEach($scope.totalQuantitySoldByCategory, function(soldItem) {
 						if (soldItem[0] == categoryId) {
@@ -107,15 +133,15 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 				console.log('combinedData:', $scope.combinedData);
 			}
 		}
-		
-		
-$scope.loadCurrentUser();
+
+
+		$scope.loadCurrentUser();
 	}
-$scope.loadCurrentUser = function() {
-    $http.get("/rest/accounts/current-account").then(resp => {
-        $scope.account = resp.data;
-    }); 
-};
+	$scope.loadCurrentUser = function() {
+		$http.get("/rest/accounts/current-account").then(resp => {
+			$scope.account = resp.data;
+		});
+	};
 	$scope.getRevenueByYear = function() {
 		// Perform an API call to get revenue data for the selected year
 		// Replace 'YOUR_API_URL' with the actual API endpoint

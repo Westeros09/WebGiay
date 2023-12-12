@@ -1,5 +1,7 @@
 package com.poly.dao;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -35,6 +37,10 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
 	//// Tổng doannh thu hôm nay
 	@Query("SELECT SUM(o.tongtien) FROM Order o WHERE CONVERT(date, o.createDate) = CONVERT(date, CURRENT_TIMESTAMP)")
 	Double getTotalRevenueToday();
+	
+	@Query("SELECT SUM(o.tongtien) FROM Order o WHERE CONVERT(date, o.createDate) = CONVERT(date, ?1)")
+	Double getTotalRevenueForDate(LocalDate myDate);
+
 
 	// AOV
 	@Query(value = "SELECT ROUND( CASE " + "    WHEN COUNT(*) > 0 THEN SUM(tongtien) / COUNT(*) " + "    ELSE 0 "

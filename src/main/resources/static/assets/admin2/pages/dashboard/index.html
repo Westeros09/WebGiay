@@ -134,14 +134,17 @@
 						<div class="col-8">
 							<div class="numbers">
 								<p class="text-sm mb-0 text-uppercase font-weight-bold">Today's Money</p>
-								<h5 class="font-weight-bolder" ng-if="dailyRevenue">
+								<h5 class="font-weight-bolder">
 									${{dailyRevenue}}
 								</h5>
-								<h5 class="font-weight-bolder" ng-if="!dailyRevenue || dailyRevenue.trim() === ''">
+								<!--<h5 class="font-weight-bolder" ng-if="!dailyRevenue || dailyRevenue.trim() === ''">
 									$0
-								</h5>
+								</h5>-->
+								<!--<h5 class="font-weight-bolder">
+									${{yesterdayRevenue}}
+								</h5>-->
 								<p class="mb-0">
-									<span class="text-success text-sm font-weight-bolder">+55%</span>
+									<span class="text-success text-sm font-weight-bolder">+{{profitPercentage}}%</span>
 									since yesterday
 								</p>
 							</div>

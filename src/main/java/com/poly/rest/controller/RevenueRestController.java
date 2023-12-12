@@ -1,5 +1,7 @@
 package com.poly.rest.controller;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,8 +47,16 @@ public class RevenueRestController {
 	// 4 bảng trong admin
 	@GetMapping("/today")
 	public Double getDailyRevenue() {
-	    return dao.getTotalRevenueToday(); 
+//		LocalDate currentDate = LocalDate.now();
+		LocalDate currentDate = LocalDate.now();
+		return dao.getTotalRevenueForDate(currentDate);
 	}
+	@GetMapping("/yesterday")
+    public Double getYesterdayRevenue() {
+        // Lấy ngày hôm qua
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        return dao.getTotalRevenueForDate(yesterday);
+    }
 	@GetMapping("/saleVolume")
 	public Integer getsaleVolume() {
 	    return orderDetailDAO.getTotalQuantitySoldThisMonth(); 
