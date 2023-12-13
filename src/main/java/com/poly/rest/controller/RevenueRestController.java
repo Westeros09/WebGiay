@@ -102,7 +102,17 @@ public class RevenueRestController {
 
 	@GetMapping("/revenueYear")
 	public Double getRevenueYear() {
-		return dao.getTotalRevenueThisYear();
+		LocalDate currentDate = LocalDate.now();
+	    int currentYear = currentDate.getYear();
+	    System.out.println("currentYear: " + currentYear);
+		return dao.getTotalRevenueThisYear(currentYear);
+	}
+	@GetMapping("/revenueYearPrevious")
+	public Double getRevenueYearPrevious() {
+		LocalDate preDate = LocalDate.now().minusYears(1);
+	    int preYear = preDate.getYear();
+	    System.out.println("preYear: " + preYear);
+		return dao.getTotalRevenueThisYear(preYear);
 	}
 
 	// BẢNG CATEGORY

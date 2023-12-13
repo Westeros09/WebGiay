@@ -237,8 +237,12 @@
 									${{revenueYear}}
 								</h5>
 								<p class="mb-0">
-									<span class="text-success text-sm font-weight-bolder">+5%</span> than last
-									month
+									<span
+										ng-class="{'text-success': revenuePercentage >= 0, 'text-danger': revenuePercentage < 0}"
+										class="text-sm font-weight-bolder">
+										{{revenuePercentage >= 0 ? '+' : ''}}{{revenuePercentage}}%
+									</span>
+									since last year
 								</p>
 							</div>
 						</div>

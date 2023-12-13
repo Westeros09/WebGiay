@@ -115,6 +115,21 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 			.catch(function(error) {
 				console.error('Error fetching daily revenue data:', error);
 			});
+		$http.get("/rest/revenue/revenueYearPrevious")
+			.then(function(response) {
+				$scope.revenueYearPrevious = response.data;
+				var revenuePercentage;
+				if ($scope.revenueYearPrevious != 0) {
+					revenuePercentage = calculateProfitPercentage($scope.revenueYear, $scope.revenueYearPrevious);
+				} else {
+					revenuePercentage = 100;
+				}
+				revenuePercentage = Math.round(revenuePercentage);
+				$scope.revenuePercentage = revenuePercentage;
+			})
+			.catch(function(error) {
+				console.error('Error fetching daily revenue data:', error);
+			});
 
 		//BẢNG CITY
 		// Gọi API để lấy thống kê city

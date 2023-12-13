@@ -53,6 +53,9 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
 	// Tổng doannh thu năm nay
 	@Query(value = "SELECT ROUND( SUM(tongtien), 2) FROM Orders WHERE YEAR(create_date) = YEAR(GETDATE())", nativeQuery = true)
 	Double getTotalRevenueThisYear();
+	@Query(value = "SELECT CASE WHEN SUM(tongtien) IS NOT NULL THEN ROUND(SUM(tongtien), 2) ELSE 0 END FROM Orders WHERE YEAR(create_date) = ?1", nativeQuery = true)
+	Double getTotalRevenueThisYear(int year);
+
 
 	// Phan tich city
 	@Query(value = "SELECT TOP 5 o.city AS cityName, SUM(o.tongtien) AS totalSales, COUNT(o.id) AS orderCount, ROUND( SUM(o.tongtien)/COUNT(o.id) , 2) AS aov "
