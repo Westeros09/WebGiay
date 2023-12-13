@@ -10,7 +10,12 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 		}).catch(error => {
 			$location.path("/unauthorized");
 		})
+		
 		// 4 BẢNG
+		// Hàm tính toán phần trăm lợi nhuận
+		function calculateProfitPercentage(now, previous) {
+			return ((now - previous) / previous) * 100;
+		}
 		// Gọi API để lấy tổng doanh thu trong ngày, ngày hôm qua
 		$http.get("/rest/revenue/today")
 			.then(function(response) {
@@ -43,10 +48,7 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 			.catch(function(error) {
 				console.error('Error fetching yesterday revenue data:', error);
 			});
-		// Hàm tính toán phần trăm lợi nhuận
-		function calculateProfitPercentage(now, previous) {
-			return ((now - previous) / previous) * 100;
-		}
+		
 
 		// Gọi API để lấy  tổng số lượng sản phẩm bán ra trong tháng
 		$http.get("/rest/revenue/saleVolume")
@@ -56,8 +58,6 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 				} else {
 					$scope.saleVolume = 0;
 				}
-				
-
 			})
 			.catch(function(error) {
 				console.error('Error fetching daily revenue data:', error);
@@ -87,6 +87,21 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 		$http.get("/rest/revenue/averageOrderValue")
 			.then(function(response) {
 				$scope.averageOrderValue = response.data; // Gán tổng doanh thu trong ngày vào biến $scope.dailyRevenue
+			})
+			.catch(function(error) {
+				console.error('Error fetching daily revenue data:', error);
+			});
+		$http.get("/rest/revenue/averageOrderValuePrevious")
+			.then(function(response) {
+				$scope.averageOrderValuePrevious = response.data; 
+				var AOVPercentage;
+				if ($scope.averageOrderValuePrevious != 0) {
+					AOVPercentage = calculateProfitPercentage($scope.averageOrderValue, $scope.averageOrderValuePrevious);
+				} else {
+					AOVPercentage = 100;
+				}
+				AOVPercentage = Math.round(AOVPercentage);
+				$scope.AOVPercentage = AOVPercentage;
 			})
 			.catch(function(error) {
 				console.error('Error fetching daily revenue data:', error);

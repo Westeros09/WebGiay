@@ -42,13 +42,13 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
 	@Query("SELECT SUM(o.tongtien) FROM Order o WHERE CONVERT(date, o.createDate) = CONVERT(date, ?1)")
 	Double getTotalRevenueForDate(LocalDate myDate);
 
-	// AOV
+	// AOV	
 	@Query(value = "SELECT ROUND( CASE " 
 			+ "    WHEN COUNT(*) > 0 THEN SUM(tongtien) / COUNT(*) " 
 			+ "    ELSE 0 "
-			+ "END, 2)" + "FROM Orders o " + "WHERE o.create_date >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0) "
-			+ "    AND o.create_date < DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) + 1, 0)", nativeQuery = true)
-	Double AverageOrderValue();
+			+ "END, 2)" + "FROM Orders o " + "WHERE o.create_date >= ?1 AND o.create_date < ?2"
+			, nativeQuery = true)
+	Double AverageOrderValue(LocalDate startDate, LocalDate endDate);
 
 	// Tổng doannh thu năm nay
 	@Query(value = "SELECT ROUND( SUM(tongtien), 2) FROM Orders WHERE YEAR(create_date) = YEAR(GETDATE())", nativeQuery = true)

@@ -208,8 +208,12 @@
 									${{averageOrderValue}}
 								</h5>
 								<p class="mb-0">
-									<span class="text-danger text-sm font-weight-bolder">-2%</span>
-									since last quarter
+									<span
+										ng-class="{'text-success': AOVPercentage >= 0, 'text-danger': AOVPercentage < 0}"
+										class="text-sm font-weight-bolder">
+										{{AOVPercentage >= 0 ? '+' : ''}}{{AOVPercentage}}%
+									</span>
+									since last month
 								</p>
 							</div>
 						</div>
