@@ -23,8 +23,8 @@ public interface OrderDetailDAO extends JpaRepository<OrderDetail, Long> {
 	// Tổng số lượng sản phẩm bán ra trong tháng
 	@Query(value = "SELECT SUM(od.quantity) FROM OrderDetails od " 
 			+ "JOIN Orders o ON od.order_id = o.id "
-			+ "WHERE MONTH(o.create_date) = MONTH(CURRENT_TIMESTAMP) AND YEAR(o.create_date) = YEAR(CURRENT_TIMESTAMP)", nativeQuery = true)
-	Integer getTotalQuantitySoldThisMonth();
+			+ "WHERE MONTH(o.create_date) = ?1 AND YEAR(o.create_date) = ?2", nativeQuery = true)
+	Integer getTotalQuantitySoldThisMonth(Integer month, Integer year);
 	
 	@Transactional
 	List<OrderDetail> findByOrder(Order order);

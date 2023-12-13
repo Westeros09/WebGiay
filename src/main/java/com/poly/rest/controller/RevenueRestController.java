@@ -1,6 +1,7 @@
 package com.poly.rest.controller;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +48,6 @@ public class RevenueRestController {
 	// 4 bảng trong admin
 	@GetMapping("/today")
 	public Double getDailyRevenue() {
-//		LocalDate currentDate = LocalDate.now();
 		LocalDate currentDate = LocalDate.now();
 		return dao.getTotalRevenueForDate(currentDate);
 	}
@@ -59,8 +59,19 @@ public class RevenueRestController {
     }
 	@GetMapping("/saleVolume")
 	public Integer getsaleVolume() {
-	    return orderDetailDAO.getTotalQuantitySoldThisMonth(); 
+		 // Lấy LocalDate cho ngày hiện tại
+        LocalDate currentDate = LocalDate.now();
+        // Lấy YearMonth cho tháng và năm hiện tại
+        YearMonth currentYearMonth = YearMonth.from(currentDate);
+	    return orderDetailDAO.getTotalQuantitySoldThisMonth(currentYearMonth.getMonthValue(), currentYearMonth.getYear()); 
 	}
+	@GetMapping("/saleVolumePrevious")
+	public Integer getsaleVolumePrevious() {		
+        LocalDate currentDate = LocalDate.now();
+        YearMonth currentYearMonth = YearMonth.from(currentDate);
+	    return orderDetailDAO.getTotalQuantitySoldThisMonth(currentYearMonth.minusMonths(1).getMonthValue(), currentYearMonth.getYear()); 
+	}
+	
 	@GetMapping("/averageOrderValue")
 	public Double AverageOrderValue() {
 	    return dao.AverageOrderValue(); 

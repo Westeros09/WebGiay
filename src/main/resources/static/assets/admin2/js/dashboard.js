@@ -19,14 +19,17 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 				} else {
 					$scope.dailyRevenue = 0;
 				}
-				
 			})
 			.catch(function(error) {
 				console.error('Error fetching daily revenue data:', error);
 			});
 		$http.get("/rest/revenue/yesterday")
 			.then(function(response) {
-				$scope.yesterdayRevenue = response.data;
+				if (response.data) {
+					$scope.yesterdayRevenue = response.data;
+				} else {
+					$scope.yesterdayRevenue = 0;
+				}
 				var profitPercentage;
 				if ($scope.yesterdayRevenue != 0) {
 					profitPercentage = calculateProfitPercentage($scope.dailyRevenue, $scope.yesterdayRevenue);
@@ -41,14 +44,40 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 				console.error('Error fetching yesterday revenue data:', error);
 			});
 		// Hàm tính toán phần trăm lợi nhuận
-		function calculateProfitPercentage(dailyRevenue, yesterdayRevenue) {
-			return ((dailyRevenue - yesterdayRevenue) / yesterdayRevenue) * 100;
+		function calculateProfitPercentage(now, previous) {
+			return ((now - previous) / previous) * 100;
 		}
 
 		// Gọi API để lấy  tổng số lượng sản phẩm bán ra trong tháng
 		$http.get("/rest/revenue/saleVolume")
 			.then(function(response) {
-				$scope.saleVolume = response.data; // Gán tổng doanh thu trong ngày vào biến $scope.dailyRevenue
+				if (response.data) {
+					$scope.saleVolume = response.data;
+				} else {
+					$scope.saleVolume = 0;
+				}
+				
+
+			})
+			.catch(function(error) {
+				console.error('Error fetching daily revenue data:', error);
+			});
+		$http.get("/rest/revenue/saleVolumePrevious")
+			.then(function(response) {
+				if (response.data) {
+					$scope.saleVolumePrevious = response.data;
+				} else {
+					$scope.saleVolumePrevious = 0;
+				}
+				var quantityPercentage;
+				if ($scope.saleVolumePrevious != 0) {
+					quantityPercentage = calculateProfitPercentage($scope.saleVolume, $scope.saleVolumePrevious);
+				} else {
+					quantityPercentage = 100;
+				}
+				quantityPercentage = Math.round(quantityPercentage);
+				$scope.quantityPercentage = quantityPercentage;
+				
 			})
 			.catch(function(error) {
 				console.error('Error fetching daily revenue data:', error);
