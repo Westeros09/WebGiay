@@ -66,23 +66,26 @@
 										<td><input
 											class="text-black font-weight-bold border border-light"
 											style="color: black; font-weight: bold; border: 1px solid lightgrey;" disabled 
-											type="text" value="{{cart.amount}}" /> <th:block
+											type="text" value="{{cart.amount}}" /> 
+											
+											<th:block
 												th:if="${calculatedValue != null}">
 												<!-- Hiển thị giá trị calculatedValue trong thẻ input -->
 												<input type="text"
-													class="text-black font-weight-bold border border-light disabled" 											style="color: black; font-weight: bold; border: 1px solid lightgrey;" disabled 
+													class="text-black font-weight-bold border border-light disabled" style="color: black; font-weight: bold; border: 1px solid lightgrey;" disabled 
 													th:value="${#numbers.formatDecimal( '- ' + ' '+ discountPrice, 2, 'COMMA', 2, 'POINT')}" />
 
 
 
-											</th:block> <th:block th:if="${calculatedValue != null}">
+											</th:block> 
+											<th:block th:if="${calculatedValue != null}">
 												<!-- Hiển thị giá trị calculatedValue trong thẻ input -->
-
-
-												<input type="text"
+													<input type="text"
 													class="text-danger font-weight-bold border border-light"
-													th:value="${calculatedValue}"  											style="color: black; font-weight: bold; border: 1px solid lightgrey;" disabled  readonly="readonly" />
-											</th:block> <input
+													th:value="${calculatedValue}" style="color: black; font-weight: bold; border: 1px solid lightgrey;" disabled  readonly="readonly" />
+											</th:block> 
+											
+											<input
 											class="text-black font-weight-bold border border-light"
 											type="hidden" name="total"
 											th:value="${calculatedValue != null ?  + calculatedValue : '{{cart.amount}}'}" />
