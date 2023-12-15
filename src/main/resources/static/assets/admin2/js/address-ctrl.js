@@ -1,14 +1,14 @@
 app.controller("address-ctrl", function($scope, $http) {
 	$scope.items = [];
 	$scope.form = {};
-	$scope.city = [];
+	$scope.province = [];
 	$scope.districts = [];
 	$scope.wards = [];
 	const host = "https://provinces.open-api.vn/api/";
 	var callAPI = (api) => {
 		return axios.get(api)
 			.then((response) => {
-				renderData(response.data, "city");
+				renderData(response.data, "province");
 
 
 			});
@@ -34,32 +34,25 @@ app.controller("address-ctrl", function($scope, $http) {
 		});
 		document.querySelector("#" + select).innerHTML = row;
 	}
-	$("#city").change(() => {
-		let selectedOptionCity = $("#city option:selected");
-		console.log("Province changed. Selected Option:", selectedOptionCity.text());
+	$("#province").change(() => {
+		let selectedOptionCity = $("#province option:selected");
 
 		let selectedCode = selectedOptionCity.data("code");
 		callApiDistrict(host + "p/" + selectedCode + "?depth=2");
-		$scope.city = selectedOptionCity.text();
-
-
+		$scope.form.city = selectedOptionCity.text();
 	});
 
 	$("#district").change(() => {
 		let selectedOptionDistrict = $("#district option:selected");
-		console.log("District changed. Selected Option:", selectedOptionDistrict.text());
 		let selectedCode = selectedOptionDistrict.data("code");
 		callApiWard(host + "d/" + selectedCode + "?depth=2");
-
-
+		$scope.form.district = selectedOptionDistrict.text();
 	});
 
 	$("#ward").change(() => {
 		let selectedOptionWard = $("#ward option:selected");
-		console.log("Ward changed. Selected Option:", selectedOptionWard.text());
-
+		$scope.form.ward = selectedOptionWard.text();
 	});
-
 
 
 
@@ -69,10 +62,7 @@ app.controller("address-ctrl", function($scope, $http) {
 			console.log(resp.data);
 			console.log(resp.data.addressDetail);
 			$scope.form = {
-
 				available: true,
-
-
 			};
 		})
 
@@ -93,7 +83,7 @@ app.controller("address-ctrl", function($scope, $http) {
 
 		var item = angular.copy($scope.form);
 
-		item.city = ($("#city option:selected").text());
+		item.city = ($("#province option:selected").text());
 		item.district = ($("#district option:selected").text());
 		item.ward = ($("#ward option:selected").text());
 		let streetInput = $('#address');
@@ -136,23 +126,30 @@ app.controller("address-ctrl", function($scope, $http) {
 		}
 	}
 
-$scope.edit = function(item) {
-    // Copy the properties of the selected item to $scope.form
-    $scope.form = angular.copy(item);
+	$scope.edit = function(item) {
+		// Copy the properties of the selected item to $scope.form
+		$scope.form = angular.copy(item);
+		/*	 $scope.form.city = item.city;
+			$scope.form.district = item.district;
+			$scope.form.ward = item.ward;*/
+		console.log(item)
+		$("#province").val(item.city);
+		$("#province").change();
 
-    // Manually set the selected values for the dropdowns
-    $scope.form.city = item.city;
-    $scope.form.district = item.district;
-    $scope.form.ward = item.ward;
-    
-    
-    
-    $("#province option:selected").text();
-   
-   
-   
+		setTimeout(function() {
+			$("#district").val(item.district);
 
-}
+			$("#district").change();
+
+			setTimeout(function() {
+				$("#ward").change();
+				$("#ward").val(item.ward);
+				
+			}, 100);
+		}, 200);
+	}
+
+
 
 
 	$scope.loadCurrentUser = function() {
@@ -163,17 +160,30 @@ $scope.edit = function(item) {
 
 	$scope.update = function() {
 		var item = angular.copy($scope.form);
+		console.log(item);
+
+
+		// Log giá trị ward trước khi update
 
 		$http.put(`/rest/address/${item.id}`, item).then(resp => {
 			var index = $scope.items.findIndex(p => p.id == item.id);
 			$scope.items[index] = item;
+
+			// Log giá trị ward sau khi update
+			console.log("Ward value after update:", resp.data.ward);
+
+			console.log("Update successful!", resp.data);
 			alert("Cập nhật thành công!");
-		})
-			.catch(error => {
-				alert("Lỗi cập nhật !");
-				console.log("Error", error);
-			});
+		}).catch(error => {
+			console.log("Update error:", error);
+			alert("Lỗi cập nhật !");
+		});
 	}
+
+
+
+
+
 
 
 	$scope.delete = function(item) {
@@ -224,7 +234,9 @@ $scope.edit = function(item) {
 	}
 	$scope.reset = function() {
 		$scope.form = {
+			province :null,
 			available: true
+
 		}
 	}
 	$scope.initialize();
