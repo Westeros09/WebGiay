@@ -156,7 +156,10 @@ public class OrderController {
 	}
 
 	@PostMapping("checkout.html")
-	public String checkout1(Model model, @RequestParam String address, @RequestParam String[] productId, @RequestParam("code") String code,@RequestParam("options") String options,
+	public String checkout1(Model model, @RequestParam String address, @RequestParam String[] productId,
+			@RequestParam("code") String code, 
+			@RequestParam("options") String selectedOption, //PT thanh toán
+			@RequestParam(name = "discountPrice", defaultValue = "0") Double discountPrice, //giảm giá
 			@RequestParam(value = "address2", required = false) Integer address2, @RequestParam String[] sizeId,
 			@RequestParam String[] countProduct, @RequestParam String email, @RequestParam String fullname,
 			@RequestParam(value = "total", required = false) double total, HttpServletRequest request,
@@ -169,7 +172,7 @@ public class OrderController {
 			@RequestParam(value = "countProduct", required = false) List<Integer> count,
 			@RequestParam(value = "IdCode", required = false) Integer IdCode,
 			@RequestParam(value = "priceTotal", required = false) List<Double> priceTotal) {
-
+		 System.out.println("Selected option: " + selectedOption);
 		boolean allProductsEnough = true; // Biến để theo dõi xem tất cả sản phẩm có đủ số lượng không
 
 		// Tạo một danh sách để lưu trạng thái kiểm tra số lượng của từng sản phẩm
@@ -373,16 +376,15 @@ public class OrderController {
 		// Lấy thông tin chi tiết của từng sản phẩm trong giỏ hàng và thêm vào bảng
 		for (int i = 0; i < productId.length; i++) {
 			Product product = productDAO.findById(Integer.parseInt(productId[i])).get();
-			 Double discountProducts = 0.0;
+			Double discountProducts = 0.0;
 			if (IdCode != null) {
-			 discountProducts =  product.getOrderDetails().get(i).getOrder().getDiscountCode().getDiscountAmount();
-			}else{
+				discountProducts = product.getOrderDetails().get(i).getOrder().getDiscountCode().getDiscountAmount();
+			} else {
 				discountProducts = 0.0;
 			}
-			
 
-			    // Lặp qua danh sách DiscountProduct để lấy discount amount
-			   
+			// Lặp qua danh sách DiscountProduct để lấy discount amount
+
 			int quantity = Integer.parseInt(countProduct[i]);
 
 			bodyBuilder.append("<tr>");
@@ -411,15 +413,15 @@ public class OrderController {
 			bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
 			bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
 			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">").append("$")
-					.append(discountProducts).append("</td>");
+					.append(discountPrice).append("</td>");
 			bodyBuilder.append("</tr>");
 			bodyBuilder.append("<tr>");
 			bodyBuilder.append(
 					"<td style=\"border: 1px solid black; padding: 8px; text-align: center; width:50%; border-right:none;\">Phương thức thanh toán</td>");
 			bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
 			bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
-			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">").append("$")
-					.append(options).append("</td>");
+			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
+					.append(selectedOption).append("</td>");
 			bodyBuilder.append("</tr>");
 			bodyBuilder.append("<tr>");
 			bodyBuilder.append(
@@ -432,9 +434,9 @@ public class OrderController {
 		}
 
 		bodyBuilder.append("</table>");
-	
+
 		bodyBuilder.append("<H5 style=\"color: Green; font-size:20px\">ĐỊA CHỈ THANH TOÁN</H5>");
-		
+
 		bodyBuilder.append("Khách hàng: ").append(fullname);
 		bodyBuilder.append("<br>");
 		bodyBuilder.append("Địa chỉ: ").append(fulladdress);

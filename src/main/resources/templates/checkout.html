@@ -67,8 +67,8 @@
 											class="text-black font-weight-bold border border-light"
 											type="text" value="{{cart.amount}}" /> <th:block
 												th:if="${calculatedValue != null}">
-												<!-- Hiển thị giá trị calculatedValue trong thẻ input -->
-												<input type="text"
+												<!-- Hiển thị giá trị discountPrice trong thẻ input -->
+												<input name="discountPrice" type="text"
 													class="text-black font-weight-bold border border-light"
 													th:value="${#numbers.formatDecimal( '- ' + ' '+ discountPrice, 2, 'COMMA', 2, 'POINT')}" />
 
@@ -131,13 +131,14 @@
 
 							<div class="btn-group btn-group-toggle d-flex flex-column mb-4"
 								data-toggle="buttons">
-								<label class="btn btn-secondary active"> <input
+								<label class="btn btn-secondary active"> 
+									<input
 									type="radio" name="options" id="option1" autocomplete="off"
-									checked> Thanh toán khi nhận hàng
+									checked value="Thanh toán khi nhận hàng"> Thanh toán khi nhận hàng
 								</label> <label class="btn btn-secondary"> <input type="radio"
-									name="options" id="option2" autocomplete="off"> Paypal
+									name="options" id="option2" autocomplete="off" value="Paypal"> Paypal
 								</label> <label class="btn btn-secondary"> <input type="radio"
-									name="options" id="option3" autocomplete="off"> Thẻ
+									name="options" id="option3" autocomplete="off" value="Thẻ ngân hàng"> Thẻ
 									ngân hàng
 								</label>
 							</div>
