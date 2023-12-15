@@ -29,6 +29,9 @@ public interface ProductDAO extends JpaRepository<Product, Integer> {
 	// tim kiem
 	@Query("SELECT o FROM Product o WHERE o.name LIKE ?1 and o.available = True")
 	Page<Product> findByKeywords(String keywords, Pageable pageable);
+	//Sắp xếp
+	@Query("SELECT o FROM Product o WHERE o.available = True")
+	Page<Product> findBySort( Pageable pageable);
 
 	@Query("SELECT new Report(o.category.name, sum(o.price), count(o) )" + " FROM Product o"
 			+ " GROUP BY o.category.name" + " ORDER BY sum(o.price) DESC")
