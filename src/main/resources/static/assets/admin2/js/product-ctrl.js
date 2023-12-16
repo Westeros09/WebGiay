@@ -150,6 +150,7 @@ app.controller("product-ctrl", function($scope, $http) {
 			$scope.reset();
 
 			alert("Thêm mới sản phẩm thành công!");
+			$scope.initialize();
 		}).catch(error => {
 			alert("Lỗi thêm mới sản phẩm!");
 			console.log("Error", error);
@@ -172,6 +173,7 @@ app.controller("product-ctrl", function($scope, $http) {
 			}
 			$scope.reset();
 			alert("Cập nhật sản phẩm thành công!");
+			$scope.initialize();
 		}).catch(error => {
 			alert("Lỗi cập nhật sản phẩm!");
 			console.log("Error", error);

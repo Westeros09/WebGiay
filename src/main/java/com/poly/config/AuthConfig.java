@@ -50,9 +50,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
 		.antMatchers("/check/**").authenticated()
 		.antMatchers("/shop.html/addComments/**").authenticated()
 		.antMatchers("/shop.html/replyComments**").authenticated()
-		
 		.antMatchers("/rest/authorities","/rest/revenue").hasRole("DIRE")
-		
 		.anyRequest().permitAll(); // anonymous
 
 		// giao diện đăng nhập
