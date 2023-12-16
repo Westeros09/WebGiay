@@ -37,22 +37,21 @@ public class AddressController {
 			@RequestParam(value = "provinceLabel", required = false) String provinceLabel,
 			@RequestParam(value = "districtLabel", required = false) String districtLabel,
 			@RequestParam(value = "wardLabel", required = false) String wardLabel, HttpServletRequest request) {
-		if (provinceLabel == null || provinceLabel.isEmpty()
-				|| districtLabel == null || districtLabel.isEmpty()
-				|| wardLabel == null || wardLabel.isEmpty()
-				|| address == null || address.isEmpty()) {
+		if (provinceLabel == null || provinceLabel.isEmpty() || districtLabel == null || districtLabel.isEmpty()
+				|| wardLabel == null || wardLabel.isEmpty() || address == null || address.isEmpty()) {
 			model.addAttribute("messages", "Vui lòng điền đầy đủ thông tin để thêm địa chỉ");
 			return "forward:/check";
 		} else {
 			String username = request.getRemoteUser();
 			Account user = accountDAO.findById(username).orElse(null);
-			
-			boolean addressExists = addressDAO.existsByAccountAndAddressDetail(user, address + ", " + wardLabel + ", " + districtLabel + ", " + provinceLabel);
-	        if (addressExists) {
-	            model.addAttribute("messages", "Địa chỉ đã tồn tại. Vui lòng chọn địa chỉ khác.");
-	            return "forward:/check";
-	        }
-			
+
+			boolean addressExists = addressDAO.existsByAccountAndAddressDetail(user,
+					address + ", " + wardLabel + ", " + districtLabel + ", " + provinceLabel);
+			if (addressExists) {
+				model.addAttribute("messages", "Địa chỉ đã tồn tại. Vui lòng chọn địa chỉ khác.");
+				return "forward:/check";
+			}
+
 			Address ad = new Address();
 			ad.setAccount(user);
 			ad.setAddressDetail(address + ", " + wardLabel + ", " + districtLabel + ", " + provinceLabel);
@@ -61,7 +60,8 @@ public class AddressController {
 			ad.setWard(wardLabel);
 			ad.setStreet(address);
 			addressDAO.save(ad);
-			return "redirect:/check";
+			model.addAttribute("messages", "Thêm địa chỉ thành công");
+			return "forward:/check";
 		}
 
 	}
@@ -74,45 +74,64 @@ public class AddressController {
 			return "forward:/check";
 		}
 		addressDAO.deleteById(address2);
-		return "redirect:/check";
+		model.addAttribute("messages", "Xóa địa chỉ thành công ");
+		return "forward:/check";
 	}
 
-	
 	@PostMapping("/updateAddress")
 	public String updateAddress(Model model, @RequestParam(value = "address2", required = false) Integer address2,
 			@RequestParam String address, @RequestParam(value = "provinceLabel", required = false) String provinceLabel,
 			@RequestParam(value = "districtLabel", required = false) String districtLabel,
 			@RequestParam(value = "wardLabel", required = false) String wardLabel, HttpServletRequest request) {
+
 		if (address2 == null) {
 			model.addAttribute("messages", "Vui lòng chọn địa chỉ để update ");
 			return "forward:/check";
 		}
+
 		Optional<Address> optionalAddress = addressDAO.findById(address2);
 		if (optionalAddress.isPresent()) {
 			Address existingAddress = optionalAddress.get();
+
+			// Kiểm tra xem các trường đầu vào có dữ liệu không hợp lệ
+			if (provinceLabel == null || provinceLabel.isEmpty() || districtLabel == null || districtLabel.isEmpty()
+					|| wardLabel == null || wardLabel.isEmpty() || address == null || address.isEmpty()) {
+				model.addAttribute("messages", "Vui lòng điền đầy đủ thông tin để cập nhật địa chỉ");
+				return "forward:/check";
+			}
+
+			// Kiểm tra sự tồn tại của địa chỉ mới
+			boolean addressExists = addressDAO.existsByAccountAndAddressDetail(existingAddress.getAccount(),
+					address + ", " + wardLabel + ", " + districtLabel + ", " + provinceLabel);
+
+			if (addressExists) {
+				model.addAttribute("messages", "Địa chỉ đã tồn tại. Vui lòng chọn địa chỉ khác.");
+				return "forward:/check";
+			}
+
+			// Cập nhật thông tin địa chỉ
 			existingAddress.setCity(provinceLabel);
 			existingAddress.setDistrict(districtLabel);
 			existingAddress.setWard(wardLabel);
 			existingAddress.setStreet(address);
 			existingAddress.setAddressDetail(address + ", " + wardLabel + ", " + districtLabel + ", " + provinceLabel);
+
 			addressDAO.save(existingAddress);
-			return "redirect:/check";
+			model.addAttribute("messages", "Cập nhật địa chỉ thành công ");
+			return "forward:/check";
 		} else {
 			model.addAttribute("messages", "Vui lòng chọn địa chỉ để update ");
 			return "forward:/check";
 		}
 	}
-	
 
 	@PostMapping("/newAction")
 	public String newAction(Model model, @RequestParam String address,
 			@RequestParam(value = "provinceLabel", required = false) String provinceLabel,
 			@RequestParam(value = "districtLabel", required = false) String districtLabel,
 			@RequestParam(value = "wardLabel", required = false) String wardLabel, HttpServletRequest request) {
-		if (provinceLabel == null || provinceLabel.isEmpty() 
-				|| districtLabel == null || districtLabel.isEmpty()
-				|| wardLabel == null || wardLabel.isEmpty() 
-				|| address == null || address.isEmpty()) {
+		if (provinceLabel == null || provinceLabel.isEmpty() || districtLabel == null || districtLabel.isEmpty()
+				|| wardLabel == null || wardLabel.isEmpty() || address == null || address.isEmpty()) {
 			model.addAttribute("messages", "Vui lòng điền đầy đủ thông tin để thêm địa chỉ");
 			return "forward:/ChangeInfomation";
 		} else {
@@ -132,5 +151,4 @@ public class AddressController {
 
 	}
 
-	
 }

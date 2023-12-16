@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	th:replace="~{/layout/layout.html::dynamic(~{::title}, ~{::body})}"
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/layout/layout.html::dynamic(~{::title}, ~{::body})}"
 	encoding="UTF-8">
 
 <head>
-<title>Shoe Galaxy</title>
-<meta charset="utf-8">
+	<title>Shoe Galaxy</title>
+	<meta charset="utf-8">
 
 </head>
 
@@ -37,25 +36,22 @@
 								</thead>
 								<tbody>
 									<tr ng-repeat="item in cart.items | filter : { status: true }">
-										<td><input ng-model="item.product.id" type="text"
-											name="productId"
-											style="width: 50%; border: none; outline: none;"></td>
+										<td><input ng-model="item.product.id" type="text" name="productId"
+												style="width: 50%; border: none; outline: none;"></td>
 
 										<td><img style="width: 50%; border: none; outline: none;"
-											src="/images/{{item.image}}"></td>
+												src="/images/{{item.image}}"></td>
 
 										<td><input ng-model="item.size" type="text" name="sizeId"
-											style="width: 100%; border: none; outline: none;"><br></td>
+												style="width: 100%; border: none; outline: none;"><br></td>
 
 										<td>${{cart.price_product(item)}}</td>
-										<td><input
-											ng-change="cart.updateQtyDatabase(item.id,  item.qty)"
-											name="countProduct" ng-model="item.qty" type="number" min="1"
-											style="width: 50px" class="border border-light" /></td>
+										<td><input ng-change="cart.updateQtyDatabase(item.id,  item.qty)"
+												name="countProduct" ng-model="item.qty" type="number" min="1"
+												style="width: 50px" class="border border-light" /></td>
 
-										<td><input type="text" name="priceTotal"
-											style="width: 100%; border: none;"
-											value="{{cart.amtt_of(item)}}"></td>
+										<td><input type="text" name="priceTotal" style="width: 100%; border: none;"
+												value="{{cart.amtt_of(item)}}"></td>
 
 
 									</tr>
@@ -63,38 +59,28 @@
 										<td class="text-black font-weight-bold"><strong>Order
 												Total</strong></td>
 
-										<td><input
-											class="text-black font-weight-bold border border-light"
-											style="color: black; font-weight: bold; border: 1px solid lightgrey;" disabled 
-											type="text" value="{{cart.amount}}" /> 
-											
-											<th:block
-												th:if="${calculatedValue != null}">
-												<!-- Hiển thị giá trị calculatedValue trong thẻ input -->
-												<input type="text"
-													class="text-danger font-weight-bold border border-light disabled" style="color: black; font-weight: bold; border: 1px solid lightgrey;" disabled 
+										<td><input name="initialPrice" class="text-black font-weight-bold border border-light" type="text"
+												value="{{cart.amount}}" />
+											<th:block th:if="${calculatedValue != null}">
+												<!-- Hiển thị giá trị discountPrice trong thẻ input -->
+												<input name="discountPrice" type="text"
+													class="text-black font-weight-bold border border-light"
 													th:value="${#numbers.formatDecimal( '- ' + ' '+ discountPrice, 2, 'COMMA', 2, 'POINT')}" />
-
-
-
-											</th:block> 
+											</th:block>
 											<th:block th:if="${calculatedValue != null}">
 												<!-- Hiển thị giá trị calculatedValue trong thẻ input -->
-													<input type="text"
-													class="text-black font-weight-bold border border-light"
-													th:value="${calculatedValue}" style="color: black; font-weight: bold; border: 1px solid lightgrey;" disabled  readonly="readonly" />
-											</th:block> 
-											
-											<input
-											class="text-black font-weight-bold border border-light"
-											type="hidden" name="total"
-											th:value="${calculatedValue != null ?  + calculatedValue : '{{cart.amount}}'}" />
+												<input type="text"
+													class="text-danger font-weight-bold border border-light"
+													th:value="${calculatedValue}" readonly="readonly" />
+											</th:block> <input class="text-black font-weight-bold border border-light"
+												type="hidden" name="total"
+												th:value="${calculatedValue != null ?  + calculatedValue : '{{cart.amount}}'}" />
 
 										</td>
 
 
-										<td><input type="hidden" id="inputAmount"
-											name="totalAmount" value="{{cart.amount}}" /></td>
+										<td><input type="hidden" id="inputAmount" name="totalAmount"
+												value="{{cart.amount}}" /></td>
 
 									</tr>
 								</tbody>
@@ -104,8 +90,8 @@
 
 
 
-							<input class="text-black font-weight-bold border border-light"
-								type="hidden" th:value="${{idCode}}" name="IdCode" />
+							<input class="text-black font-weight-bold border border-light" type="hidden"
+								th:value="${{idCode}}" name="IdCode" />
 
 
 							<div class="row  ">
@@ -133,22 +119,21 @@
 							</div>
 
 
-							<div class="btn-group btn-group-toggle d-flex flex-column mb-4"
-								data-toggle="buttons">
-								<label class="btn btn-secondary active"> <input
-									type="radio" name="options" id="option1" autocomplete="off"
-									checked> Thanh toán khi nhận hàng
-								</label> <label class="btn btn-secondary"> <input type="radio"
-									name="options" id="option2" autocomplete="off"> Paypal
-								</label> <label class="btn btn-secondary"> <input type="radio"
-									name="options" id="option3" autocomplete="off"> Thẻ
+							<div class="btn-group btn-group-toggle d-flex flex-column mb-4" data-toggle="buttons">
+								<label class="btn btn-secondary active">
+									<input type="radio" name="options" id="option1" autocomplete="off" checked
+										value="Thanh toán khi nhận hàng"> Thanh toán khi nhận hàng
+								</label> <label class="btn btn-secondary"> <input type="radio" name="options"
+										id="option2" autocomplete="off" value="Paypal"> Paypal
+								</label> <label class="btn btn-secondary"> <input type="radio" name="options"
+										id="option3" autocomplete="off" value="Thẻ ngân hàng"> Thẻ
 									ngân hàng
 								</label>
 							</div>
 
 
-							<button class="btn btn-dark btn-lg py-3 btn-block"
-								id="placeOrderButton" onclick="placeOrder()">Place
+							<button class="btn btn-dark btn-lg py-3 btn-block" id="placeOrderButton"
+								onclick="placeOrder()">Place
 								Order</button>
 
 						</div>
@@ -173,14 +158,13 @@
 										<div class="col-md-12 pt-4">
 											<label for="c_email_address" class="text-black">Email
 												Address <span class="text-danger">*</span>
-											</label> <input type="text" class="form-control" id="email"
-												name="email" th:value="${user.email}" required>
+											</label> <input type="text" class="form-control" id="email" name="email"
+												th:value="${user.email}" required>
 										</div>
 
 										<div class="col-md-12 pt-4">
-											<label class="text-danger"
-												th:text="${session.messagesAddress}"></label> <select
-												class="form-select" name="address2" id="address2">
+											<label class="text-danger" th:text="${session.messagesAddress}"></label>
+											<select class="form-select" name="address2" id="address2">
 												<option selected disabled>Open address menu</option>
 												<!-- Kiểm tra điều kiện userAddresses null hoặc trống -->
 												<th:block
@@ -191,8 +175,8 @@
 												<th:block
 													th:if="${userAddresses != null and not #lists.isEmpty(userAddresses)}">
 													<option th:each="address : ${userAddresses}"
-														th:value="${address.id}"
-														th:text="${address.addressDetail}"></option>
+														th:value="${address.id}" th:text="${address.addressDetail}">
+													</option>
 											</select>
 										</div>
 
@@ -202,26 +186,25 @@
 
 										<div class="col-md-12 mt-3 address-div" style="display: none;">
 											<label for="c_fname" class="text-black">Province/City<span
-												class="text-danger">*</span>
+													class="text-danger">*</span>
 											</label> <select class="form-select mb-3" name="provinceLabel"
 												id="province">
 												<!--<option value="">chọn tỉnh/thành phố</option>-->
 											</select> <label for="c_fname" class="text-black">District<span
-												class="text-danger">*</span>
+													class="text-danger">*</span>
 											</label> <select class="form-select mb-3" name="districtLabel"
 												id="district">
 												<option value="">chọn quận</option>
 											</select> <label for="c_fname" class="text-black">Ward<span
-												class="text-danger">*</span>
+													class="text-danger">*</span>
 											</label> <select class="form-select mb-3" name="wardLabel" id="ward">
 												<option value="">chọn phường</option>
 											</select> <label for="c_address" class="text-black">Street
 												Name <span class="text-danger">*</span>
-											</label> <input type="text" class="form-control" id="address"
-												name="address" placeholder="Street Name">
+											</label> <input type="text" class="form-control" id="address" name="address"
+												placeholder="Street Name">
 
-											<div class="btn-group w-100" role="group"
-												aria-label="Basic example">
+											<div class="btn-group w-100" role="group" aria-label="Basic example">
 												<button class="btn btn-primary my-3  py-3 btn-block  mx-1"
 													formaction="/addAddress" formmethod="post">Thêm</button>
 
@@ -251,7 +234,7 @@
 		// Thêm sự kiện click ẩn hiện vào nút "Edit"
 		var addressDiv = document.querySelector('.address-div');
 		var editButton = document.getElementById("editButton");
-		editButton.addEventListener("click", function() {
+		editButton.addEventListener("click", function () {
 			var isHidden = addressDiv.style.display === "none";
 			if (isHidden) {
 				addressDiv.style.display = "block";
