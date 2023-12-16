@@ -45,16 +45,29 @@ app.controller("product-ctrl", function($scope, $http) {
 				console.log("Error", error);
 			});
 	};
+
 	$scope.deleteImage = function(filename) {
 		$http.delete(`${url}/${filename}`)
 			.then((resp) => {
 				let i = $scope.filenames.findIndex((name) => name == filename);
 				$scope.filenames.splice(i, 1);
+				// Xóa tên file ảnh khỏi danh sách uploadedImageNames
+				$scope.deleteUploadedImageName(filename);
+				$scope.reduceImageInputCount();
 			})
 			.catch((error) => {
 				console.log("Error", error);
 			});
 	};
+
+	// Hàm xóa tên ảnh khỏi danh sách uploadedImageNames
+	$scope.deleteUploadedImageName = function(imageName) {
+		let i = $scope.uploadedImageNames.findIndex((name) => name == imageName);
+		if (i !== -1) {
+			$scope.uploadedImageNames.splice(i, 1);
+		}
+	};
+	
 	$scope.upload = function(files) {
 		var form = new FormData();
 		for (let i = 0; i < files.length; i++) {
@@ -117,7 +130,9 @@ app.controller("product-ctrl", function($scope, $http) {
 		$scope.uploadedImageNames = []; // Reset số lượng file
 		$scope.form.images = []; // Reset số lượng file
 		$scope.images = [];
-		
+		var input = document.getElementById('imageInput');
+		input.value = ''; // Clear the selected files
+
 	}
 
 
@@ -143,13 +158,18 @@ app.controller("product-ctrl", function($scope, $http) {
 
 	$scope.update = function() {
 		var item = angular.copy($scope.form);
+
 		$http.put(`/rest/products/${item.id}`, item).then(resp => {
 			var index = $scope.items.findIndex(p => p.id == item.id);
 			$scope.items[index] = item;
 
 			// Thực hiện xóa ảnh cũ và upload 3 ảnh mới
-			$scope.deleteOldImages(item.id);
-			$scope.uploadNewImages(item.id);
+			if ($scope.filenames.length > 0) {
+				console.log($scope.filenames.length);
+				// If new images are selected, delete old images and upload new images
+				$scope.deleteOldImages(item.id);
+				$scope.uploadNewImages(item.id);
+			}
 			$scope.reset();
 			alert("Cập nhật sản phẩm thành công!");
 		}).catch(error => {

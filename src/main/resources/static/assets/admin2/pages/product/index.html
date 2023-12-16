@@ -208,7 +208,7 @@
 							</div>
 							<div class="row pt-4" style="display: flex; flex-wrap: wrap;">
 								<label>Upload file <input type="file" accept="image/*"
-									multiple
+									multiple  id="imageInput"
 									onchange="angular.element(this).scope().upload(this.files)" />
 								</label>
 								<hr />
@@ -293,10 +293,7 @@
 									<td class="align-middle text-center text-sm">{{item.price
 										| number : 2}}</td>
 									<td class="align-middle text-center text-sm">{{item.category.name}}</td>
-									<!--<td class="align-middle text-center text-sm">
-										<span ng-if="item.discount_sale.name">{{item.discount_sale.name}}</span>
-										<span ng-if="!item.discount_sale.name">null</span>
-									</td>-->
+							
 									<td class="align-middle text-center text-sm">{{item.available?'Yes':'No'}}</td>
 									<td class="align-middle text-center text-sm">
 										<div class="btn-group btn-group-xs">
@@ -311,20 +308,6 @@
 							</tbody>
 
 						</table>
-
-						<!-- 
-							<div class="container">
-								<div class="row">
-									<div class="col-sm-4">
-										
-										<canvas id="myChartPie" width="400" height="400"></canvas>
-									</div>
-									<div class="col-sm-8">
-									
-										<canvas id="myChartBar" width="400" height="400"></canvas>
-									</div>
-								</div>
-							</div> -->
 
 
 						<div class="panel-footer text-center">
