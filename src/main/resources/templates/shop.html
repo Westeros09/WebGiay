@@ -111,82 +111,101 @@
 							<div class="site-block-27 ">
 
 								<!-- ĐIỀU HƯỚNG -->
+								<!-- ĐIỀU HƯỚNG -->
 								<div th:switch="${check}" class="pagination-center">
 									<ul th:case="1">
-										<li><a th:href="@{|/shop.html/search?p=0|}">&lt;</a></li>
+										<li><a th:href="@{|/shop.html/search?p=0|}"
+											th:class="${currentPage == 0} ? 'active' : ''">&lt;</a></li>
 										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
-											<a th:href="@{|/shop.html/search?p=${i-1}|}" th:text="${i}"></a>
+											<a th:href="@{|/shop.html/search?p=${i-1}|}"
+											th:class="${currentPage == i-1} ? 'active' : ''"
+											th:text="${i}"></a>
 										</li>
 										<li><a
-											th:href="@{|/shop.html/search?p=${products.totalPages - 1}|}">&gt;</a></li>
+											th:href="@{|/shop.html/search?p=${products.totalPages - 1}|}"
+											th:class="${currentPage == products.totalPages - 1} ? 'active' : ''">&gt;</a></li>
 									</ul>
+
 									<ul th:case="2">
 										<li><a
-											th:href="@{|/shop.html/findByPrice?p=0&priceRange=${priceRange}|}">&lt;</a></li>
+											th:href="@{|/shop.html/findByPrice?p=0&priceRange=${priceRange}|}"
+											th:class="${currentPage == 0} ? 'active' : ''">&lt;</a></li>
 										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
 											<a
 											th:href="@{|/shop.html/findByPrice?p=${i-1}&priceRange=${priceRange}|}"
+											th:class="${currentPage == i-1} ? 'active' : ''"
 											th:text="${i}"></a>
 										</li>
 										<li><a
-											th:href="@{|/shop.html/findByPrice?p=${products.totalPages - 1}&priceRange=${priceRange}|}">&gt;</a></li>
+											th:href="@{|/shop.html/findByPrice?p=${products.totalPages - 1}&priceRange=${priceRange}|}"
+											th:class="${currentPage == products.totalPages - 1} ? 'active' : ''">&gt;</a></li>
 									</ul>
 
-
-
-
-
-
 									<ul th:case="3">
-										<li><a th:href="@{|/shop.html/searchBrand?p=0|}">&lt;</a></li>
+										<li><a th:href="@{|/shop.html/searchBrand?p=0|}"
+											th:class="${currentPage == 0} ? 'active' : ''">&lt;</a></li>
 										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
 											<a th:href="@{|/shop.html/searchBrand?p=${i-1}|}"
+											th:class="${currentPage == i-1} ? 'active' : ''"
 											th:text="${i}"></a>
 										</li>
 										<li><a
-											th:href="@{|/shop.html/searchBrand?p=${products.totalPages - 1}|}">&gt;</a></li>
+											th:href="@{|/shop.html/searchBrand?p=${products.totalPages - 1}|}"
+											th:class="${currentPage == products.totalPages - 1} ? 'active' : ''">&gt;</a></li>
 									</ul>
 
 									<ul th:case="4">
-										<li><a th:href="@{|/shop.html/sort?p=0|}">&lt;</a></li>
+										<li><a th:href="@{|/shop.html/sort?p=0|}"
+											th:class="${currentPage == 0} ? 'active' : ''">&lt;</a></li>
 										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
-											<a th:href="@{|/shop.html/sort?p=${i-1}|}" th:text="${i}"></a>
+											<a th:href="@{|/shop.html/sort?p=${i-1}|}"
+											th:class="${currentPage == i-1} ? 'active' : ''"
+											th:text="${i}"></a>
 										</li>
 										<li><a
-											th:href="@{|/shop.html/sort?p=${products.totalPages - 1}|}">&gt;</a></li>
+											th:href="@{|/shop.html/sort?p=${products.totalPages - 1}|}"
+											th:class="${currentPage == products.totalPages - 1} ? 'active' : ''">&gt;</a></li>
 									</ul>
 
 									<ul th:case="5">
-										<li><a th:href="@{|/shop.html/sort1?p=0|}">&lt;</a></li>
+										<li><a th:href="@{|/shop.html/sort1?p=0|}"
+											th:class="${currentPage == 0} ? 'active' : ''">&lt;</a></li>
 										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
-											<a th:href="@{|/shop.html/sort1?p=${i-1}|}" th:text="${i}"></a>
+											<a th:href="@{|/shop.html/sort1?p=${i-1}|}"
+											th:class="${currentPage == i-1} ? 'active' : ''"
+											th:text="${i}"></a>
 										</li>
 										<li><a
-											th:href="@{|/shop.html/sort1?p=${products.totalPages - 1}|}">&gt;</a></li>
+											th:href="@{|/shop.html/sort1?p=${products.totalPages - 1}|}"
+											th:class="${currentPage == products.totalPages - 1} ? 'active' : ''">&gt;</a></li>
 									</ul>
 
 									<ul th:case="6">
 										<li><a
-											th:href="@{|/findSizeProducts?size=${size}&page=0|}">&lt;</a></li>
+											th:href="@{|/findSizeProducts?size=${size}&page=0|}"
+											th:class="${currentPage == 0} ? 'active' : ''">&lt;</a></li>
 										<li
 											th:each="i : ${#numbers.sequence(0, products.totalPages - 1)}">
 											<a th:href="@{|/findSizeProducts?size=${size}&page=${i}|}"
+											th:class="${currentPage == i} ? 'active' : ''"
 											th:text="${i + 1}"></a>
 										</li>
 										<li><a
-											th:href="@{|/findSizeProducts?size=${size}&page=${products.totalPages - 1}|}">&gt;</a></li>
+											th:href="@{|/findSizeProducts?size=${size}&page=${products.totalPages - 1}|}"
+											th:class="${currentPage == products.totalPages - 1} ? 'active' : ''">&gt;</a></li>
 									</ul>
 
-
-
-
 									<ul th:case="*">
-										<li><a th:href="@{|/shop.html?p=0|}">&lt;</a></li>
+										<li><a th:href="@{|/shop.html?p=0|}"
+											th:class="${currentPage == 0} ? 'active' : ''">&lt;</a></li>
 										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
-											<a th:href="@{|/shop.html?p=${i-1}|}" th:text="${i}"></a>
+											<a th:href="@{|/shop.html?p=${i-1}|}"
+											th:class="${currentPage == i-1} ? 'active' : ''"
+											th:text="${i}"></a>
 										</li>
 										<li><a
-											th:href="@{|/shop.html?p=${products.totalPages - 1}|}">&gt;</a></li>
+											th:href="@{|/shop.html?p=${products.totalPages - 1}|}"
+											th:class="${currentPage == products.totalPages - 1} ? 'active' : ''">&gt;</a></li>
 									</ul>
 								</div>
 
