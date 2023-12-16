@@ -1,5 +1,6 @@
 package com.poly.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,13 +79,13 @@ public class LoadPage {
 
 	@RequestMapping({ "/", "index.html" })
 	public String index(Model model) {
-		List<Product> pro = productDAO.topProduct();
+		
 		List<Image> images = imageDAO.findAll();
 		List<Product> products = productDAO.findAll();
-
+        List<List<Product>> pro = chunkList(products,4);
 		List<DiscountProduct> discountProducts = dpDAO.findAll();
-
-		List<Product> newProduct = productDAO.NewProduct();
+		List<Product> getNewProduct = productDAO.NewProduct();
+		List<List<Product>> newProduct= chunkList(getNewProduct, 4); 
 		List<Object[]> orderDetails = orderDetailDAO.findByAllTopProductOrderDetail();
         model.addAttribute("orderDetails", orderDetails);
 		model.addAttribute("pro", pro);
@@ -92,7 +93,6 @@ public class LoadPage {
 		model.addAttribute("images", images);
 		model.addAttribute("products", products);
 		model.addAttribute("discountProducts", discountProducts);
-		
 		  // Truy vấn danh sách hãng và số lượng sản phẩm tương ứng
 	    List<Object[]> results = productDAO.countProductsByCategory();
 	    model.addAttribute("results", results);
@@ -101,7 +101,14 @@ public class LoadPage {
 
 		return "index";
 	}
+	private <T> List<List<T>> chunkList(List<T> list, int chunkSize) {
+	    List<List<T>> chunks = new ArrayList<>();
+	    for (int i = 0; i < list.size(); i += chunkSize) {
+	        int end = Math.min(i + chunkSize, list.size());
+	        chunks.add(new ArrayList<>(list.subList(i, end)));
+	    }
+	    return chunks;
+	}
 	
-
 
 }
