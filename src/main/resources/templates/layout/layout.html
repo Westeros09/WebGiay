@@ -155,7 +155,7 @@
 											th:text="${#request.remoteUser}" style="display: none;"></span>
 										<ul class="dropdown-menu">
 											<li
-												th:if="${#request.isUserInRole('DIRE') or #request.isUserInRole('STAF')}">
+												th:if="${#request.isUserInRole('ADMI')}">
 												<a class="dropdown-item" th:href="@{/admin2}"
 												th:text="#{nav.admin}">Admin</a>
 											</li>
