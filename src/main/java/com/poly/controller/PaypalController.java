@@ -64,9 +64,12 @@ public class PaypalController {
 			@RequestParam(value = "provinceLabel", required = false) String provinceLabel,
 			@RequestParam(value = "districtLabel", required = false) String districtLabel,
 			@RequestParam(value = "wardLabel", required = false) String wardLabel,
+			@RequestParam String email,
 			@RequestParam(value = "countProduct", required = false) List<Integer> count, HttpServletRequest request) {
-		// Lưu thuộc tính vào session để khi truyển qua thanh toán thành công còn lấy dc
-
+		if (!email.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
+		    model.addAttribute("messages", "Vui lòng nhập địa chỉ email hợp lệ.");
+		    return "forward:/check"; // Quay lại trang thanh toán với thông báo lỗi
+		}
 
 		boolean allProductsEnough = true; // Biến để theo dõi xem tất cả sản phẩm có đủ số lượng không
 		// Tạo một danh sách để lưu trạng thái kiểm tra số lượng của từng sản phẩm

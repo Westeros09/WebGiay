@@ -59,7 +59,7 @@
 
 
 
-	<div class="container mt-5" data-aos="fade-up">
+	<div class="container mt-5" data-aos="fade-up" th:if="${not #lists.isEmpty(discountProducts)}">
 		<div class="row">
 			<div class="col-12" th:if="${discountProducts != null }">
 				<h1 class="big-sale" th:text="#{body.bigsale}">BIG SALES</h1>
@@ -73,6 +73,7 @@
 					<div class="product-image-container">
 						<a th:href="@{|/shop-single.html/${discountProduct.product.id}|}">
 							<span th:if="${not #lists.isEmpty(images)}"> <span
+
 								th:each="pro : ${pro}"><span
 									th:if="${pro[0].id == discountProduct.product.id}"> <img
 										class="product-image-shoe img-fluid" style="height: auto;"
@@ -98,6 +99,10 @@
 			</div>
 		</div>
 	</div>
+	
+	
+	
+	
 	<div class="container mt-5 mb-3" data-aos="fade-up">
 		<div class="row">
 			<div class="col-12 ">
@@ -154,6 +159,7 @@
 									</div>
 								</div>
 							</div>
+
 						</div>
 					</div>
 				</div>
@@ -279,45 +285,44 @@
 						</a>
 						<div th:if="${not #lists.isEmpty(discountProducts)}">
 							<div th:each="discountProduct : ${discountProducts}"
-								th:if="${discountProduct.product.id ==  detail[0] and T(java.time.LocalDate).now().isAfter(discountProduct.start_Date) and T(java.time.LocalDate).now().isBefore(discountProduct.end_Date)}">
+								th:if="${discountProduct.product.id == detail[0] and T(java.time.LocalDate).now().isAfter(discountProduct.start_Date.minusDays(1)) and T(java.time.LocalDate).now().isBefore(discountProduct.end_Date.plusDays(1))}">
 								<span th:if="${discountProduct.active}"> <span
-									class="discount-badge-shoe"
-									th:text="${discountProduct.percentage + '%' }"></span>
-
+									th:if="${(T(java.time.LocalDate).now().isEqual(discountProduct.start_Date) or T(java.time.LocalDate).now().isAfter(discountProduct.start_Date)) and (T(java.time.LocalDate).now().isEqual(discountProduct.end_Date) or T(java.time.LocalDate).now().isBefore(discountProduct.end_Date))}">
+										<span class="discount-badge-shoe"
+										th:text="${discountProduct.percentage + '%' }"></span>
+								</span>
 								</span>
 							</div>
-
 						</div>
+
+
 					</div>
 					<div class="product-details-shoe">
 						<div class="product-title-shoe text-truncate"
 							th:text="${detail[1]}"></div>
 
-
 						<div th:each="product : ${pro}" th:if="${product.id == detail[0]}">
 							<p
 								th:if="${product.discountProduct != null and not #lists.isEmpty(product.discountProduct) and product.discountProduct[0].active}">
 								<span
-									th:if="${T(java.time.LocalDate).now().isAfter(product.discountProduct[0].start_Date) and (T(java.time.LocalDate).now().isBefore(product.discountProduct[0].end_Date) or T(java.time.LocalDate).now() == product.discountProduct[0].end_Date)}">
+									th:if="${T(java.time.LocalDate).now().isEqual(product.discountProduct[0].start_Date) or T(java.time.LocalDate).now().isEqual(product.discountProduct[0].end_Date) or (T(java.time.LocalDate).now().isAfter(product.discountProduct[0].start_Date) and T(java.time.LocalDate).now().isBefore(product.discountProduct[0].end_Date))}">
 									<span class="product-price-shoe"
 									th:text="${'$' + (product.price - (product.price * product.discountProduct[0].percentage / 100))}"></span>
 									<del class="original-price-shoe"
 										th:text="${'$' + product.price}"></del>
-
 								</span> <span
-									th:unless="${T(java.time.LocalDate).now().isAfter(product.discountProduct[0].start_Date) and (T(java.time.LocalDate).now().isBefore(product.discountProduct[0].end_Date) or T(java.time.LocalDate).now() == product.discountProduct[0].end_Date)}">
+									th:unless="${T(java.time.LocalDate).now().isEqual(product.discountProduct[0].start_Date) or T(java.time.LocalDate).now().isEqual(product.discountProduct[0].end_Date) or (T(java.time.LocalDate).now().isAfter(product.discountProduct[0].start_Date) and T(java.time.LocalDate).now().isBefore(product.discountProduct[0].end_Date))}">
 									<span class="product-price-shoe"
 									th:text="${'$' + product.price}"></span>
-
 								</span>
 							</p>
 							<p
 								th:unless="${product.discountProduct != null and not #lists.isEmpty(product.discountProduct) and product.discountProduct[0].active}">
 								<span class="product-price-shoe"
 									th:text="${'$' + product.price}"></span>
-
 							</p>
 						</div>
+
 					</div>
 				</div>
 			</div>
@@ -392,10 +397,9 @@
 						<span class="icon-truck"></span>
 					</div>
 					<div class="text">
-						<h2 class="text-uppercase" th:text="#{footer.freeshipping}">Free
-							Shipping</h2>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-							Phasellus at iaculis quam. Integer accumsan tincidunt fringilla.</p>
+
+						<h2 class="text-uppercase" th:text="#{footer.freeshipping}">Free Shipping</h2>
+						<p th:text="#{footer.freeshipping1}">When you place an order and meet the applicable conditions, free shipping will be automatically applied during the checkout process.</p>
 					</div>
 				</div>
 				<div class="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4"
@@ -404,10 +408,8 @@
 						<span class="icon-refresh2"></span>
 					</div>
 					<div class="text">
-						<h2 class="text-uppercase" th:text="#{footer.freereturns}">Free
-							Returns</h2>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-							Phasellus at iaculis quam. Integer accumsan tincidunt fringilla.</p>
+						<h2 class="text-uppercase"th:text="#{footer.freereturns}">Free Returns</h2>
+						<p th:text="#{footer.freereturns1}">We are committed to ensuring the satisfaction of our customers with our free return policy.</p>
 					</div>
 				</div>
 				<div class="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4"
@@ -416,10 +418,9 @@
 						<span class="icon-help"></span>
 					</div>
 					<div class="text">
-						<h2 class="text-uppercase" th:text="#{footer.custsup}">Customer
-							Support</h2>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-							Phasellus at iaculis quam. Integer accumsan tincidunt fringilla.</p>
+
+						<h2 class="text-uppercase" th:text="#{footer.custsup}">Customer Support</h2>
+						<p th:text="#{footer.custsup1}">We are committed to providing professional customer support services to ensure that your shopping experience is smooth and comfortable.</p>
 					</div>
 				</div>
 			</div>

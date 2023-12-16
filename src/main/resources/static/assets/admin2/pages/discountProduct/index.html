@@ -27,9 +27,12 @@
 			<ul class="navbar-nav  justify-content-end">
 				<li class="nav-item d-flex align-items-center"><a
 					href="javascript:;"
-					class="nav-link text-white font-weight-bold px-0">
-					<img style="max-width: 50%; height: 50px" class="border-radius-lg shadow-sm" id="imagePreview" ng-src="{{'/images/'+account.photo}}"  alt="Avatar">
-					<span class="d-sm-inline d-none mx-2">{{account.username}}</span>
+					class="nav-link text-white font-weight-bold px-0"> <img
+						style="max-width: 50%; height: 50px"
+						class="border-radius-lg shadow-sm" id="imagePreview"
+						ng-src="{{'/images/'+account.photo}}" alt="Avatar"> <span
+						class="d-sm-inline d-none mx-2">{{account.username}}</span>
+
 				</a></li>
 				<li class="nav-item d-xl-none ps-3 d-flex align-items-center">
 					<a href="javascript:;" class="nav-link text-white p-0"
@@ -133,7 +136,6 @@
 	<div class="row">
 		<div class="col-12">
 			<div class="card">
-
 				<div class="card-body">
 					<div class="text-center text-secondary">PRODUCT DISCOUNT
 						EDITION</div>
@@ -230,8 +232,31 @@
 	</div>
 </div>
 
-
-
+<!-- Add ng-model for startDate and endDate -->
+<div class="container col-sm-10">
+	<div class="row">
+		<div class="col-sm-6">
+			<div>
+				<label for="startDate" class="form-label">Start Date</label> <input
+					ng-model="startDate" class="form-control" type="date"
+					id="startDate">
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div>
+				<label for="endDate" class="form-label">End Date</label> <input
+					ng-model="endDate" class="form-control" type="date" id="endDate">
+			</div>
+		</div>
+		<div class="col-sm-12">
+			<div>
+				<!-- Call getDiscountProductsInDateRange on button click -->
+				<button ng-click="getDiscountProductsInDateRange()"
+					class="btn btn-primary mt-2">Get Discounts</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 
 <div class="container-fluid py-4">
@@ -284,8 +309,8 @@
 										class="badge badge-sm text-dark">{{item.id}}</span></td>
 
 									<td class="align-middle text-center text-sm"><span
-										class="badge badge-sm text-dark">{{item.product.id
-											}} {{item.product.name}}</span></td>
+										class="badge badge-sm text-dark">{{item.product.id }}
+											{{item.product.name}}</span></td>
 									<td class="align-middle text-center   text-sm"><span
 										class="badge badge-sm text-dark">{{item.name}}</span></td>
 									<td class="align-middle  text-center  text-sm"><span
@@ -296,8 +321,8 @@
 									<td class="align-middle text-center   text-sm"><span
 										class="badge badge-sm text-dark">{{item.percentage}}</span></td>
 									<td class="align-middle text-center   text-sm"><span
-										class="badge badge-sm text-dark">{{item.active
-											? 'Hoạt Động' : 'Ngưng Hoạt Động '}}</span></td>
+										class="badge badge-sm text-dark">{{item.active ? 'Hoạt
+											Động' : 'Ngưng Hoạt Động '}}</span></td>
 
 									<td class="align-middle text-center   text-sm">
 
@@ -370,10 +395,3 @@
 		</div>
 	</footer>
 </div>
-
-
-
-
-
-
-

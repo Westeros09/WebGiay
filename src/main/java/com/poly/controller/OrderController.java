@@ -91,7 +91,7 @@ public class OrderController {
 			model.addAttribute("user", user);
 			return "checkout.html";
 		} else {
-			 redirectAttributes.addFlashAttribute("message", "Bạn chưa có sản phẩm để thanh toán.");
+			redirectAttributes.addFlashAttribute("message", "Bạn chưa có sản phẩm để thanh toán.");
 			// Nếu tất cả sản phẩm có trạng thái là false, chuyển hướng đến trang cart
 			return "redirect:/cart.html";
 		}
@@ -157,6 +157,9 @@ public class OrderController {
 
 	@PostMapping("checkout.html")
 	public String checkout1(Model model, @RequestParam String address, @RequestParam String[] productId,
+			@RequestParam("code") String code, @RequestParam("options") String selectedOption, // PT thanh toán
+			@RequestParam("initialPrice") Double initialPrice, // PT thanh toán
+			@RequestParam(name = "discountPrice", defaultValue = "0") Double discountPrice, // giảm giá
 			@RequestParam(value = "address2", required = false) Integer address2, @RequestParam String[] sizeId,
 			@RequestParam String[] countProduct, @RequestParam String email, @RequestParam String fullname,
 			@RequestParam(value = "total", required = false) double total, HttpServletRequest request,
@@ -171,7 +174,10 @@ public class OrderController {
 			@RequestParam(value = "priceTotal", required = false) List<Double> priceTotal) {
 
 		boolean allProductsEnough = true; // Biến để theo dõi xem tất cả sản phẩm có đủ số lượng không
-
+		if (!email.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
+		    model.addAttribute("messages", "Vui lòng nhập địa chỉ email hợp lệ.");
+		    return "forward:/check"; // Quay lại trang thanh toán với thông báo lỗi
+		}
 		// Tạo một danh sách để lưu trạng thái kiểm tra số lượng của từng sản phẩm
 		List<Boolean> productStatus = new ArrayList<>();
 		for (int i = 0; i < productID.size(); i++) {
@@ -351,24 +357,34 @@ public class OrderController {
 
 		// Tạo nội dung email
 		StringBuilder bodyBuilder = new StringBuilder();
-		bodyBuilder.append("Tổng hóa đơn của ").append(fullname).append(" là: $").append(total).append(" tại địa chỉ: ")
-				.append(fulladdress).append("<br><br>");
+		bodyBuilder.append("<H5 style=\"color: Green; font-size:20px\">ĐƠN HÀNG CỦA BẠN</H5>");
 
 		// Tạo bảng với CSS
 		bodyBuilder.append("<table style=\"border-collapse: collapse;\">");
-		bodyBuilder.append("<tr>" + "<th style=\"border: 1px solid black; padding: 8px;\">Sản phẩm</th>"
+		bodyBuilder.append("<tr>" + "<th style=\"border: 1px solid black; padding: 8px; width: 200px;\">Sản phẩm</th>"
 				+ "<th style=\"border: 1px solid black; padding: 8px;\">Số lượng</th>"
 				+ "<th style=\"border: 1px solid black; padding: 8px;\">Size</th>"
-				+ "<th style=\"border: 1px solid black; padding: 8px;\">Giá</th>"
-				+ "<th style=\"border: 1px solid black; padding: 8px;\">Tổng cộng</th></tr>");
+				+ "<th style=\"border: 1px solid black; padding: 8px;width: 200px;\">Giá</th></tr>");
+
+		/*
+		 * +"<tr>" +
+		 * "<th style=\"border: 1px solid black; padding: 8px;\">Tổng số phụ</th></tr>"
+		 * +"<tr>" +
+		 * "<th style=\"border: 1px solid black; padding: 8px;\">Giảm giá</th></tr>"
+		 * +"<tr>" +
+		 * "<th style=\"border: 1px solid black; padding: 8px;\">Phương thức thanh toán</th></tr>"
+		 * +"<tr>" +
+		 * "<th style=\"border: 1px solid black; padding: 8px;\">Tổng cộng</th></tr>");
+		 */
 
 		// Lấy thông tin chi tiết của từng sản phẩm trong giỏ hàng và thêm vào bảng
+
+		bodyBuilder.append("<tr>");
 		for (int i = 0; i < productId.length; i++) {
 			Product product = productDAO.findById(Integer.parseInt(productId[i])).get();
 			int quantity = Integer.parseInt(countProduct[i]);
 
-			bodyBuilder.append("<tr>");
-			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
+			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px;width: 200px; text-align: center;\">")
 					.append(product.getName()).append("</td>");
 			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
 					.append(quantity).append("</td>");
@@ -376,15 +392,50 @@ public class OrderController {
 			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
 					.append(size.get(i)).append("</td>");
 
-			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">").append("$")
-					.append(product.getPrice()).append("</td>");
-
-			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">").append("$")
-					.append(product.getPrice() * quantity).append("</td>");
+			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px;width: 200px; text-align: center;\">")
+					.append(product.getPrice() * quantity).append("$").append("</td>");
 			bodyBuilder.append("</tr>");
 		}
+		bodyBuilder.append("<tr>");
+		bodyBuilder.append(
+				"<td style=\"border: 1px solid black; padding: 8px; text-align: center; width:50%; border-right:none;\">Tổng số phụ</td>");
+		bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+		bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+		bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
+				.append(initialPrice).append("$").append("</td>");
+		bodyBuilder.append("</tr>");
+		bodyBuilder.append("<tr>");
+		bodyBuilder.append(
+				"<td style=\"border: 1px solid black; padding: 8px; text-align: center; width:50%; border-right:none;\">Giảm giá</td>");
+		bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+		bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+		bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
+				.append(discountPrice).append("$").append("</td>");
+		bodyBuilder.append("</tr>");
+		bodyBuilder.append("<tr>");
+		bodyBuilder.append(
+				"<td style=\"border: 1px solid black; padding: 8px; text-align: center; width:50%; border-right:none;\">Phương thức thanh toán</td>");
+		bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+		bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+		bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
+				.append(selectedOption).append("</td>");
+		bodyBuilder.append("</tr>");
+		bodyBuilder.append("<tr>");
+		bodyBuilder.append(
+				"<td style=\"border: 1px solid black; padding: 8px; text-align: center; width:50%; border-right:none;\">Tổng cộng</td>");
+		bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+		bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+		bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">").append(total)
+				.append("$").append("</td>");
+		bodyBuilder.append("</tr>");
 
 		bodyBuilder.append("</table>");
+
+		bodyBuilder.append("<H5 style=\"color: Green; font-size:20px\">ĐỊA CHỈ THANH TOÁN</H5>");
+
+		bodyBuilder.append("<p style=\"color: black;\">Khách hàng: ").append(fullname).append("</p>");
+		bodyBuilder.append("<p style=\"color: black;\">Địa chỉ: ").append(fulladdress).append("</p>");
+		bodyBuilder.append("<p style=\"color: black;\">Email: ").append(email).append("</p>");
 		mail.setBody(bodyBuilder.toString());
 		mailerService.queue(mail);
 		return "redirect:/thankyou.html";

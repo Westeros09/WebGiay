@@ -1,11 +1,11 @@
 .carousel-control-prev-icon, .carousel-control-next-icon {
     filter: invert(100%);
 }
-
 /* Optional: Change the background color of the controls */
 .carousel-control-prev, .carousel-control-next {
     background-color: #000; /* Change to your desired background color */
 }
+
 table {
             width: 100%;
             border-collapse: collapse;

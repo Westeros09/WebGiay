@@ -1,5 +1,6 @@
 package com.poly.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,4 +29,7 @@ public interface DiscountProductService {
 	
 	
 	public List<DiscountProduct> findByIdProductDiscount(Integer productId);
+	
+	 
+	public List<DiscountProduct> findDiscountProductsInDateRange (LocalDate startDate, LocalDate endDate);
 }

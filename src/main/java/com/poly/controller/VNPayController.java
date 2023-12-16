@@ -60,10 +60,15 @@ public class VNPayController {
 			@RequestParam(value = "sizeId", required = false) List<Integer> size,
 			@RequestParam(value = "countProduct", required = false) List<Integer> count,
 			@RequestParam (required = false) Integer address2,
+			@RequestParam String email,
 			@RequestParam String fullname,
-			@RequestParam long total
+			@RequestParam double total
 
 	) throws UnsupportedEncodingException {
+		if (!email.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
+		    model.addAttribute("messages", "Vui lòng nhập địa chỉ email hợp lệ.");
+		    return "forward:/check"; // Quay lại trang thanh toán với thông báo lỗi
+		}
 		boolean allProductsEnough = true; // Biến để theo dõi xem tất cả sản phẩm có đủ số lượng không
 		// Tạo một danh sách để lưu trạng thái kiểm tra số lượng của từng sản phẩm
 		List<Boolean> productStatus = new ArrayList<>();
@@ -128,11 +133,11 @@ public class VNPayController {
 			model.addAttribute("messages", "Vui lòng thêm địa chỉ");
 			return "forward:/check";
 		}
-
+		long convertedTotal = (long) total;
 		String vnp_Version = "2.1.0";
 		String vnp_Command = "pay";
 		String orderType = "other";
-		long amount = total * 24000 * 100;
+		long amount = convertedTotal * 24000 * 100;
 		String bankCode = "NCB";
 
 		String vnp_TxnRef = VNPayConfig.getRandomNumber(8);

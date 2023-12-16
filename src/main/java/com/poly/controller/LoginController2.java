@@ -3,6 +3,8 @@ package com.poly.controller;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -97,6 +99,12 @@ public class LoginController2 {
 		return String.valueOf(otpValue);
 	}
 
+	private boolean isValidEmail(String email) {
+		String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
 	@RequestMapping("/register/success")
 	public String register1(Model model, @RequestParam String username, @RequestParam String password,
 			@RequestParam String fullname, @RequestParam String email, @RequestParam String confirmPassword,
@@ -118,6 +126,9 @@ public class LoginController2 {
 				if (accountDAO.findByEmail(email).isPresent()) {
 					model.addAttribute("errorm", "Địa chỉ email đã được sử dụng. Vui lòng chọn địa chỉ email khác!");
 					return "register";
+				}else if(!isValidEmail(email)) {
+					 model.addAttribute("errorm", "Địa chỉ email không hợp lệ. Vui lòng nhập lại.");
+			            return "register";
 				} else if (!password.equals(confirmPassword)) {
 					model.addAttribute("errorp", "Mật khẩu và xác nhận mật khẩu không khớp. Vui lòng nhập lại.");
 					return "register";

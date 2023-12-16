@@ -8,7 +8,7 @@
 </head>
 <body>
 
-	<div class="site-sectionn" >
+	<div class="site-sectionn">
 		<div class="container ">
 			<div class="row">
 				<div class="col-md-9 order-2">
@@ -51,7 +51,6 @@
 					</div>
 					<div class="container mb-3 mt-3">
 						<div class="row">
-
 							<div th:each="product : ${products}"
 								class="col-md-4 col-6 col-sm-4"
 								th:if="${product.available and product.category.available}">
@@ -66,13 +65,12 @@
 										<div>
 											<span th:if="${not #lists.isEmpty(discountProducts)}">
 												<span th:each="discountProduct : ${discountProducts}"
-												th:if="${discountProduct.product.id == product.id and discountProduct.active and T(java.time.LocalDate).now().isAfter(discountProduct.start_Date) and (T(java.time.LocalDate).now().isBefore(discountProduct.end_Date) or T(java.time.LocalDate).now() == discountProduct.start_Date or T(java.time.LocalDate).now() == discountProduct.end_Date)}">
+												th:if="${discountProduct.product.id == product.id and discountProduct.active and T(java.time.LocalDate).now().isAfter(discountProduct.start_Date.minusDays(1)) and (T(java.time.LocalDate).now().isBefore(discountProduct.end_Date.plusDays(1)) or T(java.time.LocalDate).now() == discountProduct.start_Date or T(java.time.LocalDate).now() == discountProduct.end_Date)}">
 													<span class="discount-badge-shoe"
 													th:text="${discountProduct.percentage + '%'}"></span>
 											</span>
 											</span>
 										</div>
-
 									</div>
 									<div class="product-details-shoe">
 										<div
@@ -82,23 +80,20 @@
 											<span
 												th:if="${product.discountProduct != null and not #lists.isEmpty(product.discountProduct) and product.discountProduct[0].active}">
 												<span
-												th:if="${T(java.time.LocalDate).now().isAfter(product.discountProduct[0].start_Date) and (T(java.time.LocalDate).now().isBefore(product.discountProduct[0].end_Date) or T(java.time.LocalDate).now() == product.discountProduct[0].end_Date)}">
+												th:if="${T(java.time.LocalDate).now().isAfter(product.discountProduct[0].start_Date.minusDays(1)) and (T(java.time.LocalDate).now().isBefore(product.discountProduct[0].end_Date.plusDays(1)) or T(java.time.LocalDate).now() == product.discountProduct[0].end_Date or T(java.time.LocalDate).now() == product.discountProduct[0].start_Date)}">
 													<span class="product-price-shoe"
 													th:text="${'$' + (product.price - (product.price * product.discountProduct[0].percentage / 100))}"></span>
 													<del class="original-price-shoe"
 														th:text="${'$' + product.price}"></del>
-
 											</span> <span
-												th:unless="${T(java.time.LocalDate).now().isAfter(product.discountProduct[0].start_Date) and (T(java.time.LocalDate).now().isBefore(product.discountProduct[0].end_Date) or T(java.time.LocalDate).now() == product.discountProduct[0].end_Date)}">
+												th:unless="${T(java.time.LocalDate).now().isAfter(product.discountProduct[0].start_Date.minusDays(1)) and (T(java.time.LocalDate).now().isBefore(product.discountProduct[0].end_Date.plusDays(1)) or T(java.time.LocalDate).now() == product.discountProduct[0].end_Date or T(java.time.LocalDate).now() == product.discountProduct[0].start_Date)}">
 													<span class="product-price-shoe"
 													th:text="${'$' + product.price}"></span>
-
 											</span>
 											</span> <span
 												th:unless="${product.discountProduct != null and not #lists.isEmpty(product.discountProduct) and product.discountProduct[0].active}">
 												<span class="product-price-shoe"
 												th:text="${'$' + product.price}"></span>
-
 											</span>
 										</div>
 									</div>
@@ -110,87 +105,107 @@
 
 
 
+
 					<div class="row" data-aos="fade-up">
 						<div class="col-md-12 text-center">
 							<div class="site-block-27 ">
 
 								<!-- ĐIỀU HƯỚNG -->
+								<!-- ĐIỀU HƯỚNG -->
 								<div th:switch="${check}" class="pagination-center">
 									<ul th:case="1">
-										<li><a th:href="@{|/shop.html/search?p=0|}">&lt;</a></li>
+										<li><a th:href="@{|/shop.html/search?p=0|}"
+											th:class="${currentPage == 0} ? 'active' : ''">&lt;</a></li>
 										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
-											<a th:href="@{|/shop.html/search?p=${i-1}|}" th:text="${i}"></a>
+											<a th:href="@{|/shop.html/search?p=${i-1}|}"
+											th:class="${currentPage == i-1} ? 'active' : ''"
+											th:text="${i}"></a>
 										</li>
 										<li><a
-											th:href="@{|/shop.html/search?p=${products.totalPages - 1}|}">&gt;</a></li>
+											th:href="@{|/shop.html/search?p=${products.totalPages - 1}|}"
+											th:class="${currentPage == products.totalPages - 1} ? 'active' : ''">&gt;</a></li>
 									</ul>
+
 									<ul th:case="2">
 										<li><a
-											th:href="@{|/shop.html/findByPrice?p=0&priceRange=${priceRange}|}">&lt;</a></li>
+											th:href="@{|/shop.html/findByPrice?p=0&priceRange=${priceRange}|}"
+											th:class="${currentPage == 0} ? 'active' : ''">&lt;</a></li>
 										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
 											<a
 											th:href="@{|/shop.html/findByPrice?p=${i-1}&priceRange=${priceRange}|}"
+											th:class="${currentPage == i-1} ? 'active' : ''"
 											th:text="${i}"></a>
 										</li>
 										<li><a
-											th:href="@{|/shop.html/findByPrice?p=${products.totalPages - 1}&priceRange=${priceRange}|}">&gt;</a></li>
+											th:href="@{|/shop.html/findByPrice?p=${products.totalPages - 1}&priceRange=${priceRange}|}"
+											th:class="${currentPage == products.totalPages - 1} ? 'active' : ''">&gt;</a></li>
 									</ul>
 
-
-
-
-
-
 									<ul th:case="3">
-										<li><a th:href="@{|/shop.html/searchBrand?p=0|}">&lt;</a></li>
+										<li><a th:href="@{|/shop.html/searchBrand?p=0|}"
+											th:class="${currentPage == 0} ? 'active' : ''">&lt;</a></li>
 										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
 											<a th:href="@{|/shop.html/searchBrand?p=${i-1}|}"
+											th:class="${currentPage == i-1} ? 'active' : ''"
 											th:text="${i}"></a>
 										</li>
 										<li><a
-											th:href="@{|/shop.html/searchBrand?p=${products.totalPages - 1}|}">&gt;</a></li>
+											th:href="@{|/shop.html/searchBrand?p=${products.totalPages - 1}|}"
+											th:class="${currentPage == products.totalPages - 1} ? 'active' : ''">&gt;</a></li>
 									</ul>
 
 									<ul th:case="4">
-										<li><a th:href="@{|/shop.html/sort?p=0|}">&lt;</a></li>
+										<li><a th:href="@{|/shop.html/sort?p=0|}"
+											th:class="${currentPage == 0} ? 'active' : ''">&lt;</a></li>
 										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
-											<a th:href="@{|/shop.html/sort?p=${i-1}|}" th:text="${i}"></a>
+											<a th:href="@{|/shop.html/sort?p=${i-1}|}"
+											th:class="${currentPage == i-1} ? 'active' : ''"
+											th:text="${i}"></a>
 										</li>
 										<li><a
-											th:href="@{|/shop.html/sort?p=${products.totalPages - 1}|}">&gt;</a></li>
+											th:href="@{|/shop.html/sort?p=${products.totalPages - 1}|}"
+											th:class="${currentPage == products.totalPages - 1} ? 'active' : ''">&gt;</a></li>
 									</ul>
 
 									<ul th:case="5">
-										<li><a th:href="@{|/shop.html/sort1?p=0|}">&lt;</a></li>
+										<li><a th:href="@{|/shop.html/sort1?p=0|}"
+											th:class="${currentPage == 0} ? 'active' : ''">&lt;</a></li>
 										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
-											<a th:href="@{|/shop.html/sort1?p=${i-1}|}" th:text="${i}"></a>
+											<a th:href="@{|/shop.html/sort1?p=${i-1}|}"
+											th:class="${currentPage == i-1} ? 'active' : ''"
+											th:text="${i}"></a>
 										</li>
 										<li><a
-											th:href="@{|/shop.html/sort1?p=${products.totalPages - 1}|}">&gt;</a></li>
+											th:href="@{|/shop.html/sort1?p=${products.totalPages - 1}|}"
+											th:class="${currentPage == products.totalPages - 1} ? 'active' : ''">&gt;</a></li>
 									</ul>
 
 									<ul th:case="6">
 										<li><a
-											th:href="@{|/findSizeProducts?size=${size}&page=0|}">&lt;</a></li>
+											th:href="@{|/findSizeProducts?size=${size}&page=0|}"
+											th:class="${currentPage == 0} ? 'active' : ''">&lt;</a></li>
 										<li
 											th:each="i : ${#numbers.sequence(0, products.totalPages - 1)}">
 											<a th:href="@{|/findSizeProducts?size=${size}&page=${i}|}"
+											th:class="${currentPage == i} ? 'active' : ''"
 											th:text="${i + 1}"></a>
 										</li>
 										<li><a
-											th:href="@{|/findSizeProducts?size=${size}&page=${products.totalPages - 1}|}">&gt;</a></li>
+											th:href="@{|/findSizeProducts?size=${size}&page=${products.totalPages - 1}|}"
+											th:class="${currentPage == products.totalPages - 1} ? 'active' : ''">&gt;</a></li>
 									</ul>
- 	
-
-
 
 									<ul th:case="*">
-										<li><a th:href="@{|/shop.html?p=0|}">&lt;</a></li>
+										<li><a th:href="@{|/shop.html?p=0|}"
+											th:class="${currentPage == 0} ? 'active' : ''">&lt;</a></li>
 										<li th:each="i : ${#numbers.sequence(1, products.totalPages)}">
-											<a th:href="@{|/shop.html?p=${i-1}|}" th:text="${i}"></a>
+											<a th:href="@{|/shop.html?p=${i-1}|}"
+											th:class="${currentPage == i-1} ? 'active' : ''"
+											th:text="${i}"></a>
 										</li>
 										<li><a
-											th:href="@{|/shop.html?p=${products.totalPages - 1}|}">&gt;</a></li>
+											th:href="@{|/shop.html?p=${products.totalPages - 1}|}"
+											th:class="${currentPage == products.totalPages - 1} ? 'active' : ''">&gt;</a></li>
 									</ul>
 								</div>
 
@@ -288,7 +303,7 @@
 
 
 
-	<div class="container-fluid col-sm-10 mt-5"  data-aos="fade-up">
+	<div class="container-fluid col-sm-10 mt-5" data-aos="fade-up">
 		<img src="/images/bannerIndex.jpg" style="height: 350px; width: 100%"
 			alt="...">
 	</div>

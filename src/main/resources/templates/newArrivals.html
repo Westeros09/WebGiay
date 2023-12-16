@@ -16,31 +16,32 @@
 				class="col-md-3 col-6 col-sm-6"
 				th:if="${newProduct.available} and ${newProduct.category.available}">
 				<div class="product-card-shoe">
+
 					<div class="product-image-container">
-					<a th:href="@{|/shop-single.html/${newProduct.id}|}">
-					<img class="product-image-shoe img-fluid"
+						<a th:href="@{|/shop-single.html/${newProduct.id}|}"><img
+							class="product-image-shoe"
 							th:src="@{|/images/${newProduct.images[0].image}|}"
-							th:alt="${newProduct.name}">
-					
-					</a>
-						
+							th:alt="${newProduct.name}"></a>
+
 						<div class="discount-badge-shoe"
 							th:if="${newProduct.discountProduct != null and not #lists.isEmpty(newProduct.discountProduct) and
-                             (T(java.time.LocalDate).now().isAfter(newProduct.discountProduct[0].start_Date) and
-                             (T(java.time.LocalDate).now().isBefore(newProduct.discountProduct[0].end_Date) or
-                             T(java.time.LocalDate).now().isEqual(newProduct.discountProduct[0].end_Date)))} and ${newProduct.discountProduct[0].active}">
+         newProduct.discountProduct[0].active and
+         (T(java.time.LocalDate).now().isAfter(newProduct.discountProduct[0].start_Date) and
+         T(java.time.LocalDate).now().isBefore(newProduct.discountProduct[0].end_Date) or
+         (T(java.time.LocalDate).now().isEqual(newProduct.discountProduct[0].start_Date) or T(java.time.LocalDate).now().isEqual(newProduct.discountProduct[0].end_Date)))}">
 							<span th:text="${newProduct.discountProduct[0].percentage + '%'}"></span>
 						</div>
+
 					</div>
 					<div class="product-details-shoe">
 						<div class="product-title-shoe text-truncate"
 							th:text="${newProduct.name}"></div>
 						<div
 							th:if="${newProduct.discountProduct != null and not #lists.isEmpty(newProduct.discountProduct) and
-                             newProduct.discountProduct[0].active and
-                             (T(java.time.LocalDate).now().isAfter(newProduct.discountProduct[0].start_Date) and
-                             (T(java.time.LocalDate).now().isBefore(newProduct.discountProduct[0].end_Date) or
-                             T(java.time.LocalDate).now().isEqual(newProduct.discountProduct[0].end_Date)))} and ${newProduct.discountProduct[0].active}">
+         newProduct.discountProduct[0].active and
+         (T(java.time.LocalDate).now().isAfter(newProduct.discountProduct[0].start_Date) and
+         T(java.time.LocalDate).now().isBefore(newProduct.discountProduct[0].end_Date) or
+         (T(java.time.LocalDate).now().isEqual(newProduct.discountProduct[0].start_Date) or T(java.time.LocalDate).now().isEqual(newProduct.discountProduct[0].end_Date)))}">
 							<span class="product-price-shoe"
 								th:text="${'$' + (newProduct.price - (newProduct.price * newProduct.discountProduct[0].percentage / 100))}"></span>
 							<del class="original-price-shoe"
@@ -63,6 +64,7 @@
 			</div>
 		</div>
 	</div>
+
 
 	<div class="row" data-aos="fade-up">
 		<div class="col-md-12 text-center">
