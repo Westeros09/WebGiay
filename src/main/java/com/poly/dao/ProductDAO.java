@@ -19,7 +19,8 @@ import com.poly.entity.Report;
 @SessionScope
 public interface ProductDAO extends JpaRepository<Product, Integer> {
 
-	@Query("SELECT p FROM Product p WHERE p.price BETWEEN :minPrice AND :maxPrice ORDER BY p.price ASC")
+	 @Query("SELECT p FROM Product p WHERE p.price BETWEEN :minPrice AND :maxPrice AND p.available = true ORDER BY p.price ASC")
+
 	Page<Product> findByPriceBetween(@Param("minPrice") Double minPrice, @Param("maxPrice") Double maxPrice,
 			Pageable pageable);
 
@@ -96,13 +97,13 @@ public interface ProductDAO extends JpaRepository<Product, Integer> {
 	 * ) Page<Product> findProductsBySize(@Param("sizeList") List<Integer> sizeList,
 	 * Pageable pageable);
 	 */
-	@Query("SELECT DISTINCT p FROM Product p JOIN p.sizes s WHERE s.sizes IN (36, 37, 38)")
+	@Query("SELECT DISTINCT p FROM Product p JOIN p.sizes s WHERE s.sizes IN (36, 37, 38) AND p.available = true")
 	Page<Product> findProductsBySize36To38(Pageable pageable);
 
-	@Query("SELECT DISTINCT p FROM Product p JOIN p.sizes s WHERE s.sizes IN (40, 41, 42)")
+	@Query("SELECT DISTINCT p FROM Product p JOIN p.sizes s WHERE s.sizes IN (40, 41, 42) AND p.available = true")
 	Page<Product> findProductsBySize40To42(Pageable pageable);
 
-	@Query("SELECT DISTINCT p FROM Product p JOIN p.sizes s WHERE s.sizes IN (42, 43, 44)")
+	@Query("SELECT DISTINCT p FROM Product p JOIN p.sizes s WHERE s.sizes IN (42, 43, 44) AND p.available = true")
 	Page<Product> findProductsBySize42To44(Pageable pageable);
 
 	@Query(value = "SELECT distinct p.* FROM Products p JOIN Sizes s ON p.id = s.product_id WHERE s.size IN (36,37,38) ", nativeQuery = true)
