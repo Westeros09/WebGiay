@@ -325,6 +325,7 @@ public class OrderController {
 				order.setTongtien(total);
 				order.setAvailable(false);
 				order.setCity(a.get().getCity());
+				order.setDiscountCode(discount);
 				Order newOrder = orderDAO.saveAndFlush(order);
 
 				// ADD OrderDetail

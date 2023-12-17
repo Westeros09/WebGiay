@@ -73,7 +73,7 @@ public interface ProductDAO extends JpaRepository<Product, Integer> {
 
 	List<Product> topProduct();
 
-	@Query(value = "SELECT TOP 4 * FROM products WHERE Products.available = 'true' ORDER BY products.id DESC", nativeQuery = true)
+	@Query(value = "SELECT TOP 8 * FROM products WHERE Products.available = 'true' ORDER BY products.id DESC", nativeQuery = true)
 	List<Product> NewProduct();
 
 	@Query(value = "SELECT p FROM Product p WHERE p.available = true ORDER BY p.id DESC")
