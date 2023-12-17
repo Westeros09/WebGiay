@@ -165,7 +165,7 @@
 										<div class="col-md-12 pt-4">
 											<label class="text-danger" th:text="${session.messagesAddress}"></label>
 											<select class="form-select" name="address2" id="address2">
-												<option selected disabled>Open address menu</option>
+<!--												<option selected disabled>Open address menu</option>-->
 												<!-- Kiểm tra điều kiện userAddresses null hoặc trống -->
 												<th:block
 													th:if="${userAddresses == null or #lists.isEmpty(userAddresses)}">

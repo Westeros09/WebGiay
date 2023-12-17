@@ -158,7 +158,7 @@ public class OrderController {
 	@PostMapping("checkout.html")
 	public String checkout1(Model model, @RequestParam String address, @RequestParam String[] productId,
 			@RequestParam("code") String code, @RequestParam("options") String selectedOption, // PT thanh toán
-			@RequestParam("initialPrice") Double initialPrice, // PT thanh toán
+			@RequestParam("initialPrice") Double initialPrice, // tiền ban đầu
 			@RequestParam(name = "discountPrice", defaultValue = "0") Double discountPrice, // giảm giá
 			@RequestParam(value = "address2", required = false) Integer address2, @RequestParam String[] sizeId,
 			@RequestParam String[] countProduct, @RequestParam String email, @RequestParam String fullname,
@@ -166,7 +166,6 @@ public class OrderController {
 			@RequestParam(value = "provinceLabel", required = false) String provinceLabel,
 			@RequestParam(value = "districtLabel", required = false) String districtLabel,
 			@RequestParam(value = "wardLabel", required = false) String wardLabel,
-
 			@RequestParam(value = "productId", required = false) List<Integer> productID,
 			@RequestParam(value = "sizeId", required = false) List<Integer> size,
 			@RequestParam(value = "countProduct", required = false) List<Integer> count,
@@ -349,7 +348,6 @@ public class OrderController {
 		}
 
 		//// GỬI MAIL ////
-		System.out.println(email);
 		MailInfo mail = new MailInfo();
 		mail.setTo(email);
 		mail.setSubject("Đơn hàng của bạn đã đặt thành công");
@@ -364,17 +362,6 @@ public class OrderController {
 				+ "<th style=\"border: 1px solid black; padding: 8px;\">Số lượng</th>"
 				+ "<th style=\"border: 1px solid black; padding: 8px;\">Size</th>"
 				+ "<th style=\"border: 1px solid black; padding: 8px;width: 200px;\">Giá</th></tr>");
-
-		/*
-		 * +"<tr>" +
-		 * "<th style=\"border: 1px solid black; padding: 8px;\">Tổng số phụ</th></tr>"
-		 * +"<tr>" +
-		 * "<th style=\"border: 1px solid black; padding: 8px;\">Giảm giá</th></tr>"
-		 * +"<tr>" +
-		 * "<th style=\"border: 1px solid black; padding: 8px;\">Phương thức thanh toán</th></tr>"
-		 * +"<tr>" +
-		 * "<th style=\"border: 1px solid black; padding: 8px;\">Tổng cộng</th></tr>");
-		 */
 
 		// Lấy thông tin chi tiết của từng sản phẩm trong giỏ hàng và thêm vào bảng
 
