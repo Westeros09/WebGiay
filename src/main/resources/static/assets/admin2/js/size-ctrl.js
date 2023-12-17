@@ -28,7 +28,7 @@ app.controller("size-ctrl", function($scope, $http) {
 			return false;
 		}
 
-		if (!$scope.form.quantity || $scope.form.quantity <= 0) {
+		if (!$scope.form.quantity || $scope.form.quantity < 0) {
 			alert("Vui lòng nhập Quantity hợp lệ!");
 			return false;
 		}
@@ -39,7 +39,7 @@ app.controller("size-ctrl", function($scope, $http) {
 
 		// Chuyển đổi quantity thành số và kiểm tra nó
 		const quantity = parseInt($scope.form.quantity, 10);
-		if (isNaN(quantity) || quantity <= 0) {
+		if (isNaN(quantity) || quantity < 0) {
 			alert("Vui lòng nhập Quantity là số dương!");
 			return false;
 		}
