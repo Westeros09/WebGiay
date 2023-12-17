@@ -379,7 +379,7 @@ public class OrderController {
 					.append(size.get(i)).append("</td>");
 
 			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px;width: 200px; text-align: center;\">")
-					.append(product.getPrice() * quantity).append("$").append("</td>");
+					.append(priceTotal.get(i)).append("$").append("</td>");
 			bodyBuilder.append("</tr>");
 		}
 		bodyBuilder.append("<tr>");
