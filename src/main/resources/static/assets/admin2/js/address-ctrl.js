@@ -76,55 +76,101 @@ app.controller("address-ctrl", function($scope, $http) {
 	}
 
 	$scope.create = function() {
-		/*	console.log($("#province option:selected").text());
-			console.log($("#district option:selected").text());
-			console.log($("#ward option:selected").text());
-			console.log("Form data before copy:", $scope.form);*/
-
 		var item = angular.copy($scope.form);
-
 		item.city = ($("#province option:selected").text());
 		item.district = ($("#district option:selected").text());
 		item.ward = ($("#ward option:selected").text());
 		let streetInput = $('#address');
 		item.street = streetInput.val();
-
 		item.addressDetail = (streetInput.val() + "," + $("#ward option:selected").text() + "," + $("#district option:selected").text() + "," + $("#province option:selected").text());
-		console.log(item.city);
-		console.log(item.district);
-		console.log(item.ward);
 
 		// Check if the necessary address information is present
 		if (item.city && item.district && item.ward) {
+			// Check if there is an existing item with the same ID
+			var existingItemIndex = $scope.items.findIndex(existingItem => existingItem.id === item.id);
 
+			if (existingItemIndex !== -1) {
+				
+				$http.put(`/rest/address/${item.id}`, item).then(resp => {
+					
+					if ($("#province option:selected").val() === "") {
+						alert("Vui lòng chọn tỉnh trước khi cập nhật.");
+						return; // Dừng hàm nếu tỉnh chưa được chọn
+					}
+					if ($("#district option:selected").val() === "") {
+						alert("Vui lòng chọn quận/huyện trước khi cập nhật.");
+						return; // Dừng hàm nếu tỉnh chưa được chọn
+					} if ($("#ward option:selected").val() === "") {
+						alert("Vui lòng chọn phường/xã trước khi cập nhật.");
+						return; // Dừng hàm nếu tỉnh chưa được chọn
+					} if (!$scope.form.street) {
+						alert("Vui lòng nhập tên đường trước khi cập nhật");
+						return;
+					}
+					// Update the item in the items array
+					$scope.items[existingItemIndex] = resp.data;
 
-			$http.post(`/rest/address`, item).then(resp => {
-				$scope.items.push(resp.data);
+					// Thêm code gọi API cập nhật addressdetails
+					var addressDetailsData = {
+						addressId: item.id,
+						// Add other fields if needed
+					};
 
-				$scope.reset();
+					$http.post(`/rest/addressdetails`, addressDetailsData).then(resp => {
+						// Cập nhật addressdetails thành công
+					}).catch(error => {
+						console.log("Error updating addressdetails", error);
+					});
 
-				// Thêm code gọi API cập nhật addressdetails
-				var newAddressId = resp.data.id;
-				var addressDetailsData = {
-					addressId: newAddressId,
-					// Add other fields if needed
-				};
-
-				$http.post(`/rest/addressdetails`, addressDetailsData).then(resp => {
-					// Cập nhật addressdetails thành công
+					alert("Cập nhật thành công!");
 				}).catch(error => {
-					console.log("Error updating addressdetails", error);
+					alert("Cập nhật địa chỉ không thành công");
+					console.log("Error", error);
 				});
+			} else {
+				// If ID is not found, add a new item
+				$http.post(`/rest/address`, item).then(resp => {
 
-				alert("Thêm mới thành công!");
-			}).catch(error => {
-				alert("Thêm địa chỉ không thành công");
-				console.log("Error", error);
-			});
-		} else {
-			alert("Vui lòng chọn đầy đủ thông tin địa chỉ (province, district, ward) trước khi tạo.");
+					if ($("#province option:selected").val() === "") {
+						alert("Vui lòng chọn tỉnh trước khi tạo.");
+						return; // Dừng hàm nếu tỉnh chưa được chọn
+					}
+					if ($("#district option:selected").val() === "") {
+						alert("Vui lòng chọn quận/huyện trước khi tạo.");
+						return; // Dừng hàm nếu tỉnh chưa được chọn
+					} if ($("#ward option:selected").val() === "") {
+						alert("Vui lòng chọn phường/xã trước khi tạo.");
+						return; // Dừng hàm nếu tỉnh chưa được chọn
+					}
+					if (!$scope.form.street) {
+						alert("Vui lòng nhập tên đường trước khi tạo");
+						return;
+					}
+
+					$scope.items.push(resp.data);
+
+					// Thêm code gọi API cập nhật addressdetails
+					var newAddressId = resp.data.id;
+					var addressDetailsData = {
+						addressId: newAddressId,
+						// Add other fields if needed
+					};
+
+					$http.post(`/rest/addressdetails`, addressDetailsData).then(resp => {
+						// Cập nhật addressdetails thành công
+					}).catch(error => {
+						console.log("Error updating addressdetails", error);
+					});
+
+					alert("Thêm mới thành công!");
+				}).catch(error => {
+					alert("Thêm địa chỉ không thành công");
+
+					console.log("Error", error);
+				});
+			}
 		}
-	}
+	};
 
 	$scope.edit = function(item) {
 		// Copy the properties of the selected item to $scope.form
@@ -142,10 +188,10 @@ app.controller("address-ctrl", function($scope, $http) {
 			$("#district").change();
 
 			setTimeout(function() {
-				$("#ward").change();
+
 				$("#ward").val(item.ward);
-				
-			}, 100);
+				$("#ward").change();
+			}, 200);
 		}, 200);
 	}
 
@@ -158,7 +204,7 @@ app.controller("address-ctrl", function($scope, $http) {
 		});
 	};
 
-	$scope.update = function() {
+	/*$scope.update = function() {
 		var item = angular.copy($scope.form);
 		console.log(item);
 
@@ -178,7 +224,7 @@ app.controller("address-ctrl", function($scope, $http) {
 			console.log("Update error:", error);
 			alert("Lỗi cập nhật !");
 		});
-	}
+	}*/
 
 
 
@@ -234,7 +280,7 @@ app.controller("address-ctrl", function($scope, $http) {
 	}
 	$scope.reset = function() {
 		$scope.form = {
-			province :null,
+			province: null,
 			available: true
 
 		}

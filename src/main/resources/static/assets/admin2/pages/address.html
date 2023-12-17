@@ -144,31 +144,33 @@
 						<div class="panel-body">
 							<div class="row container text-x font-weight-bolder">
 								<div class="col-sm-12">
-   <label for="formDiscountAmount" class="form-label">Account Id</label>
-   <select ng-model="form.account.username" class="form-control">
-      <option value="" disabled selected>Select Account Id</option>
-      <option ng-repeat="a in accounts" ng-value="a.username">{{a.username}} {{a.name}}</option>
-   </select>
-
-   <label for="province" class="text-black">Province/City<span class="text-danger">*</span></label>
-   <select class="form-select mb-3" ng-model="form.province" id="province" name="provinceLabel">
-      <option value="">Choose province/city</option>
-      <!-- Populate options from API or other data source -->
-   </select>
-
-   <label for="district" class="text-black">District<span class="text-danger">*</span></label>
-   <select class="form-select mb-3" ng-model="form.district" ng-options="district.name for district in districts" id="district" name="districtLabel">
-      <option value="">Choose district</option>
-   </select>
-
-   <label for="ward" class="text-black">Ward<span class="text-danger">*</span></label>
-   <select class="form-select mb-3" ng-model="form.ward" ng-options="ward.name for ward in wards" id="ward" name="wardLabel">
-      <option value="">Choose ward</option>
-   </select>
-
-   <label for="address" class="text-black">Street Name<span class="text-danger">*</span></label>
-   <input type="text" class="form-control" id="address" ng-model="form.street" name="address" placeholder="Street Name">
-</div>
+									<label for="formDiscountAmount" class="form-label">Account
+										Id</label> <select ng-model="form.account.username" 
+										class="form-control">
+										<option value="" disabled selected>Select Account Id</option>
+										<option ng-repeat="a in accounts" ng-value="a.username">{{a.username}}
+											{{a.name}}</option>
+									</select> <label for="province" class="text-black">Province/City<span
+										class="text-danger">*</span></label> <select class="form-select mb-3"
+										ng-model="form.province" id="province" name="provinceLabel">
+										<option value="">Choose province/city</option>
+										<!-- Populate options from API or other data source -->
+									</select> <label for="district" class="text-black">District<span
+										class="text-danger">*</span></label> <select class="form-select mb-3"
+										ng-model="form.district"
+										ng-options="district.name for district in districts"
+										id="district" name="districtLabel">
+										<option value="">Choose district</option>
+									</select> <label for="ward" class="text-black">Ward<span
+										class="text-danger">*</span></label> <select class="form-select mb-3"
+										ng-model="form.ward" ng-options="ward.name for ward in wards"
+										id="ward" name="wardLabel">
+										<option value="">Choose ward</option>
+									</select> <label for="address" class="text-black">Street Name<span
+										class="text-danger">*</span></label> <input type="text"
+										class="form-control" id="address" ng-model="form.street"
+										name="address" placeholder="Street Name">
+								</div>
 
 							</div>
 
@@ -195,14 +197,13 @@
 					<h6>Address Edit</h6>
 				</div>
 				<div class="panel-footer text-center">
-					<button ng-click="create()" ng-disabled="form.id"
+					<button ng-click="create()"
 						class="btn btn-primary">
-						<b class="glyphicon glyphicon-plus"></b> Create
+						<b class="glyphicon glyphicon-plus"></b> {{form.id ? 'Update' :
+						'Create'}}
 					</button>
-					<button ng-click="update()" ng-disabled="!form.id"
-						class="btn btn-success">
-						<b class="glyphicon glyphicon-save"></b> Update
-					</button>
+					
+
 					<button ng-click="delete(form)" ng-disabled="!form.id"
 						class="btn btn-danger">
 						<b class="glyphicon glyphicon-trash"></b> Delete
