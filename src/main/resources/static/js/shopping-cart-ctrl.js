@@ -4,7 +4,7 @@ app.controller("cart-ctrl", function($scope, $http, $window) {
 	$scope.cart = [];
 
 	$scope.selectedSize = '';
-
+	// code hiển thị thông báo add giỏ hàng thành công. 
 	function displayModal() {
 		var modal = document.getElementById('myModal');
 		modal.classList.add('show');
@@ -18,10 +18,13 @@ app.controller("cart-ctrl", function($scope, $http, $window) {
 	}
 
 
-
+	//  check size lúc click vào button. 
 	$scope.getSize = function(event) {
+
+		// lấy id sản phẩm từ URL sau dấu / 
 		var urlParts = window.location.href.split('/');
 		var id = urlParts[urlParts.length - 1];
+		// lấy size từ sự kiện click 
 		var size = event.target.innerText;
 		$scope.selectedSize = size.trim();
 		var buttons = document.getElementsByClassName('btn');
@@ -46,71 +49,88 @@ app.controller("cart-ctrl", function($scope, $http, $window) {
 		}
 
 	}
-	$scope.totalCount = 0; // Khai báo biến totalCount trong $scope
-	$scope.getOrderDetails = function() {
-		var buttons = document.getElementsByClassName('btn-secondary');
-		for (var i = 0; i < buttons.length; i++) {
-			buttons[i].addEventListener('click', function(event) {
-				var orderId = event.currentTarget.parentNode.querySelector('#orderId').value;
 
-				$http.get(`/rest/products/repurchase/${orderId}`)
-					.then(function(response) {
-						var orderDetails = response.data.orderDetails;
-						$scope.cart.items = [];
-						if (orderDetails && orderDetails.length > 0) {
-							for (var j = 0; j < orderDetails.length; j++) {
-								(function(orderDetail) {
-									var spanElement = document.getElementById('remoteUi');
-									var spanText = spanElement !== null ? spanElement.innerText : null;
-									console.log(spanText);
-									var accountData = null;
-									var productData = null;
-									$http.get(`/rest/accounts/${spanText}`).then(account => {
-										accountData = account.data;
-										$http.get(`/rest/products/${orderDetail.id}`).then(product => {
-											productData = product.data;
-											var data = {
-												account: accountData,
-												product: productData,
-												image: orderDetail.image,
-												name: orderDetail.name,
-												size: orderDetail.sizes,
-												price: orderDetail.price,
-												qty: orderDetail.qty,
-												total: orderDetail.price * orderDetail.qty,
-												status: true,
-											};
-											$http({
-												method: 'POST',
-												url: '/rest/carts',
-												data: data
-											}).then(function(response) {
-												console.log("Dữ liệu đã được lưu vào cơ sở dữ liệu", response.data);
-											}).catch(function(error) {
-												console.error("Lỗi khi lưu dữ liệu vào cơ sở dữ liệu: ", error);
-											});
-											$window.location.reload();
-											window.location.href = 'http://localhost:8080/cart.html';
-										});
-									});
-									console.log(orderDetail);
-									$scope.cart.items.push(orderDetail);
-								})(orderDetails[j]);
+$scope.totalCount = 0; // Khai báo biến totalCount trong $scope
+$scope.getOrderDetails = function() {
+    var buttons = document.getElementsByClassName('btn-secondary');
+    for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('click', function(event) {
+            var orderId = event.currentTarget.parentNode.querySelector('#orderId').value;
 
-							}
-						} else {
-							console.log("No order details found");
-						}
+            $http.get(`/rest/products/repurchase/${orderId}`)
+                .then(function(response) {
+                    var orderDetails = response.data.orderDetails;
+                    $scope.cart.items = [];
+                    if (orderDetails && orderDetails.length > 0) {
+                        for (var j = 0; j < orderDetails.length; j++) {
+                            (function(orderDetail) {
+                                var spanElement = document.getElementById('remoteUi');
+                                var spanText = spanElement !== null ? spanElement.innerText : null;
+                                console.log(spanText);
+                                var accountData = null;
+                                var productData = null;
+                                $http.get(`/rest/accounts/${spanText}`).then(function(account) {
+                                    accountData = account.data;
+                                    $http.get(`/rest/products/${orderDetail.id}`).then(function(product) {
+                                        productData = product.data;
+
+                                        $http.get(`/rest/products/${orderDetail.id}/price`).then(function(totalAmount) {
+                                            if (totalAmount.data.length > 0) {
+                                                productData.percentage = totalAmount.data[0].percentage;
+                                            } else {
+                                                productData.percentage = 0; // Nếu không có giảm giá, đặt percentage = 0
+                                            }
+
+                                            var itemPrice = orderDetail.price;
+
+                                            // Nếu có giảm giá, tính giá mới
+                                            if (productData.percentage > 0) {
+                                                itemPrice = itemPrice - (itemPrice * productData.percentage / 100);
+                                            }
+
+                                            var data = {
+                                                account: accountData,
+                                                product: productData,
+                                                image: orderDetail.image,
+                                                name: orderDetail.name,
+                                                size: orderDetail.sizes,
+                                                price: itemPrice,
+                                                qty: orderDetail.qty,
+                                                total: orderDetail.price * orderDetail.qty,
+                                                status: true,
+                                            };
+                                            $http({
+                                                method: 'POST',
+                                                url: '/rest/carts',
+                                                data: data
+                                            }).then(function(response) {
+                                                console.log("Dữ liệu đã được lưu vào cơ sở dữ liệu", response.data);
+                                            }).catch(function(error) {
+                                                console.error("Lỗi khi lưu dữ liệu vào cơ sở dữ liệu: ", error);
+                                            });
+                                            $window.location.reload();
+                                            window.location.href = 'http://localhost:8080/cart.html';
+                                        });
+                                    });
+                                    console.log(orderDetail);
+                                    $scope.cart.items.push(orderDetail);
+                                });
+                            })(orderDetails[j]);
+                        }
+                    } else {
+                        console.log("No order details found");
+                    }
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+            event.currentTarget.removeEventListener('click', this);
+        });
+    }
+};
 
 
-					})
-					.catch(function(error) {
-						console.error(error);
-					});
-				event.currentTarget.removeEventListener('click', this);
-			});
-		}
-	};
+
 
 	var $cart = $scope.cart = {
 		items: [],
@@ -125,7 +145,7 @@ app.controller("cart-ctrl", function($scope, $http, $window) {
 			if (spanText == null) {
 				try {
 					alert("Vui lòng đăng nhập");
-					
+
 					window.location.href = "/login";
 					return;
 				} catch (error) {

@@ -34,9 +34,11 @@ import com.poly.dao.ProductDAO;
 import com.poly.dao.SizeDAO;
 import com.poly.entity.Account;
 import com.poly.entity.Address;
+import com.poly.entity.MailInfo;
 import com.poly.entity.Order;
 import com.poly.entity.OrderDetail;
 import com.poly.entity.Product;
+import com.poly.service.MailerService;
 
 @Controller
 public class VNPayController {
@@ -52,6 +54,8 @@ public class VNPayController {
 	ProductDAO productDAO;
 	@Autowired
 	OrderDetailDAO orderDetailDAO;
+	@Autowired
+	MailerService mailerService; // mail
 	String fulladdress;
 
 	@GetMapping("/VnPay")
@@ -59,15 +63,15 @@ public class VNPayController {
 			@RequestParam(value = "productId", required = false) List<Integer> productID,
 			@RequestParam(value = "sizeId", required = false) List<Integer> size,
 			@RequestParam(value = "countProduct", required = false) List<Integer> count,
-			@RequestParam (required = false) Integer address2,
-			@RequestParam String email,
-			@RequestParam String fullname,
-			@RequestParam double total
+			@RequestParam(required = false) Integer address2, @RequestParam String fullname, @RequestParam double total,
+			@RequestParam String email, @RequestParam("options") String selectedOption, // PT thanh toán
+			@RequestParam("initialPrice") Double initialPrice, // tiền ban đầu
+			@RequestParam(name = "discountPrice", defaultValue = "0") Double discountPrice // giảm giá
 
 	) throws UnsupportedEncodingException {
 		if (!email.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
-		    model.addAttribute("messages", "Vui lòng nhập địa chỉ email hợp lệ.");
-		    return "forward:/check"; // Quay lại trang thanh toán với thông báo lỗi
+			model.addAttribute("messages", "Vui lòng nhập địa chỉ email hợp lệ.");
+			return "forward:/check"; // Quay lại trang thanh toán với thông báo lỗi
 		}
 		boolean allProductsEnough = true; // Biến để theo dõi xem tất cả sản phẩm có đủ số lượng không
 		// Tạo một danh sách để lưu trạng thái kiểm tra số lượng của từng sản phẩm
@@ -121,7 +125,7 @@ public class VNPayController {
 					"Số lượng đơn giày của bạn muốn mua lớn hơn số lượng tồn kho cho ít nhất một sản phẩm!");
 			return "cart.html";
 		}
-		
+
 		if (address2 != null) {
 			request.getSession().setAttribute("productID", productID);
 			request.getSession().setAttribute("size", size);
@@ -129,6 +133,10 @@ public class VNPayController {
 			request.getSession().setAttribute("address2", address2);
 			request.getSession().setAttribute("total", total);
 			request.getSession().setAttribute("fullname", fullname);
+			request.getSession().setAttribute("email", email);
+			request.getSession().setAttribute("selectedOption", selectedOption);
+			request.getSession().setAttribute("initialPrice", initialPrice);
+			request.getSession().setAttribute("discountPrice", discountPrice);
 		} else {
 			model.addAttribute("messages", "Vui lòng thêm địa chỉ");
 			return "forward:/check";
@@ -203,15 +211,21 @@ public class VNPayController {
 	}
 
 	@GetMapping("/payment-confirm")
-	public String handlePaymentResult(Model model, HttpServletRequest request, @RequestParam("vnp_ResponseCode") String responseCode) {
+	public String handlePaymentResult(Model model, HttpServletRequest request,
+			@RequestParam("vnp_ResponseCode") String responseCode) {
 		if (responseCode.equals("00")) {
 			List<Integer> productID = (List<Integer>) request.getSession().getAttribute("productID");
 			List<Integer> size = (List<Integer>) request.getSession().getAttribute("size");
 			List<Integer> count = (List<Integer>) request.getSession().getAttribute("count");
 			Integer address2 = (Integer) request.getSession().getAttribute("address2");
-			long total = (long) request.getSession().getAttribute("total");
-			String fullname =  (String) request.getSession().getAttribute("fullname");
-			//THÊM VÀO ORDER DB		
+			Double total = (Double) request.getSession().getAttribute("total");
+			String fullname = (String) request.getSession().getAttribute("fullname");
+
+			String email = (String) request.getSession().getAttribute("email");
+			String selectedOption = (String) request.getSession().getAttribute("selectedOption");
+			Double discountPrice = (Double) request.getSession().getAttribute("discountPrice");
+			Double initialPrice = (Double) request.getSession().getAttribute("initialPrice");
+			// THÊM VÀO ORDER DB
 			Order order = new Order();
 			Timestamp now = new Timestamp(new Date().getTime());
 			String username = request.getRemoteUser();
@@ -241,6 +255,88 @@ public class VNPayController {
 				orderDetail.setQuantity(count.get(i));
 				orderDetailDAO.save(orderDetail);
 			}
+			//// GỬI MAIL ////
+
+			MailInfo mail = new MailInfo();
+			mail.setTo(email);
+			mail.setSubject("Đơn hàng của bạn đã đặt thành công");
+
+			// Tạo nội dung email
+			StringBuilder bodyBuilder = new StringBuilder();
+			bodyBuilder.append("<H5 style=\"color: Green; font-size:20px\">ĐƠN HÀNG CỦA BẠN</H5>");
+
+			// Tạo bảng với CSS
+			bodyBuilder.append("<table style=\"border-collapse: collapse;\">");
+			bodyBuilder
+					.append("<tr>" + "<th style=\"border: 1px solid black; padding: 8px; width: 200px;\">Sản phẩm</th>"
+							+ "<th style=\"border: 1px solid black; padding: 8px;\">Số lượng</th>"
+							+ "<th style=\"border: 1px solid black; padding: 8px;\">Size</th>"
+							+ "<th style=\"border: 1px solid black; padding: 8px;width: 200px;\">Giá</th></tr>");
+
+			// Lấy thông tin chi tiết của từng sản phẩm trong giỏ hàng và thêm vào bảng
+
+			bodyBuilder.append("<tr>");
+			for (int i = 0; i < productID.size(); i++) {
+				Optional<Product> product = productDAO.findById(productID.get(i));
+				int quantity = count.get(i);
+
+				bodyBuilder.append(
+						"<td style=\"border: 1px solid black; padding: 8px;width: 200px; text-align: center;\">")
+						.append(product.get().getName()).append("</td>");
+				bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
+						.append(quantity).append("</td>");
+
+				bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
+						.append(size.get(i)).append("</td>");
+
+				bodyBuilder.append(
+						"<td style=\"border: 1px solid black; padding: 8px;width: 200px; text-align: center;\">")
+						.append(product.get().getPrice() * quantity).append("$").append("</td>");
+				bodyBuilder.append("</tr>");
+			}
+			bodyBuilder.append("<tr>");
+			bodyBuilder.append(
+					"<td style=\"border: 1px solid black; padding: 8px; text-align: center; width:50%; border-right:none;\">Tổng số phụ</td>");
+			bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+			bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
+					.append(initialPrice).append("$").append("</td>");
+			bodyBuilder.append("</tr>");
+			bodyBuilder.append("<tr>");
+			bodyBuilder.append(
+					"<td style=\"border: 1px solid black; padding: 8px; text-align: center; width:50%; border-right:none;\">Giảm giá</td>");
+			bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+			bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
+					.append(discountPrice).append("$").append("</td>");
+			bodyBuilder.append("</tr>");
+			bodyBuilder.append("<tr>");
+			bodyBuilder.append(
+					"<td style=\"border: 1px solid black; padding: 8px; text-align: center; width:50%; border-right:none;\">Phương thức thanh toán</td>");
+			bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+			bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
+					.append(selectedOption).append("</td>");
+			bodyBuilder.append("</tr>");
+			bodyBuilder.append("<tr>");
+			bodyBuilder.append(
+					"<td style=\"border: 1px solid black; padding: 8px; text-align: center; width:50%; border-right:none;\">Tổng cộng</td>");
+			bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+			bodyBuilder.append("<td style=\"border-bottom: 1px solid black;\">").append("</td>");
+			bodyBuilder.append("<td style=\"border: 1px solid black; padding: 8px; text-align: center;\">")
+					.append(total).append("$").append("</td>");
+			bodyBuilder.append("</tr>");
+
+			bodyBuilder.append("</table>");
+
+			bodyBuilder.append("<H5 style=\"color: Green; font-size:20px\">ĐỊA CHỈ THANH TOÁN</H5>");
+
+			bodyBuilder.append("<p style=\"color: black;\">Khách hàng: ").append(fullname).append("</p>");
+			bodyBuilder.append("<p style=\"color: black;\">Địa chỉ: ").append(fulladdress).append("</p>");
+			bodyBuilder.append("<p style=\"color: black;\">Email: ").append(email).append("</p>");
+			mail.setBody(bodyBuilder.toString());
+			mailerService.queue(mail);
+
 			return "redirect:/thankyou.html";
 		} else {
 			model.addAttribute("messages", "Thanh toán không thành công. Vui lòng chọn thanh toán khác");

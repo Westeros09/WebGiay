@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	th:replace="~{/layout/layout.html::dynamic(~{::title}, ~{::body})}">
 <head>
+
 <title>New Arrivals</title>
 
 <meta charset="utf-8">
@@ -65,24 +66,20 @@
 		</div>
 	</div>
 
-
 	<div class="row" data-aos="fade-up">
 		<div class="col-md-12 text-center">
 			<div class="site-block-27 ">
-
-				<!-- ĐIỀU HƯỚNG -->
-				<div class="pagination-center">
-					<ul>
-						
-						<li th:if="${currentPage > 0}" class="page-item"><a
-							th:href="@{'/newArrivals?page=' + ${currentPage - 1}}">Prev</a>
-						</li>
+				<!-- Pagination -->
+				<div th:switch="${check}" class="pagination-center">
+					<ul th:case="*">
+						<li><a th:href="@{|/newArrivals?page=0|}"
+							th:class="${currentPage == 0} ? 'active' : ''">&lt;</a></li>
 						<li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"><a
-							class="" th:href="@{'/newArrivals?page=' + ${i}}"
-							th:text="${i + 1}"></a></li>
-						<li th:if="${currentPage < totalPages - 1}" class="page-item">
-							<a th:href="@{'/newArrivals?page=' + ${currentPage + 1}}">Next</a>
+							th:href="@{|/newArrivals?page=${i}|}"
+							th:class="${currentPage == i} ? 'active' : ''" th:text="${i + 1}"></a>
 						</li>
+						<li><a th:href="@{|/newArrivals?page=${totalPages - 1}|}"
+							th:class="${currentPage == totalPages - 1} ? 'active' : ''">&gt;</a></li>
 					</ul>
 				</div>
 			</div>
