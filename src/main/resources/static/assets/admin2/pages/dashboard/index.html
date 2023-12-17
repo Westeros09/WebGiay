@@ -403,7 +403,7 @@
 									<h6 class="mb-1 text-dark text-sm">{{ category.categoryId }}</h6>
 									<span class="text-xs">{{ category.quantityInStock === null ? 0 :
 										category.quantityInStock}} in stock,
-										<span class="font-weight-bold">{{ category.soldQuantity === null ? 0 :
+										<span class="font-weight-bold">{{ category.soldQuantity == null ? 0 :
 											category.soldQuantity}} sold</span>
 									</span>
 								</div>
