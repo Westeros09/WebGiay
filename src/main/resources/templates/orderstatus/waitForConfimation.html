@@ -8,10 +8,14 @@
 <meta charset="UTF-8">
 </head>
 <body>
+
+
 	<section class="vh-90" style="margin-bottom: 100px">
 		<div class="container">
 			<div class="row d-flex justify-content-center align-items-center"
 				th:each="order: ${order}">
+
+
 				<div class="col">
 					<div class="card mb-4 t-2">
 						<div class="card-body p-4">
@@ -59,8 +63,7 @@
 										</form>
 									</div>
 
-									<div class="col-md-2"
-										th:if="${order.status == 'Đã Hủy'}">
+									<div class="col-md-2" th:if="${order.status == 'Đã Hủy'}">
 										<input type="hidden" id="orderId" th:value="${order.id}">
 										<p class="small text-muted">Action</p>
 										<button class="btn btn-secondary" ng-click="getOrderDetails()">Repurchase</button>
@@ -69,9 +72,8 @@
 
 
 									</div>
-									
-													<div class="col-md-2"
-										th:if="${order.status == 'Đã Giao'}">
+
+									<div class="col-md-2" th:if="${order.status == 'Đã Giao'}">
 										<input type="hidden" id="orderId" th:value="${order.id}">
 										<p class="small text-muted">Action</p>
 										<button class="btn btn-secondary" ng-click="getOrderDetails()">Repurchase</button>
@@ -150,6 +152,8 @@
 				</div>
 			</div>
 		</div>
+		
+		
 	</section>
 
 	<script

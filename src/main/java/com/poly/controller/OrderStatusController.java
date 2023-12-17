@@ -21,6 +21,7 @@ import com.poly.dao.OrderDAO;
 import com.poly.dao.OrderDetailDAO;
 import com.poly.dao.ProductDAO;
 import com.poly.dao.ShoppingCartDAO;
+import com.poly.dao.SizeDAO;
 import com.poly.entity.Account;
 import com.poly.entity.Image;
 import com.poly.entity.Order;
@@ -48,6 +49,9 @@ public class OrderStatusController {
 	OrderDAO orderDAO;
 	@Autowired
 	OrderDetailDAO orderDetailDAO;
+	
+	@Autowired
+	SizeDAO sizeDAO;
 
 	@Autowired
 	ImageDAO imageDAO;
@@ -58,7 +62,7 @@ public class OrderStatusController {
 //		model.addAttribute("total", shoppingCartDAO.getAmount());
 		return "TrangThai";
 	}
-	@GetMapping({ "/shipped", "/unshipped", "/waitForConfimation", "/cancelled" })
+	@GetMapping("/waitForConfimation" )
 	public String handleOrderStatus(Model model, HttpServletRequest request) {
 	    String remoteUser = request.getRemoteUser();
 	    if (remoteUser != null) {
@@ -85,22 +89,36 @@ public class OrderStatusController {
 
 	@PostMapping("/updateOrder")
 	public String updateOrder(@RequestParam("orderId") String orderId) {
-		System.out.println(orderId);
-		try {
-			Long id = Long.parseLong(orderId);
-			Order order = orderDAO.findById(id).orElse(null);
+	    System.out.println(orderId);
+	    try {
+	        Long id = Long.parseLong(orderId);
+	        Order order = orderDAO.findById(id).orElse(null);
 
-			if (order != null) {
-				System.out.println("ok");
-				order.setStatus("Đã Hủy");
-				orderDAO.save(order);
-			} else {
-				// Handle case when order is not found
-			}
-		} catch (NumberFormatException e) {
-			// Handle the case when the orderId is not a valid Long
-			System.out.println("lỗi rồi bẹn ơi");
-		}
+	        if (order != null) {
+	            System.out.println("ok");
+	            order.setStatus("Đã Hủy");
+	            orderDAO.save(order);
+
+	            List<OrderDetail> orderDetails = order.getOrderDetails();
+	            for (OrderDetail orderDetail : orderDetails) {
+	                int productId = orderDetail.getProduct().getId();
+	                int quantity = orderDetail.getQuantity();
+	                Integer sizeId = orderDetail.getSize();
+
+	                // Find the existing quantity in the Size entity
+	                Integer quantitySize = sizeDAO.findQuantityByProductIdAndSize(productId, sizeId);
+
+	                System.out.println("Original Quantity: " + quantitySize);
+	                // Update the Size entity with the new quantity
+	                sizeDAO.updateQuantityByProductIdAndSize(productId, sizeId, quantity + quantitySize);
+	            }
+	        } else {
+	            // Handle case when order is not found
+	        }
+	    } catch (NumberFormatException e) {
+	        // Handle the case when the orderId is not a valid Long
+	        System.out.println("lỗi rồi bẹn ơi");
+	    }
 		return "redirect:/waitForConfimation";
 	}
 
