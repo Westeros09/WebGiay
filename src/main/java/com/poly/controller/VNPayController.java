@@ -72,7 +72,7 @@ public class VNPayController {
 			@RequestParam String email, @RequestParam("options") String selectedOption, // PT thanh toán
 			@RequestParam("initialPrice") Double initialPrice, // tiền ban đầu
 			@RequestParam(value = "IdCode", required = false) Integer IdCode,
-			@RequestParam(name = "discountPrice", defaultValue = "0") Double discountPrice // giảm giá
+			@RequestParam(name = "discountPrice", defaultValue = "0") Double discountPrice, // giảm giá
 			@RequestParam(value = "priceTotal", required = false) List<Double> priceTotal
 
 
@@ -147,7 +147,7 @@ public class VNPayController {
 				request.getSession().setAttribute("selectedOption", selectedOption);
 				request.getSession().setAttribute("initialPrice", initialPrice);
 				request.getSession().setAttribute("discountPrice", discountPrice);
-        request.getSession().setAttribute("priceTotal", priceTotal);
+				request.getSession().setAttribute("priceTotal", priceTotal);
 				request.getSession().removeAttribute("IdCode");
 			} else {
 				request.getSession().setAttribute("productID", productID);
@@ -160,7 +160,7 @@ public class VNPayController {
 				request.getSession().setAttribute("selectedOption", selectedOption);
 				request.getSession().setAttribute("initialPrice", initialPrice);
 				request.getSession().setAttribute("discountPrice", discountPrice);
-        request.getSession().setAttribute("priceTotal", priceTotal);
+				request.getSession().setAttribute("priceTotal", priceTotal);
 				request.getSession().setAttribute("IdCode", IdCode);
 			}
 
