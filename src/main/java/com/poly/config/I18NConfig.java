@@ -16,7 +16,6 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 @Configuration
-
 public class I18NConfig implements WebMvcConfigurer{
 	
 	@Value("${file.upload-dir}")
