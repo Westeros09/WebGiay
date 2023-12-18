@@ -28,12 +28,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.poly.config.VNPayConfig;
 import com.poly.dao.AccountDAO;
 import com.poly.dao.AddressDAO;
+import com.poly.dao.DiscountCodeDAO;
 import com.poly.dao.OrderDAO;
 import com.poly.dao.OrderDetailDAO;
 import com.poly.dao.ProductDAO;
 import com.poly.dao.SizeDAO;
 import com.poly.entity.Account;
 import com.poly.entity.Address;
+import com.poly.entity.DiscountCode;
 import com.poly.entity.MailInfo;
 import com.poly.entity.Order;
 import com.poly.entity.OrderDetail;
@@ -58,6 +60,9 @@ public class VNPayController {
 	MailerService mailerService; // mail
 	String fulladdress;
 
+	@Autowired
+	DiscountCodeDAO dcDAO;
+
 	@GetMapping("/VnPay")
 	public String getPay(Model model, HttpServletRequest request,
 			@RequestParam(value = "productId", required = false) List<Integer> productID,
@@ -66,6 +71,7 @@ public class VNPayController {
 			@RequestParam(required = false) Integer address2, @RequestParam String fullname, @RequestParam double total,
 			@RequestParam String email, @RequestParam("options") String selectedOption, // PT thanh toán
 			@RequestParam("initialPrice") Double initialPrice, // tiền ban đầu
+			@RequestParam(value = "IdCode", required = false) Integer IdCode,
 			@RequestParam(name = "discountPrice", defaultValue = "0") Double discountPrice // giảm giá
 
 	) throws UnsupportedEncodingException {
@@ -127,16 +133,32 @@ public class VNPayController {
 		}
 
 		if (address2 != null) {
-			request.getSession().setAttribute("productID", productID);
-			request.getSession().setAttribute("size", size);
-			request.getSession().setAttribute("count", count);
-			request.getSession().setAttribute("address2", address2);
-			request.getSession().setAttribute("total", total);
-			request.getSession().setAttribute("fullname", fullname);
-			request.getSession().setAttribute("email", email);
-			request.getSession().setAttribute("selectedOption", selectedOption);
-			request.getSession().setAttribute("initialPrice", initialPrice);
-			request.getSession().setAttribute("discountPrice", discountPrice);
+			if (IdCode == null) {
+				request.getSession().setAttribute("productID", productID);
+				request.getSession().setAttribute("size", size);
+				request.getSession().setAttribute("count", count);
+				request.getSession().setAttribute("address2", address2);
+				request.getSession().setAttribute("total", total);
+				request.getSession().setAttribute("fullname", fullname);
+				request.getSession().setAttribute("email", email);
+				request.getSession().setAttribute("selectedOption", selectedOption);
+				request.getSession().setAttribute("initialPrice", initialPrice);
+				request.getSession().setAttribute("discountPrice", discountPrice);
+				request.getSession().removeAttribute("IdCode");
+			} else {
+				request.getSession().setAttribute("productID", productID);
+				request.getSession().setAttribute("size", size);
+				request.getSession().setAttribute("count", count);
+				request.getSession().setAttribute("address2", address2);
+				request.getSession().setAttribute("total", total);
+				request.getSession().setAttribute("fullname", fullname);
+				request.getSession().setAttribute("email", email);
+				request.getSession().setAttribute("selectedOption", selectedOption);
+				request.getSession().setAttribute("initialPrice", initialPrice);
+				request.getSession().setAttribute("discountPrice", discountPrice);
+				request.getSession().setAttribute("IdCode", IdCode);
+			}
+
 		} else {
 			model.addAttribute("messages", "Vui lòng thêm địa chỉ");
 			return "forward:/check";
@@ -214,6 +236,7 @@ public class VNPayController {
 	public String handlePaymentResult(Model model, HttpServletRequest request,
 			@RequestParam("vnp_ResponseCode") String responseCode) {
 		if (responseCode.equals("00")) {
+
 			List<Integer> productID = (List<Integer>) request.getSession().getAttribute("productID");
 			List<Integer> size = (List<Integer>) request.getSession().getAttribute("size");
 			List<Integer> count = (List<Integer>) request.getSession().getAttribute("count");
@@ -225,36 +248,75 @@ public class VNPayController {
 			String selectedOption = (String) request.getSession().getAttribute("selectedOption");
 			Double discountPrice = (Double) request.getSession().getAttribute("discountPrice");
 			Double initialPrice = (Double) request.getSession().getAttribute("initialPrice");
+			Integer IdCode = (Integer) request.getSession().getAttribute("IdCode");
 			// THÊM VÀO ORDER DB
-			Order order = new Order();
-			Timestamp now = new Timestamp(new Date().getTime());
-			String username = request.getRemoteUser();
-			Account user = accountDAO.findById(username).orElse(null);
-			order.setCreateDate(now);
-			Optional<Address> a = addressDAO.findById(address2);
-			fulladdress = a.get().getStreet() + ", " + a.get().getWard() + ", " + a.get().getDistrict() + ", "
-					+ a.get().getCity();
-			order.setAddress(fulladdress);
-			System.out.println(order.getAddress());
-			order.setDiscountCode(null); // May need a null check here for the discount object
-			order.setAccount(user);
-			order.setAvailable(false);
-			order.setNguoinhan(fullname);
-			order.setStatus("Đang Xác Nhận");
-			order.setTongtien((double) total);
-			order.setAvailable(true);
-			order.setCity(a.get().getCity());
-			Order newOrder = orderDAO.saveAndFlush(order);
-			for (int i = 0; i < productID.size(); i++) {
-				Product product = productDAO.findById(productID.get(i)).get();
-				OrderDetail orderDetail = new OrderDetail();
-				orderDetail.setOrder(newOrder);
-				orderDetail.setProduct(product);
-				orderDetail.setSize(size.get(i));
-				orderDetail.setPrice(product.getPrice());
-				orderDetail.setQuantity(count.get(i));
-				orderDetailDAO.save(orderDetail);
+			if (IdCode == null) {
+
+				Order order = new Order();
+				Timestamp now = new Timestamp(new Date().getTime());
+				String username = request.getRemoteUser();
+				Account user = accountDAO.findById(username).orElse(null);
+				order.setCreateDate(now);
+				Optional<Address> a = addressDAO.findById(address2);
+				fulladdress = a.get().getStreet() + ", " + a.get().getWard() + ", " + a.get().getDistrict() + ", "
+						+ a.get().getCity();
+				order.setAddress(fulladdress);
+				System.out.println(order.getAddress());
+				order.setDiscountCode(null); // May need a null check here for the discount object
+				order.setAccount(user);
+				order.setDiscountCode(null);
+				order.setAvailable(false);
+				order.setNguoinhan(fullname);
+				order.setStatus("Đang Xác Nhận");
+				order.setTongtien((double) total);
+				order.setAvailable(true);
+				order.setCity(a.get().getCity());
+				Order newOrder = orderDAO.saveAndFlush(order);
+				for (int i = 0; i < productID.size(); i++) {
+					Product product = productDAO.findById(productID.get(i)).get();
+					OrderDetail orderDetail = new OrderDetail();
+					orderDetail.setOrder(newOrder);
+					orderDetail.setProduct(product);
+					orderDetail.setSize(size.get(i));
+					orderDetail.setPrice(product.getPrice());
+					orderDetail.setQuantity(count.get(i));
+					orderDetailDAO.save(orderDetail);
+				}
+			} else {
+				DiscountCode discount = dcDAO.findById(IdCode).orElse(null);
+
+				Order order = new Order();
+				Timestamp now = new Timestamp(new Date().getTime());
+				String username = request.getRemoteUser();
+				Account user = accountDAO.findById(username).orElse(null);
+				order.setCreateDate(now);
+				Optional<Address> a = addressDAO.findById(address2);
+				fulladdress = a.get().getStreet() + ", " + a.get().getWard() + ", " + a.get().getDistrict() + ", "
+						+ a.get().getCity();
+				order.setAddress(fulladdress);
+				System.out.println(order.getAddress());
+				order.setDiscountCode(null); // May need a null check here for the discount object
+				order.setAccount(user);
+				order.setDiscountCode(discount);
+				order.setAvailable(false);
+				order.setNguoinhan(fullname);
+				order.setStatus("Đang Xác Nhận");
+				order.setTongtien((double) total);
+				order.setAvailable(true);
+				order.setCity(a.get().getCity());
+				Order newOrder = orderDAO.saveAndFlush(order);
+				for (int i = 0; i < productID.size(); i++) {
+					Product product = productDAO.findById(productID.get(i)).get();
+					OrderDetail orderDetail = new OrderDetail();
+					orderDetail.setOrder(newOrder);
+					orderDetail.setProduct(product);
+					orderDetail.setSize(size.get(i));
+					orderDetail.setPrice(product.getPrice());
+					orderDetail.setQuantity(count.get(i));
+					orderDetailDAO.save(orderDetail);
+				}
 			}
+
 			//// GỬI MAIL ////
 
 			MailInfo mail = new MailInfo();
