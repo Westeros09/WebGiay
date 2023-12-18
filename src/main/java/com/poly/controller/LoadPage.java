@@ -83,7 +83,8 @@ public class LoadPage {
 		
 		List<Image> images = imageDAO.findAll();
 		List<Product> products = productDAO.findAll();
-        List<List<Product>> pro = chunkList(products,4);
+		/* List<List<Product>> proo = chunkList(products,4); */
+        List<Product> pro = productDAO.findAll();
 		List<DiscountProduct> discountProducts = dpDAO.findAll();
 		List<Product> getNewProduct = productDAO.NewProduct();
 		List<List<Product>> newProduct= chunkList(getNewProduct, 4); 

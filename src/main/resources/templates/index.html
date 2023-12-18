@@ -74,9 +74,9 @@
 							<span th:if="${not #lists.isEmpty(images)}"> <span
 
 								th:each="pro : ${pro}"><span
-									th:if="${pro[0].id == discountProduct.product.id}"> <img
+									th:if="${pro.id == discountProduct.product.id}"> <img
 										class="product-image-shoe img-fluid" style="height: auto;"
-										th:src="@{|/images/${pro[0].images[0].image}|}"
+										th:src="@{|/images/${pro.images[0].image}|}"
 										alt="Nike Dunk Low Retro Premium">
 								</span> </span>
 						</span>
