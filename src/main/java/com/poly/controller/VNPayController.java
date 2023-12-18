@@ -139,6 +139,7 @@ public class VNPayController {
 			request.getSession().setAttribute("initialPrice", initialPrice);
 			request.getSession().setAttribute("discountPrice", discountPrice);
 			request.getSession().setAttribute("priceTotal", priceTotal);
+			
 		} else {
 			model.addAttribute("messages", "Vui lòng thêm địa chỉ");
 			return "forward:/check";
@@ -227,6 +228,7 @@ public class VNPayController {
 			String selectedOption = (String) request.getSession().getAttribute("selectedOption");
 			Double discountPrice = (Double) request.getSession().getAttribute("discountPrice");
 			Double initialPrice = (Double) request.getSession().getAttribute("initialPrice");
+			
 			// THÊM VÀO ORDER DB
 			Order order = new Order();
 			Timestamp now = new Timestamp(new Date().getTime());

@@ -40,7 +40,7 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
 //	Double getTotalRevenueToday();
 
 //	@Query("SELECT SUM(o.tongtien) FROM Order o WHERE CONVERT(date, o.createDate) = CONVERT(date, ?1) ")
-	@Query(value = "SELECT SUM(o.tongtien) FROM Orders o WHERE CONVERT(date, o.create_date) = CONVERT(date, ?1 )  AND o.status = N'Đã Giao'", nativeQuery = true)
+	@Query(value = "SELECT ROUND(SUM(o.tongtien), 2)  FROM Orders o WHERE CONVERT(date, o.create_date) = CONVERT(date, ?1 )  AND o.status = N'Đã Giao'", nativeQuery = true)
 	Double getTotalRevenueForDate(LocalDate myDate);
 
 	// AOV	
