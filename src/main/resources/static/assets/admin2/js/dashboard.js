@@ -10,19 +10,74 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 		}).catch(error => {
 			$location.path("/unauthorized");
 		})
+		
 		// 4 BẢNG
-		// Gọi API để lấy tổng doanh thu trong ngày
+		// Hàm tính toán phần trăm lợi nhuận
+		function calculateProfitPercentage(now, previous) {
+			return ((now - previous) / previous) * 100;
+		}
+		// Gọi API để lấy tổng doanh thu trong ngày, ngày hôm qua
 		$http.get("/rest/revenue/today")
 			.then(function(response) {
-				$scope.dailyRevenue = response.data; // Gán tổng doanh thu trong ngày vào biến $scope.dailyRevenue
+				if (response.data) {
+					$scope.dailyRevenue = response.data;
+				} else {
+					$scope.dailyRevenue = 0;
+				}
 			})
 			.catch(function(error) {
 				console.error('Error fetching daily revenue data:', error);
 			});
+		$http.get("/rest/revenue/yesterday")
+			.then(function(response) {
+				if (response.data) {
+					$scope.yesterdayRevenue = response.data;
+				} else {
+					$scope.yesterdayRevenue = 0;
+				}
+				var profitPercentage;
+				if ($scope.yesterdayRevenue != 0) {
+					profitPercentage = calculateProfitPercentage($scope.dailyRevenue, $scope.yesterdayRevenue);
+				} else {
+					profitPercentage = 100;
+				}
+				profitPercentage = Math.round(profitPercentage);
+				$scope.profitPercentage = profitPercentage;
+
+			})
+			.catch(function(error) {
+				console.error('Error fetching yesterday revenue data:', error);
+			});
+		
+
 		// Gọi API để lấy  tổng số lượng sản phẩm bán ra trong tháng
 		$http.get("/rest/revenue/saleVolume")
 			.then(function(response) {
-				$scope.saleVolume = response.data; // Gán tổng doanh thu trong ngày vào biến $scope.dailyRevenue
+				if (response.data) {
+					$scope.saleVolume = response.data;
+				} else {
+					$scope.saleVolume = 0;
+				}
+			})
+			.catch(function(error) {
+				console.error('Error fetching daily revenue data:', error);
+			});
+		$http.get("/rest/revenue/saleVolumePrevious")
+			.then(function(response) {
+				if (response.data) {
+					$scope.saleVolumePrevious = response.data;
+				} else {
+					$scope.saleVolumePrevious = 0;
+				}
+				var quantityPercentage;
+				if ($scope.saleVolumePrevious != 0) {
+					quantityPercentage = calculateProfitPercentage($scope.saleVolume, $scope.saleVolumePrevious);
+				} else {
+					quantityPercentage = 100;
+				}
+				quantityPercentage = Math.round(quantityPercentage);
+				$scope.quantityPercentage = quantityPercentage;
+				
 			})
 			.catch(function(error) {
 				console.error('Error fetching daily revenue data:', error);
@@ -36,11 +91,41 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 			.catch(function(error) {
 				console.error('Error fetching daily revenue data:', error);
 			});
+		$http.get("/rest/revenue/averageOrderValuePrevious")
+			.then(function(response) {
+				$scope.averageOrderValuePrevious = response.data; 
+				var AOVPercentage;
+				if ($scope.averageOrderValuePrevious != 0) {
+					AOVPercentage = calculateProfitPercentage($scope.averageOrderValue, $scope.averageOrderValuePrevious);
+				} else {
+					AOVPercentage = 100;
+				}
+				AOVPercentage = Math.round(AOVPercentage);
+				$scope.AOVPercentage = AOVPercentage;
+			})
+			.catch(function(error) {
+				console.error('Error fetching daily revenue data:', error);
+			});
 
 		// Gọi API để lấy tổng doanh thu trong năm nnay
 		$http.get("/rest/revenue/revenueYear")
 			.then(function(response) {
 				$scope.revenueYear = response.data; // Gán tổng doanh thu trong ngày vào biến $scope.dailyRevenue
+			})
+			.catch(function(error) {
+				console.error('Error fetching daily revenue data:', error);
+			});
+		$http.get("/rest/revenue/revenueYearPrevious")
+			.then(function(response) {
+				$scope.revenueYearPrevious = response.data;
+				var revenuePercentage;
+				if ($scope.revenueYearPrevious != 0) {
+					revenuePercentage = calculateProfitPercentage($scope.revenueYear, $scope.revenueYearPrevious);
+				} else {
+					revenuePercentage = 100;
+				}
+				revenuePercentage = Math.round(revenuePercentage);
+				$scope.revenuePercentage = revenuePercentage;
 			})
 			.catch(function(error) {
 				console.error('Error fetching daily revenue data:', error);
@@ -52,13 +137,13 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 			.then(function(response) {
 				$scope.cities = response.data;
 				console.log('cities:', $scope.cities);
-			})	
+			})
 			.catch(function(error) {
 				console.error('Error fetching total quantity by category data:', error);
 			});
-		
 
-		
+
+
 		// BẢNG CATEGORY
 		// Gọi API để lấy tổng số lượng hàng tồn kho theo danh mục
 		$http.get("/rest/revenue/totalQuantityByCategory")
@@ -90,7 +175,7 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 				angular.forEach($scope.totalQuantityByCategory, function(category) {
 					var categoryId = category[0];
 					var quantityInStock = category[1];
-					var soldQuantity ;
+					var soldQuantity;
 					// Tìm số lượng đã bán tương ứng với danh mục
 					angular.forEach($scope.totalQuantitySoldByCategory, function(soldItem) {
 						if (soldItem[0] == categoryId) {
@@ -107,15 +192,15 @@ app.controller("dashboard-ctrl", function($scope, $http, $location) {
 				console.log('combinedData:', $scope.combinedData);
 			}
 		}
-		
-		
-$scope.loadCurrentUser();
+
+
+		$scope.loadCurrentUser();
 	}
-$scope.loadCurrentUser = function() {
-    $http.get("/rest/accounts/current-account").then(resp => {
-        $scope.account = resp.data;
-    }); 
-};
+	$scope.loadCurrentUser = function() {
+		$http.get("/rest/accounts/current-account").then(resp => {
+			$scope.account = resp.data;
+		});
+	};
 	$scope.getRevenueByYear = function() {
 		// Perform an API call to get revenue data for the selected year
 		// Replace 'YOUR_API_URL' with the actual API endpoint

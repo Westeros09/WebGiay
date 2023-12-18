@@ -26,15 +26,17 @@
 			<ul class="navbar-nav  justify-content-end">
 				<li class="nav-item d-flex align-items-center"><a
 					href="javascript:;"
-					class="nav-link text-white font-weight-bold px-0"> 
-					<img style="max-width: 50%; height: 50px" class="border-radius-lg shadow-sm" id="imagePreview" ng-src="{{'/images/'+account.photo}}"  alt="Avatar">
-					<span class="d-sm-inline d-none mx-2">{{account.username}}</span>
-					
+					class="nav-link text-white font-weight-bold px-0"> <img
+						style="max-width: 50%; height: 50px"
+						class="border-radius-lg shadow-sm" id="imagePreview"
+						ng-src="{{'/images/'+account.photo}}" alt="Avatar"> <span
+						class="d-sm-inline d-none mx-2">{{account.username}}</span>
+
 				</a></li>
 				<li class="nav-item d-xl-none ps-3 d-flex align-items-center">
 					<a href="javascript:;" class="nav-link text-white p-0"
 					id="iconNavbarSidenav">
-					
+
 						<div class="sidenav-toggler-inner">
 							<i class="sidenav-toggler-line bg-white"></i> <i
 								class="sidenav-toggler-line bg-white"></i> <i
@@ -142,243 +144,200 @@
 						<div class="panel-body">
 							<div class="row container text-x font-weight-bolder">
 								<div class="col-sm-12">
-									<div class="row ">
-										<div class="form-group col-sm-6">
-											<div>Username</div>
-											<input ng-model="form.account.username" class="form-control" disabled="disabled"
-												>
-										</div>
-										<div class="form-group col-sm-6">
-											<div>Address Detail</div>
-											<input ng-model="form.addressDetail" class="form-control" disabled="disabled"
-												>
-										</div>
-									</div>
-									<div class="row">
-										<div class="form-group col-sm-6">
-											<div>City</div>
-											<input ng-model="form.city" class="form-control" disabled="disabled"
-												>
-										</div>
-										<div class="form-group col-sm-6">
-											<div>Distric</div>
-											<input ng-model="form.district" class="form-control" disabled="disabled"
-												>
-										</div>
-									</div>
-									<div class="row">
-										<div class="form-group col-sm-6">
-											<div>Ward</div>
-											<input ng-model="form.ward" class="form-control" disabled="disabled"
-												>
-										</div>
-										<div class="form-group col-sm-6">
-											<div>Street</div>
-											<input ng-model="form.street" class="form-control" disabled="disabled"
-												>
-										</div>
-									</div>
-									
-									</a>
-								</li>
-							</ul>
-						</li>
-					</ul>
+									<label for="formDiscountAmount" class="form-label">Account
+										Id</label> <select ng-model="form.account.username" 
+										class="form-control">
+										<option value="" disabled selected>Select Account Id</option>
+										<option ng-repeat="a in accounts" ng-value="a.username">{{a.username}}
+											{{a.name}}</option>
+									</select> <label for="province" class="text-black">Province/City<span
+										class="text-danger">*</span></label> <select class="form-select mb-3"
+										ng-model="form.province" id="province" name="provinceLabel">
+										<option value="">Choose province/city</option>
+										<!-- Populate options from API or other data source -->
+									</select> <label for="district" class="text-black">District<span
+										class="text-danger">*</span></label> <select class="form-select mb-3"
+										ng-model="form.district"
+										ng-options="district.name for district in districts"
+										id="district" name="districtLabel">
+										<option value="">Choose district</option>
+									</select> <label for="ward" class="text-black">Ward<span
+										class="text-danger">*</span></label> <select class="form-select mb-3"
+										ng-model="form.ward" ng-options="ward.name for ward in wards"
+										id="ward" name="wardLabel">
+										<option value="">Choose ward</option>
+									</select> <label for="address" class="text-black">Street Name<span
+										class="text-danger">*</span></label> <input type="text"
+										class="form-control" id="address" ng-model="form.street"
+										name="address" placeholder="Street Name">
+								</div>
+
+							</div>
+
+
+
+						</div>
+					</div>
 				</div>
 			</div>
-		</nav>
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		<!-- End Navbar -->
-		<div class="container-fluid py-4">
-			<div class="row">
-				<div class="col-12">
-					<div class="card mb-4">
-						<div class="card-header pb-0">
-							<h6>Address Edit</h6>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+<!-- End Navbar -->
+<div class="container-fluid py-4">
+	<div class="row">
+		<div class="col-12">
+			<div class="card mb-4">
+				<div class="card-header pb-0">
+					<h6>Address Edit</h6>
+				</div>
+				<div class="panel-footer text-center">
+					<button ng-click="create()"
+						class="btn btn-primary">
+						<b class="glyphicon glyphicon-plus"></b> {{form.id ? 'Update' :
+						'Create'}}
+					</button>
+					
+
+					<button ng-click="delete(form)" ng-disabled="!form.id"
+						class="btn btn-danger">
+						<b class="glyphicon glyphicon-trash"></b> Delete
+					</button>
+					<button ng-click="reset()" class="btn btn-info">
+						<b class="glyphicon glyphicon-refresh"></b> Reset
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-12">
+		<div class="card mb-4">
+			<div class="card-header pb-0">
+				<h6>List of Address</h6>
+			</div>
+
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<div class="card mb-4">
+				<div class="card-header pb-0">
+					<h6>List of Address</h6>
+				</div>
+				<div class="card-body px-0 pt-0 pb-2 w-100">
+					<div class="table-responsive p-0">
+						<table
+							class="table align-items-center justify-content-center mb-0">
+							<thead>
+								<tr>
+									<th
+										class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+										ID</th>
+									<th
+										class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ">
+										Username</th>
+									<th
+										class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ">
+										Province/City</th>
+
+
+									<th
+										class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">
+										Distric</th>
+									<th
+										class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">
+										Ward</th>
+									<th
+										class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">
+										Street</th>
+
+									<th></th>
+								</tr>
+							</thead>
+							<tbody class="text-xs font-weight-bolder text-center ">
+								<tr ng-repeat="item in pager.items">
+									<td>{{item.id}}</td>
+									<td>{{item.account.username}}</td>
+									<td>{{item.city}}</td>
+									<td>{{item.district}}</td>
+									<td>{{item.ward}}</td>
+									<td>{{item.street}}</td>
+
+									<td>
+										<div class="btn-group btn-group-xs">
+											<a ng-click="edit(item)" href="" class="btn btn-warning">
+												<i class="fa-solid fa-pen-to-square"></i>
+											</a> <a ng-click="delete(item)" href="" class="btn btn-danger">
+												<i class="fa-solid fa-trash"></i>
+											</a>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<div ng-repeat="item in pager.items">
+							<div class="fixed-top">
+								<table class="table table-condensed detail-table"
+									ng-show="item.showDetail">
+									<thead class="bg-danger"
+										style="color: aliceblue; font-variant: small-caps;">
+										<th>Id</th>
+										<th>Order id</th>
+										<th>size</th>
+										<th>Name</th>
+										<th>Price</th>
+										<th>Quantity</th>
+									</thead>
+									<tbody class="bg-dark" style="color: aliceblue;">
+										<tr ng-repeat="detailItem in item.detailData">
+											<td>{{detailItem.id}}</td>
+											<td>{{detailItem.order.id}}</td>
+											<td>{{detailItem.size}}</td>
+											<td class="text-truncate">{{detailItem.product.name}}</td>
+											<td>{{detailItem.price}}</td>
+											<td>{{detailItem.quantity}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
 						</div>
 						<div class="panel-footer text-center">
-							<button ng-click="create()" ng-disabled="form.id"
-								class="btn btn-primary">
-								<b class="glyphicon glyphicon-plus"></b> Create
+							<button ng-click="pager.first()" class="btn "
+								style="width: 60px;">
+								<i class="fa-solid fa-backward-step"></i>
 							</button>
-							<button ng-click="update()" ng-disabled="!form.id"
-								class="btn btn-success">
-								<b class="glyphicon glyphicon-save"></b> Update
+							<button ng-click="pager.prev()" class="btn " style="width: 60px;">
+								<i class="fa-solid fa-backward"></i>
 							</button>
-							<button ng-click="delete(form)" ng-disabled="!form.id"
-								class="btn btn-danger">
-								<b class="glyphicon glyphicon-trash"></b> Delete
+							<button class="btn btn-success">{{pager.page + 1}} of
+								{{pager.count}}</button>
+							<button ng-click="pager.next()" class="btn " style="width: 60px;">
+								<i class="fa-solid fa-forward"></i>
 							</button>
-							<button ng-click="reset()" class="btn btn-info">
-								<b class="glyphicon glyphicon-refresh"></b> Reset
+							<button ng-click="pager.last()" class="btn" style="width: 60px;">
+								<i class="fa-solid fa-forward-step"></i>
 							</button>
 						</div>
+
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-12">
-				<div class="card mb-4">
-					<div class="card-header pb-0">
-						<h6>List of Address</h6>
-					</div>
-
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-12">
-					<div class="card mb-4">
-						<div class="card-header pb-0">
-							<h6>List of Address</h6>
-						</div>
-						<div class="card-body px-0 pt-0 pb-2 w-100" >
-							<div class="table-responsive p-0">
-								<table class="table align-items-center justify-content-center mb-0">
-									<thead>
-										<tr>
-											<th
-												class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-												ID</th>
-											<th
-												class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ">
-												Username</th>
-											<th
-												class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ">
-												Address Detail</th>
-											<th
-												class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">
-												City</th>
-												
-												<th
-												class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">
-												Distric</th>
-												<th
-												class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">
-												Ward</th>
-												<th
-												class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">
-												Street</th>
-												
-										        <th></th>
-										</tr>
-									</thead>
-														<tbody class="text-xs font-weight-bolder text-center ">
-															<tr ng-repeat="item in pager.items">
-																<td>{{item.id}}</td>
-																<td>{{item.account.username}}</td>
-																<td>{{item.addressDetail}}</td>
-																<td>{{item.city}}</td>
-																<td>{{item.district}}</td>
-																<td>{{item.ward}}</td>
-																<td>{{item.street}}</td>
-																
-
-																<td>
-																	<div class="btn-group btn-group-xs">
-																		<a ng-click="edit(item)" href=""
-																			class="btn btn-warning"> <i
-																			class="fa-solid fa-pen-to-square"></i>
-																		</a> <a ng-click="delete(item)" href=""
-																			class="btn btn-danger"> <i
-																			class="fa-solid fa-trash"></i>
-																		</a>
-																	</div>
-																</td>
-															</tr>
-														</tbody>
-													</table>
-								
-									<div ng-repeat="item in pager.items">		
-		<div class="fixed-top">
-			<table class="table table-condensed detail-table" ng-show="item.showDetail">
-            <thead class="bg-danger" style="color: aliceblue;font-variant: small-caps;">
-                <th>Id</th>
-                <th>Order id</th>
-                <th>size</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Quantity</th>
-            </thead>
-            <tbody class="bg-dark" style="color: aliceblue;">
-                <tr ng-repeat="detailItem in item.detailData">
-                    <td>{{detailItem.id}}</td>
-                    <td>{{detailItem.order.id}}</td>
-                    <td>{{detailItem.size}}</td>
-                    <td class="text-truncate">{{detailItem.product.name}}</td>
-                    <td>{{detailItem.price}}</td>
-                    <td>{{detailItem.quantity}}</td>
-                </tr>
-            </tbody>
-        </table>
-		</div>
-		
-							</div>
-							<div class="panel-footer text-center">
-								<button ng-click="pager.first()" class="btn "
-									style="width: 60px;">
-									<i class="fa-solid fa-backward-step"></i>
-								</button>
-								<button ng-click="pager.prev()" class="btn "
-									style="width: 60px;">
-									<i class="fa-solid fa-backward"></i>
-								</button>
-								<button class="btn btn-success">{{pager.page + 1}} of
-									{{pager.count}}</button>
-								<button ng-click="pager.next()" class="btn "
-									style="width: 60px;">
-									<i class="fa-solid fa-forward"></i>
-								</button>
-								<button ng-click="pager.last()" class="btn" style="width: 60px;">
-									<i class="fa-solid fa-forward-step"></i>
-								</button>
-							</div>
-
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<footer class="footer pt-3  ">
-			<div class="container-fluid">
-				<div class="row align-items-center justify-content-lg-between">
-					<div class="col-lg-6 mb-lg-0 mb-4">
-						<div
-							class="copyright text-center text-sm text-muted text-lg-start">
-							©
-							<script>
-								document.write(new Date().getFullYear())
-							</script>
-							, made with <i class="fa fa-heart"></i> by <a
-								href="https://www.creative-tim.com" class="font-weight-bold"
-								target="_blank">Creative Tim</a> for a better web.
-						</div>
-					</div>
-					<div class="col-lg-6">
-						<ul
-							class="nav nav-footer justify-content-center justify-content-lg-end">
-							<li class="nav-item"><a href="https://www.creative-tim.com"
-								class="nav-link text-muted" target="_blank">Creative Tim</a></li>
-							<li class="nav-item"><a
-								href="https://www.creative-tim.com/presentation"
-								class="nav-link text-muted" target="_blank">About Us</a></li>
-							<li class="nav-item"><a
-								href="https://www.creative-tim.com/blog"
-								class="nav-link text-muted" target="_blank">Blog</a></li>
-							<li class="nav-item"><a
-								href="https://www.creative-tim.com/license"
-								class="nav-link pe-0 text-muted" target="_blank">License</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</footer>
 	</div>
+	<footer class="footer pt-3  ">
+		<div class="text-center container-fluid col-sm p-3 "
+			style="background-color: #0000;">
+			© 2023 <a href="/" class=" text-decoration-none" style="color: black">Shoe
+				Galaxy Sneakers Of Team Galaxy Shoe</a>
+		</div>
+	</footer>
+</div>

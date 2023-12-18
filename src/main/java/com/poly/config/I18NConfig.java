@@ -48,10 +48,11 @@ public class I18NConfig implements WebMvcConfigurer{
 			.addPathPatterns("/**")
 			.excludePathPatterns("/images/**");
 	}
-//	 @Override
-//	    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//		 registry.addResourceHandler("/uploads/**")
-//         .addResourceLocations("file:" + uploadDir + "/");
-//	
-//}
+	/*
+	 * @Override public void addResourceHandlers(ResourceHandlerRegistry registry) {
+	 * registry.addResourceHandler("/uploads/**") .addResourceLocations("file:" +
+	 * uploadDir + "/");
+	 * 
+	 * }
+	 */
 }

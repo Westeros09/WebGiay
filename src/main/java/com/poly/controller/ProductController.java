@@ -191,7 +191,7 @@ public class ProductController {
 
 		Sort sort = Sort.by(Sort.Direction.DESC, desc);
 		Pageable pageable = PageRequest.of(p.orElse(0), 6, sort);
-		Page<Product> page = dao.findAll(pageable);
+		Page<Product> page = dao.findBySort(pageable);
 		model.addAttribute("products", page);
 		model.addAttribute("check", "4");
 		// Truy vấn danh sách hãng và số lượng sản phẩm tương ứng
@@ -208,7 +208,7 @@ public class ProductController {
 		sessionService.setAttribute("asc", asc);
 		Sort sort = Sort.by(Sort.Direction.ASC, asc);
 		Pageable pageable = PageRequest.of(p.orElse(0), 6, sort);
-		Page<Product> page = dao.findAll(pageable);
+		Page<Product> page = dao.findBySort(pageable);
 		model.addAttribute("products", page);
 		List<DiscountProduct> discountProducts = dpDAO.findAll();
 		model.addAttribute("discountProducts", discountProducts);

@@ -19,7 +19,8 @@
 			<ul class="navbar-nav  justify-content-end">
 				<li class="nav-item d-flex align-items-center">
 					<a href="javascript:;" class="nav-link text-white font-weight-bold px-0">
-						<img style="max-width: 50%; height: 50px" class="border-radius-lg shadow-sm" id="imagePreview" ng-src="{{'/images/'+account.photo}}"  alt="Avatar">
+						<img style="max-width: 50%; height: 50px" class="border-radius-lg shadow-sm" id="imagePreview"
+							ng-src="{{'/images/'+account.photo}}" alt="Avatar">
 						<span class="d-sm-inline d-none mx-2">{{account.username}}</span>
 					</a>
 				</li>
@@ -134,15 +135,23 @@
 						<div class="col-8">
 							<div class="numbers">
 								<p class="text-sm mb-0 text-uppercase font-weight-bold">Today's Money</p>
-								<h5 class="font-weight-bolder" ng-if="dailyRevenue">
+								<h5 class="font-weight-bolder">
 									${{dailyRevenue}}
 								</h5>
-								<h5 class="font-weight-bolder" ng-if="!dailyRevenue || dailyRevenue.trim() === ''">
+								<!--<h5 class="font-weight-bolder" ng-if="!dailyRevenue || dailyRevenue.trim() === ''">
 									$0
-								</h5>
+								</h5>-->
+								<!--<h5 class="font-weight-bolder">
+									${{yesterdayRevenue}}
+								</h5>-->
 								<p class="mb-0">
-									<span class="text-success text-sm font-weight-bolder">+55%</span>
+									<span
+										ng-class="{'text-success': profitPercentage >= 0, 'text-danger': profitPercentage < 0}"
+										class="text-sm font-weight-bolder">
+										{{profitPercentage >= 0 ? '+' : ''}}{{profitPercentage}}%
+									</span>
 									since yesterday
+								
 								</p>
 							</div>
 						</div>
@@ -155,9 +164,9 @@
 				</div>
 			</div>
 		</div>
-		
-		
-		
+
+
+
 		<div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
 			<div class="card">
 				<div class="card-body p-3" style="height: 155px;">
@@ -165,15 +174,17 @@
 						<div class="col-8">
 							<div class="numbers">
 								<p class="text-sm mb-0 text-uppercase font-weight-bold">Monthly Product Sales</p>
-								<h5 class="font-weight-bolder" ng-if="saleVolume">
+								<h5 class="font-weight-bolder">
 									{{saleVolume}}
 								</h5>
-								<h5 class="font-weight-bolder" ng-if="!saleVolume || saleVolume.trim() === ''">
-									0
-								</h5>
+								
 								<p class="mb-0">
-									<span class="text-success text-sm font-weight-bolder">+3%</span>
-									since last week
+									<span
+										ng-class="{'text-success': quantityPercentage >= 0, 'text-danger': quantityPercentage < 0}"
+										class="text-sm font-weight-bolder">
+										{{quantityPercentage >= 0 ? '+' : ''}}{{quantityPercentage}}%
+									</span>
+									since last month
 								</p>
 							</div>
 						</div>
@@ -197,8 +208,12 @@
 									${{averageOrderValue}}
 								</h5>
 								<p class="mb-0">
-									<span class="text-danger text-sm font-weight-bolder">-2%</span>
-									since last quarter
+									<span
+										ng-class="{'text-success': AOVPercentage >= 0, 'text-danger': AOVPercentage < 0}"
+										class="text-sm font-weight-bolder">
+										{{AOVPercentage >= 0 ? '+' : ''}}{{AOVPercentage}}%
+									</span>
+									since last month
 								</p>
 							</div>
 						</div>
@@ -222,8 +237,12 @@
 									${{revenueYear}}
 								</h5>
 								<p class="mb-0">
-									<span class="text-success text-sm font-weight-bolder">+5%</span> than last
-									month
+									<span
+										ng-class="{'text-success': revenuePercentage >= 0, 'text-danger': revenuePercentage < 0}"
+										class="text-sm font-weight-bolder">
+										{{revenuePercentage >= 0 ? '+' : ''}}{{revenuePercentage}}%
+									</span>
+									since last year
 								</p>
 							</div>
 						</div>
@@ -237,18 +256,18 @@
 			</div>
 		</div>
 	</div>
-	
-	
-	
+
+
+
 	<div class="row mt-4">
 		<div class="col-lg-7 mb-lg-0 mb-4">
 			<div class="card z-index-2 h-100">
 				<div class="card-header pb-0 pt-3 bg-transparent">
 					<h6 class="text-capitalize">Sales overview</h6>
-					<p class="text-sm mb-0">
+					<!--<p class="text-sm mb-0">
 						<i class="fa fa-arrow-up text-success"></i>
 						<span class="font-weight-bold">4% more</span> in 2021
-					</p>
+					</p>-->
 				</div>
 				<div class="card-body pb-0 pt-3">
 					<div class="form-group">
@@ -288,10 +307,10 @@
 								<div class="icon icon-shape icon-sm bg-white text-center border-radius-md mb-3">
 									<i class="ni ni-bulb-61 text-dark opacity-10"></i>
 								</div>
-									<h5 class="text-white mb-1">Walk Like A king</h5>
+								<h5 class="text-white mb-1">Walk Like A king</h5>
 								<p>Đôi giày nói lên cá tính của riêng bạn.</p>
-								
-							
+
+
 							</div>
 						</div>
 						<div class="carousel-item h-100" style="background-image: url('../admin2/img/shoeglx1.png');
@@ -300,8 +319,9 @@
 								<div class="icon icon-shape icon-sm bg-white text-center border-radius-md mb-3">
 									<i class="ni ni-trophy text-dark opacity-10"></i>
 								</div>
-							<h5 class="text-white mb-1 mx-4"  >Forever Faster</h5>
-								<p class="mx-5" style="color:#13292a;" >Muốn đi nhanh đi một mình, muốn đi xa đi cùng ShoeGalaxy.</p>
+								<h5 class="text-white mb-1 mx-4">Forever Faster</h5>
+								<p class="mx-5" style="color:#13292a;">Muốn đi nhanh đi một mình, muốn đi xa đi cùng
+									ShoeGalaxy.</p>
 							</div>
 						</div>
 					</div>
@@ -333,7 +353,7 @@
 							<tr ng-repeat="city in cities">
 								<td class="w-30">
 									<div class="d-flex px-2 py-1 align-items-center">
-										
+
 										<div class="ms-4">
 											<p class="text-xs font-weight-bold mb-0">Province/City:</p>
 											<h6 class="text-sm mb-0">{{city[0]}}</h6>
@@ -359,8 +379,8 @@
 									</div>
 								</td>
 							</tr>
-							
-							
+
+
 						</tbody>
 					</table>
 				</div>
@@ -372,7 +392,7 @@
 					<h6 class="mb-0">Categories</h6>
 				</div>
 				<div class="card-body p-3">
-					<ul class="list-group">				
+					<ul class="list-group">
 						<li ng-repeat="category in combinedData"
 							class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
 							<div class="d-flex align-items-center">
@@ -381,8 +401,10 @@
 								</div>
 								<div class="d-flex flex-column">
 									<h6 class="mb-1 text-dark text-sm">{{ category.categoryId }}</h6>
-									<span class="text-xs">{{ category.quantityInStock === null ? 0 : category.quantityInStock}} in stock,
-										<span class="font-weight-bold">{{ category.soldQuantity === null ? 0 : category.soldQuantity}} sold</span>
+									<span class="text-xs">{{ category.quantityInStock === null ? 0 :
+										category.quantityInStock}} in stock,
+										<span class="font-weight-bold">{{ category.soldQuantity == null ? 0 :
+											category.soldQuantity}} sold</span>
 									</span>
 								</div>
 							</div>
@@ -400,41 +422,10 @@
 		</div>
 	</div>
 	<footer class="footer pt-3  ">
-		<div class="container-fluid">
-			<div class="row align-items-center justify-content-lg-between">
-				<div class="col-lg-6 mb-lg-0 mb-4">
-					<div class="copyright text-center text-sm text-muted text-lg-start">
-						©
-						<script>
-							document.write(new Date().getFullYear())
-						</script>,
-						made with <i class="fa fa-heart"></i> by
-						<a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative
-							Tim</a>
-						for a better web.
-					</div>
-				</div>
-				<div class="col-lg-6">
-					<ul class="nav nav-footer justify-content-center justify-content-lg-end">
-						<li class="nav-item">
-							<a href="https://www.creative-tim.com" class="nav-link text-muted" target="_blank">Creative
-								Tim</a>
-						</li>
-						<li class="nav-item">
-							<a href="https://www.creative-tim.com/presentation" class="nav-link text-muted"
-								target="_blank">About Us</a>
-						</li>
-						<li class="nav-item">
-							<a href="https://www.creative-tim.com/blog" class="nav-link text-muted"
-								target="_blank">Blog</a>
-						</li>
-						<li class="nav-item">
-							<a href="https://www.creative-tim.com/license" class="nav-link pe-0 text-muted"
-								target="_blank">License</a>
-						</li>
-					</ul>
-				</div>
-			</div>
+		<div class="text-center container-fluid col-sm p-3 "
+			style="background-color: #0000;">
+			© 2023 <a href="/" class=" text-decoration-none" style="color: black">Shoe
+				Galaxy Sneakers Of Team Galaxy Shoe</a>
 		</div>
 	</footer>
 </div>
