@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -70,6 +71,7 @@ public class PaypalController {
 			@RequestParam(value = "districtLabel", required = false) String districtLabel,
 			@RequestParam(value = "wardLabel", required = false) String wardLabel,			
 			@RequestParam(value = "countProduct", required = false) List<Integer> count,
+			@RequestParam(value = "priceTotal", required = false) List<Double> priceTotal,
 			@RequestParam String email,
 			@RequestParam("options") String selectedOption, // PT thanh toán
 			@RequestParam("initialPrice") Double initialPrice, // tiền ban đầu
@@ -141,6 +143,7 @@ public class PaypalController {
 			request.getSession().setAttribute("selectedOption", selectedOption);
 			request.getSession().setAttribute("initialPrice", initialPrice);
 			request.getSession().setAttribute("discountPrice", discountPrice);
+			request.getSession().setAttribute("priceTotal", priceTotal);
 			Optional<Address> a = addressDAO.findById(address2);
 			String addressNoCity = a.get().getStreet() + ", " + a.get().getWard() + ", " + a.get().getDistrict();
 
@@ -177,6 +180,7 @@ public class PaypalController {
 		String selectedOption = (String) request.getSession().getAttribute("selectedOption");
 		Double discountPrice = (Double) request.getSession().getAttribute("discountPrice");
 		Double initialPrice = (Double) request.getSession().getAttribute("initialPrice");
+		List<Double> priceTotal = (List<Double>) request.getSession().getAttribute("priceTotal");
 		System.out.println(productID.size());
 		for (int i = 0; i < productID.size(); i++) {
 			Integer id = productID.get(i);
@@ -221,6 +225,7 @@ public class PaypalController {
 					e.printStackTrace();
 				}
 				Order newOrder = orderDAO.saveAndFlush(order);
+				System.out.println(Arrays.asList(priceTotal));
 				//// ADD OrderDetail ////
 				for (int i = 0; i < productID.size(); i++) {
 					Product product = productDAO.findById(productID.get(i)).get();
@@ -228,7 +233,7 @@ public class PaypalController {
 					orderDetail.setOrder(newOrder);
 					orderDetail.setProduct(product);
 					orderDetail.setSize(size.get(i));
-					orderDetail.setPrice(product.getPrice());
+					orderDetail.setPrice(priceTotal.get(i));
 					orderDetail.setQuantity(count.get(i));
 					orderDetailDAO.save(orderDetail);
 				}
@@ -268,7 +273,7 @@ public class PaypalController {
 
 					bodyBuilder.append(
 							"<td style=\"border: 1px solid black; padding: 8px;width: 200px; text-align: center;\">")
-							.append(product.get().getPrice() * quantity).append("$").append("</td>");
+							.append(priceTotal.get(i)).append("$").append("</td>");
 					bodyBuilder.append("</tr>");
 				}
 				bodyBuilder.append("<tr>");

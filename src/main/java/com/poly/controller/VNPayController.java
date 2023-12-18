@@ -66,7 +66,8 @@ public class VNPayController {
 			@RequestParam(required = false) Integer address2, @RequestParam String fullname, @RequestParam double total,
 			@RequestParam String email, @RequestParam("options") String selectedOption, // PT thanh toán
 			@RequestParam("initialPrice") Double initialPrice, // tiền ban đầu
-			@RequestParam(name = "discountPrice", defaultValue = "0") Double discountPrice // giảm giá
+			@RequestParam(name = "discountPrice", defaultValue = "0") Double discountPrice, // giảm giá
+			@RequestParam(value = "priceTotal", required = false) List<Double> priceTotal
 
 	) throws UnsupportedEncodingException {
 		if (!email.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
@@ -137,6 +138,7 @@ public class VNPayController {
 			request.getSession().setAttribute("selectedOption", selectedOption);
 			request.getSession().setAttribute("initialPrice", initialPrice);
 			request.getSession().setAttribute("discountPrice", discountPrice);
+			request.getSession().setAttribute("priceTotal", priceTotal);
 		} else {
 			model.addAttribute("messages", "Vui lòng thêm địa chỉ");
 			return "forward:/check";
@@ -220,7 +222,7 @@ public class VNPayController {
 			Integer address2 = (Integer) request.getSession().getAttribute("address2");
 			Double total = (Double) request.getSession().getAttribute("total");
 			String fullname = (String) request.getSession().getAttribute("fullname");
-
+			List<Double> priceTotal = (List<Double>) request.getSession().getAttribute("priceTotal");
 			String email = (String) request.getSession().getAttribute("email");
 			String selectedOption = (String) request.getSession().getAttribute("selectedOption");
 			Double discountPrice = (Double) request.getSession().getAttribute("discountPrice");
@@ -251,7 +253,7 @@ public class VNPayController {
 				orderDetail.setOrder(newOrder);
 				orderDetail.setProduct(product);
 				orderDetail.setSize(size.get(i));
-				orderDetail.setPrice(product.getPrice());
+				orderDetail.setPrice(priceTotal.get(i));
 				orderDetail.setQuantity(count.get(i));
 				orderDetailDAO.save(orderDetail);
 			}
@@ -291,7 +293,7 @@ public class VNPayController {
 
 				bodyBuilder.append(
 						"<td style=\"border: 1px solid black; padding: 8px;width: 200px; text-align: center;\">")
-						.append(product.get().getPrice() * quantity).append("$").append("</td>");
+						.append(priceTotal.get(i)).append("$").append("</td>");
 				bodyBuilder.append("</tr>");
 			}
 			bodyBuilder.append("<tr>");
