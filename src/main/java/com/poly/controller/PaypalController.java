@@ -25,12 +25,14 @@ import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
 import com.poly.dao.AccountDAO;
 import com.poly.dao.AddressDAO;
+import com.poly.dao.DiscountCodeDAO;
 import com.poly.dao.OrderDAO;
 import com.poly.dao.OrderDetailDAO;
 import com.poly.dao.ProductDAO;
 import com.poly.dao.SizeDAO;
 import com.poly.entity.Account;
 import com.poly.entity.Address;
+import com.poly.entity.DiscountCode;
 import com.poly.entity.MailInfo;
 import com.poly.entity.Order;
 import com.poly.entity.OrderDetail;
@@ -55,6 +57,8 @@ public class PaypalController {
 	@Autowired
 	AddressDAO addressDAO;
 	@Autowired
+	DiscountCodeDAO dcDAO;
+	@Autowired
 	MailerService mailerService; //mail
 	String city;
 	double totalAmountDouble;
@@ -69,7 +73,8 @@ public class PaypalController {
 			@RequestParam(value = "sizeId", required = false) List<Integer> size,
 			@RequestParam(value = "provinceLabel", required = false) String provinceLabel,
 			@RequestParam(value = "districtLabel", required = false) String districtLabel,
-			@RequestParam(value = "wardLabel", required = false) String wardLabel,			
+			@RequestParam(value = "wardLabel", required = false) String wardLabel,
+			@RequestParam(value = "IdCode", required = false) Integer IdCode,
 			@RequestParam(value = "countProduct", required = false) List<Integer> count,
 			@RequestParam(value = "priceTotal", required = false) List<Double> priceTotal,
 			@RequestParam String email,
@@ -135,7 +140,20 @@ public class PaypalController {
 			return "cart.html";
 		}
 		if (address2 != null) {
-			request.getSession().setAttribute("productID", productID);
+			if(IdCode == null) {
+				request.getSession().setAttribute("productID", productID);
+				request.getSession().setAttribute("size", size);
+				request.getSession().setAttribute("count", count);	
+				request.getSession().setAttribute("address2", address2);
+				request.getSession().setAttribute("email", email);
+				request.getSession().setAttribute("selectedOption", selectedOption);
+				request.getSession().setAttribute("initialPrice", initialPrice);
+				request.getSession().setAttribute("discountPrice", discountPrice);
+        request.getSession().setAttribute("priceTotal", priceTotal);
+				request.getSession().removeAttribute("IdCode");
+			}
+			else {
+				request.getSession().setAttribute("productID", productID);
 			request.getSession().setAttribute("size", size);
 			request.getSession().setAttribute("count", count);	
 			request.getSession().setAttribute("address2", address2);
@@ -143,8 +161,15 @@ public class PaypalController {
 			request.getSession().setAttribute("selectedOption", selectedOption);
 			request.getSession().setAttribute("initialPrice", initialPrice);
 			request.getSession().setAttribute("discountPrice", discountPrice);
-			request.getSession().setAttribute("priceTotal", priceTotal);
+      request.getSession().setAttribute("priceTotal", priceTotal);
+			request.getSession().setAttribute("IdCode", IdCode);
+			
+			}
+			
+	
+
 			Optional<Address> a = addressDAO.findById(address2);
+			
 			String addressNoCity = a.get().getStreet() + ", " + a.get().getWard() + ", " + a.get().getDistrict();
 
 			try {
@@ -180,7 +205,10 @@ public class PaypalController {
 		String selectedOption = (String) request.getSession().getAttribute("selectedOption");
 		Double discountPrice = (Double) request.getSession().getAttribute("discountPrice");
 		Double initialPrice = (Double) request.getSession().getAttribute("initialPrice");
+
+		Integer IdCode = (Integer) request.getSession().getAttribute("IdCode");
 		List<Double> priceTotal = (List<Double>) request.getSession().getAttribute("priceTotal");
+
 		System.out.println(productID.size());
 		for (int i = 0; i < productID.size(); i++) {
 			Integer id = productID.get(i);
@@ -206,37 +234,73 @@ public class PaypalController {
 			String recipientName = payment.getPayer().getPayerInfo().getShippingAddress().getRecipientName();
 			String totalAmountString = payment.getTransactions().get(0).getAmount().getTotal();
 
+			
+			
 			if (payment.getState().equals("approved")) {
-				//// ADD Order ////
-				Order order = new Order();
-				String username = request.getRemoteUser();
-				Account user = accountDAO.findById(username).orElse(null);
-				order.setCreateDate(timestamp);
-				order.setAddress(address);
-				order.setAccount(user);
-				order.setNguoinhan(recipientName);
-				order.setStatus("Đang Xác Nhận");
-				order.setCity(a.get().getCity());
-				order.setAvailable(true);
-				try {
-					totalAmountDouble = Double.parseDouble(totalAmountString);
-					order.setTongtien(totalAmountDouble);
-				} catch (NumberFormatException e) {
-					e.printStackTrace();
+
+				if(IdCode == null) {
+					Order order = new Order();
+					String username = request.getRemoteUser();
+					Account user = accountDAO.findById(username).orElse(null);
+					order.setCreateDate(timestamp);
+					order.setAddress(address);
+					order.setAccount(user);
+					order.setNguoinhan(recipientName);
+					order.setStatus("Đang Xác Nhận");
+					order.setCity(a.get().getCity());
+					order.setAvailable(true);
+					try {
+						totalAmountDouble = Double.parseDouble(totalAmountString);
+						order.setTongtien(totalAmountDouble);
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
+					}
+					Order newOrder = orderDAO.saveAndFlush(order);
+					//// ADD OrderDetail ////
+					for (int i = 0; i < productID.size(); i++) {
+						Product product = productDAO.findById(productID.get(i)).get();
+						OrderDetail orderDetail = new OrderDetail();
+						orderDetail.setOrder(newOrder);
+						orderDetail.setProduct(product);
+						orderDetail.setSize(size.get(i));
+						orderDetail.setPrice(priceTotal.get(i));
+						orderDetail.setQuantity(count.get(i));
+						orderDetailDAO.save(orderDetail);
+					}
+				}else {
+					DiscountCode discount = dcDAO.findById(IdCode).orElse(null);
+					Order order = new Order();
+					String username = request.getRemoteUser();
+					Account user = accountDAO.findById(username).orElse(null);
+					order.setCreateDate(timestamp);
+					order.setAddress(address);
+					order.setDiscountCode(discount);
+					order.setAccount(user);
+					order.setNguoinhan(recipientName);
+					order.setStatus("Đang Xác Nhận");
+					order.setCity(a.get().getCity());
+					order.setAvailable(true);
+					try {
+						totalAmountDouble = Double.parseDouble(totalAmountString);
+						order.setTongtien(totalAmountDouble);
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
+					}
+					Order newOrder = orderDAO.saveAndFlush(order);
+					//// ADD OrderDetail ////
+					for (int i = 0; i < productID.size(); i++) {
+						Product product = productDAO.findById(productID.get(i)).get();
+						OrderDetail orderDetail = new OrderDetail();
+						orderDetail.setOrder(newOrder);
+						orderDetail.setProduct(product);
+						orderDetail.setSize(size.get(i));
+						orderDetail.setPrice(priceTotal.get(i));
+						orderDetail.setQuantity(count.get(i));
+						orderDetailDAO.save(orderDetail);
+					}
+
 				}
-				Order newOrder = orderDAO.saveAndFlush(order);
-				System.out.println(Arrays.asList(priceTotal));
-				//// ADD OrderDetail ////
-				for (int i = 0; i < productID.size(); i++) {
-					Product product = productDAO.findById(productID.get(i)).get();
-					OrderDetail orderDetail = new OrderDetail();
-					orderDetail.setOrder(newOrder);
-					orderDetail.setProduct(product);
-					orderDetail.setSize(size.get(i));
-					orderDetail.setPrice(priceTotal.get(i));
-					orderDetail.setQuantity(count.get(i));
-					orderDetailDAO.save(orderDetail);
-				}
+				
 				//// GỬI MAIL ////
 		
 				MailInfo mail = new MailInfo();

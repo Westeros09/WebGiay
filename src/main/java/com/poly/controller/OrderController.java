@@ -269,7 +269,7 @@ public class OrderController {
 				request.getSession().setAttribute("messagesAddress", "Vui lòng thêm địa chỉ");
 				return "forward:/check";
 			}
-
+// xử lí code khi có discount
 		} else {
 			DiscountCode quantityDiscountCode = dcDAO.findById(IdCode).orElse(null);
 			// Kiểm tra xem đối tượng có tồn tại không
@@ -303,7 +303,6 @@ public class OrderController {
 				// với thông báo lỗi
 				return "cart.html";
 			}
-
 			if (address2 != null) {
 				// Create a new order
 				Order order = new Order();
@@ -312,14 +311,16 @@ public class OrderController {
 				Account user = accountDAO.findById(username).orElse(null);
 				// Update the discount code
 				DiscountCode discount = dcDAO.findById(IdCode).orElse(null);
-				order.setCreateDate(now);
+				System.out.println("discount" + discount.getCode());
 
 				Optional<Address> a = addressDAO.findById(address2);
 				fulladdress = a.get().getStreet() + ", " + a.get().getWard() + ", " + a.get().getDistrict() + ", "
 						+ a.get().getCity();
+				order.setCreateDate(now);
 				order.setAddress(fulladdress);
 				System.out.println(order.getAddress());
 				order.setAvailable(false);
+				order.setDiscountCode(discount);
 				order.setAccount(user);
 				order.setNguoinhan(fullname);
 				order.setStatus("Đang Xác Nhận");

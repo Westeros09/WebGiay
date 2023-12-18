@@ -17,8 +17,15 @@ public interface OrderDetailDAO extends JpaRepository<OrderDetail, Long> {
 	List<OrderDetail> findByOrderDetailId(Long id);
 	
 	
-	@Query(value="SELECT TOP 4 p.id, p.name, p.price, p.quantity, p.available, p.category_id, SUM(od.quantity) AS total_quantity_sold FROM Products p JOIN orderdetails od ON p.id = od.product_id GROUP BY p.id, p.name, p.price, p.quantity, p.available, p.category_id ORDER BY total_quantity_sold DESC", nativeQuery = true)
+	@Query(value = "SELECT TOP 4 p.id, p.name, p.price, p.quantity, p.available, p.category_id, SUM(od.quantity) AS total_quantity_sold \r\n"
+			+ "	        FROM Products p \r\n"
+			+ "	        JOIN orderdetails od ON p.id = od.product_id \r\n"
+			+ "			JOIN  categories c ON p.category_id = c.id \r\n"
+			+ "	        WHERE c.available = 'true'  \r\n"
+			+ "	        GROUP BY p.id, p.name, p.price, p.quantity, p.available, p.category_id \r\n"
+			+ "	        ORDER BY total_quantity_sold DESC", nativeQuery = true)
 	List<Object[]> findByAllTopProductOrderDetail();
+
 
 	// Tổng số lượng sản phẩm bán ra trong tháng
 	@Query(value = "SELECT SUM(od.quantity) FROM OrderDetails od " 
