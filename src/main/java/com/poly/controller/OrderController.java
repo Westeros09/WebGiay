@@ -244,6 +244,7 @@ public class OrderController {
 				order.setAvailable(false);
 				order.setNguoinhan(fullname);
 				order.setStatus("Đang Xác Nhận");
+				
 				order.setTongtien(total);
 				order.setAvailable(false);
 				order.setCity(a.get().getCity());
@@ -326,6 +327,7 @@ public class OrderController {
 				order.setTongtien(total);
 				order.setAvailable(false);
 				order.setCity(a.get().getCity());
+				order.setDiscountCode(discount);
 				Order newOrder = orderDAO.saveAndFlush(order);
 
 				// ADD OrderDetail

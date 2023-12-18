@@ -275,8 +275,7 @@ class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ">
 									{{item.address}}</td>
 								<td>{{item.nguoinhan}}</td>
 								<td>{{item.tongtien}}</td>
-								<td>{{ item.discountCode.id }} {{ item.discountCode.code ||
-									'No Discount' }}</td>
+								<td>{{item.discountCode.id ? item.discountCode.code : 'No discount'}}</td>
 								<td
 									ng-class="{'btn-show': item.status == 'Đã Giao', 'btn-hide': item.status == 'Đang Giao','btn-cancel': item.status == 'Đã Hủy'}">
 									<span ng-if="item.status == 'Đang Xác Nhận'">Chờ xác

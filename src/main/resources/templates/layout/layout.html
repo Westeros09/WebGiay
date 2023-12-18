@@ -155,7 +155,7 @@
 											th:text="${#request.remoteUser}" style="display: none;"></span>
 										<ul class="dropdown-menu">
 											<li
-												th:if="${#request.isUserInRole('DIRE') or #request.isUserInRole('STAF')}">
+												th:if="${#request.isUserInRole('ADMI')}">
 												<a class="dropdown-item" th:href="@{/admin2}"
 												th:text="#{nav.admin}">Admin</a>
 											</li>
@@ -198,6 +198,7 @@
 				</div>
 			</div>
 		</div>
+
 		<nav class="site-navigation mt-4 mb-3 text-right text-md-center"
 			role="navigation">
 			<div class="container">
@@ -224,12 +225,11 @@
 						<li><a href="/newArrivals" th:text="#{nav.newarrivals}">New
 								Arrivals</a></li>
 						<li><a href="/contact.html" th:text="#{nav.contact}">Contact</a></li>
-						
+				
 					</ul>
 				</div>
 			</div>
 		</nav>
-
 	</header>
 
 	<main th:replace="${view}"></main>
@@ -243,49 +243,57 @@
 				<div class="col-md-3">
 					<h5 class="font-weight-bold text-uppercase mt-3 mb-4">Shoe
 						Galaxy</h5>
-					<p th:text="#{footer.abc}">Bringing you quality sneakers from top brands for confident
-						steps every day.</p>
+					<p th:text="#{footer.abc}">Bringing you quality sneakers from
+						top brands for confident steps every day.</p>
 
 
 					<img th:src="@{../../images/thongbao.webp}" alt="Product 1"
 						class="img-fluid mb-3" style="height: 70px">
 				</div>
 				<div class="col-md-3">
-					<h5 class="font-weight-bold text-uppercase mt-3 mb-4"th:text="#{footer.info}">Information</h5>
+					<h5 class="font-weight-bold text-uppercase mt-3 mb-4"
+						th:text="#{footer.info}">Information</h5>
 					<ul class="list-unstyled">
-						<li><a href="#!" class="text-decoration-none "th:text="#{footer.about}">About Us</a></li>
-						<li><a href="#!" class="text-decoration-none"th:text="#{footer.privacy}">Privacy
-								Policy</a></li>
-						<li><a href="#!" class="text-decoration-none"th:text="#{footer.terms}">Terms and
-								Conditions</a></li>
-						<li><a href="#!" class="text-decoration-none"th:text="#{footer.site}">Site Map</a></li>
-						<li><a href="#!" class="text-decoration-none" th:text="#{footer.size}">Size Guide</a></li>
-						<li><a href="#!" class="text-decoration-none"th:text="#{footer.feed}">Feedback</a></li>
+						<li><a href="#!" class="text-decoration-none "
+							th:text="#{footer.about}">About Us</a></li>
+						<li><a href="#!" class="text-decoration-none"
+							th:text="#{footer.privacy}">Privacy Policy</a></li>
+						<li><a href="#!" class="text-decoration-none"
+							th:text="#{footer.terms}">Terms and Conditions</a></li>
+						<li><a href="#!" class="text-decoration-none"
+							th:text="#{footer.site}">Site Map</a></li>
+						<li><a href="#!" class="text-decoration-none"
+							th:text="#{footer.size}">Size Guide</a></li>
+						<li><a href="#!" class="text-decoration-none"
+							th:text="#{footer.feed}">Feedback</a></li>
 					</ul>
 				</div>
 				<div class="col-md-3">
-					<h5 class="font-weight-bold text-uppercase mt-3 mb-4"th:text="#{footer.freeshipping}">Customer
-						Services</h5>
+					<h5 class="font-weight-bold text-uppercase mt-3 mb-4"
+						th:text="#{footer.freeshipping}">Customer Services</h5>
 					<ul class="list-unstyled">
-						<li><a href="#!" class="text-decoration-none "th:text="#{footer.contact}">Contact</a></li>
-						<li><a href="#!" class="text-decoration-none "th:text="#{footer.support}">Support</a></li>
-						<li><a href="#!" class="text-decoration-none "th:text="#{footer.returns}">Returns</a></li>
-						<li><a href="#!" class="text-decoration-none "th:text="#{footer.order}">Order
-								Status</a></li>
-						<li><a href="#!" class="text-decoration-none "th:text="#{footer.faq}">FAQ</a></li>
-						<li><a href="#!" class="text-decoration-none "th:text="#{footer.loyalty}">Loyalty
-								Program</a></li>
+						<li><a href="#!" class="text-decoration-none "
+							th:text="#{footer.contact}">Contact</a></li>
+						<li><a href="#!" class="text-decoration-none "
+							th:text="#{footer.support}">Support</a></li>
+						<li><a href="#!" class="text-decoration-none "
+							th:text="#{footer.returns}">Returns</a></li>
+						<li><a href="#!" class="text-decoration-none "
+							th:text="#{footer.order}">Order Status</a></li>
+						<li><a href="#!" class="text-decoration-none "
+							th:text="#{footer.faq}">FAQ</a></li>
+						<li><a href="#!" class="text-decoration-none "
+							th:text="#{footer.loyalty}">Loyalty Program</a></li>
 					</ul>
 				</div>
 				<div class="col-md-3">
-					<h5 class="font-weight-bold text-uppercase mt-3 mb-4"th:text="#{footer.contactAdd}">Contact
-						Address</h5>
+					<h5 class="font-weight-bold text-uppercase mt-3 mb-4"
+						th:text="#{footer.contactAdd}">Contact Address</h5>
 
-					<p th:text="#{footer.address1}">
-						QTSC Building 1, Quang Trung Software City, Tan Chanh
-						Hiep Ward, District 12, Ho Chi Minh City, Vietnam 
-					</p>Email:
-						ShoeGalaxy@sneakers.com <br> Hotline: (84-28) 3715 8888
+					<p th:text="#{footer.address1}">QTSC Building 1, Quang Trung
+						Software City, Tan Chanh Hiep Ward, District 12, Ho Chi Minh City,
+						Vietnam</p>
+					Email: ShoeGalaxy@sneakers.com <br> Hotline: (84-28) 3715 8888
 
 
 				</div>

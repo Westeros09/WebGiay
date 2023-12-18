@@ -22,7 +22,10 @@ public interface CategoryDAO extends JpaRepository<Category, String> {
 
 	@Query(value = "SELECT c.name, SUM(od.quantity)" 
 			+ "FROM Categories c "
-			+ "LEFT JOIN Products p ON c.id = p.category_id " + "LEFT JOIN OrderDetails od ON p.id = od.product_id "
+			+ "LEFT JOIN Products p ON c.id = p.category_id " 
+			+ "LEFT JOIN OrderDetails od ON p.id = od.product_id "
+			+ "LEFT JOIN Orders o ON od.order_id = o.id "
+			+ "WHERE o.status = N'Đã Giao' "
 			+ "GROUP BY c.name, c.id " + "ORDER BY c.name", nativeQuery = true)
 	List<Object[]> getTotalQuantitySoldByCategoryNative();
 }
