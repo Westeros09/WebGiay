@@ -133,7 +133,7 @@ app.controller("product-ctrl", function($scope, $http) {
 			console.log(resp.data.id);
 
 			$scope.reset();
-
+	$scope.initialize();
 			alert("Thêm mới sản phẩm thành công!");
 		}).catch(error => {
 			alert("Lỗi thêm mới sản phẩm!");
@@ -151,6 +151,7 @@ app.controller("product-ctrl", function($scope, $http) {
 			$scope.deleteOldImages(item.id);
 			$scope.uploadNewImages(item.id);
 			$scope.reset();
+			$scope.initialize();
 			alert("Cập nhật sản phẩm thành công!");
 		}).catch(error => {
 			alert("Lỗi cập nhật sản phẩm!");
@@ -208,6 +209,7 @@ app.controller("product-ctrl", function($scope, $http) {
 				$scope.items.splice(index, 1);
 				$scope.reset();
 				alert("Xóa sản phẩm thành công!");
+				$scope.initialize();
 			}
 		}, function errorCallback(error) {
 			// Nếu không xóa được, thực hiện cập nhật trạng thái
@@ -221,6 +223,7 @@ app.controller("product-ctrl", function($scope, $http) {
 				if (index !== -1) {
 					$scope.items[index] = itemCopy;
 					alert("Cập nhật trạng thái thành công!");
+					$scope.initialize();
 				}
 			}, function errorCallback(updateError) {
 				// Handle the error for the status update here if needed
