@@ -11,5 +11,10 @@
 ### Giỏ hàng(lưu theo user), thanh toán (paypal, VNpay)
 ![image](https://github.com/Westeros09/WebGiay/assets/93584462/53c2c494-17ca-4a5b-a325-3d1e9af5f632)
 ![image](https://github.com/Westeros09/WebGiay/assets/93584462/ef45e0bf-42a2-4162-973b-834ae151b49b)
+![image](https://github.com/Westeros09/WebGiay/assets/93584462/e9266a1c-2233-434c-bfe2-3cb8e5697445)
+![image](https://github.com/Westeros09/WebGiay/assets/93584462/1427dfd9-54fb-4b98-9773-e9cc43feffc6)
+
+
+
 
 
