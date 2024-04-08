@@ -443,41 +443,75 @@ $scope.getOrderDetails = function() {
 })
 
 
-const host = "https://provinces.open-api.vn/api/";
-var callAPI = (api) => {
-	return axios.get(api)
-		.then((response) => {
-			renderData(response.data, "province");
-		});
-}
-callAPI('https://provinces.open-api.vn/api/?depth=1');
-var callApiDistrict = (api) => {
-	return axios.get(api)
-		.then((response) => {
-			renderData(response.data.districts, "district");
-		});
-}
-var callApiWard = (api) => {
-	return axios.get(api)
-		.then((response) => {
-			renderData(response.data.wards, "ward");
-		});
-}
+const apiPro = `https://vapi.vnappmob.com/api/province`;
+    const apiDis = `https://vapi.vnappmob.com/api/province/district/`;
+    const apiWar = `https://vapi.vnappmob.com/api/province/ward/`;
 
-var renderData = (array, select) => {
-	let row = ' <option disable value="">chọn</option>';
-	array.forEach(element => {
-		row += `<option data-code="${element.code}" value="${element.name}">${element.name}</option>`
-	});
-	document.querySelector("#" + select).innerHTML = row;
-}
+    var callApiProvine = () => {
+        return axios.get(apiPro)
+            .then((response) => {
+                renderData(response.data.results, "province");
+            })
+            .catch((error) => {
+                console.error("Error fetching province data:", error);
+            });
+    }
 
+    var callApiDistrict = (province_id) => {
+        return axios.get(`${apiDis}${province_id}`)
+            .then((response) => {
+                renderDataDis(response.data.results, "district");
+            })
+            .catch((error) => {
+                console.error("Error fetching district data:", error);
+            });
+    }
+
+    var callApiWard = (district_id) => {
+        return axios.get(`${apiWar}${district_id}`)
+            .then((response) => {
+                renderWar(response.data.results, "ward");
+            })
+            .catch((error) => {
+                console.error("Error fetching ward data:", error);
+            });
+    }
+
+    var renderData = (array, select) => {
+        let row = '<option value="">Chọn Tỉnh/Thành phố</option>';
+        array.forEach(element => {
+            row += `<option data-code="${element.province_id}" value="${element.province_name}">${element.province_name}</option>`;
+        });
+        document.querySelector("#" + select).innerHTML = row;
+    }
+    var renderDataDis = (array, select) => {
+        let row = '<option value="">Chọn Quận</option>';
+        array.forEach(element => {
+            row += `<option data-code="${element.district_id}" value="${element.district_name}">${element.district_name}</option>`;
+        });
+        document.querySelector("#" + select).innerHTML = row;
+    }
+    var renderWar = (array, select) => {
+        let row = '<option value="">Chọn phường</option>';
+        array.forEach(element => {
+            row += `<option data-code="${element.ward_id}" value="${element.ward_name}">${element.ward_name}</option>`;
+        });
+        document.querySelector("#" + select).innerHTML = row;
+    }
+
+    // Gọi hàm để lấy danh sách tỉnh/thành phố ban đầu
+    callApiProvine();
+
+    // Gọi hàm để lấy danh sách quận/huyện khi chọn tỉnh/thành phố
+   // Gọi hàm để lấy danh sách quận/huyện khi chọn tỉnh/thành phố
 $("#province").change(() => {
-	let selectedCode = $("#province option:selected").data("code");
-	callApiDistrict(host + "p/" + selectedCode + "?depth=2");
+    let selectedProvinceId = $("#province option:selected").data('code');
+    callApiDistrict(selectedProvinceId);
 });
+
+// Gọi hàm để lấy danh sách phường/xã khi chọn quận/huyện
 $("#district").change(() => {
-	let selectedCode = $("#district option:selected").data("code");
-	callApiWard(host + "d/" + selectedCode + "?depth=2");
+    let selectedDistrictId = $("#district option:selected").data('code');
+    callApiWard(selectedDistrictId);
 });
 

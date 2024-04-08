@@ -4,54 +4,76 @@ app.controller("address-ctrl", function($scope, $http) {
 	$scope.province = [];
 	$scope.districts = [];
 	$scope.wards = [];
-	const host = "https://provinces.open-api.vn/api/";
-	var callAPI = (api) => {
-		return axios.get(api)
+	const apiPro = `https://vapi.vnappmob.com/api/province`;
+	const apiDis = `https://vapi.vnappmob.com/api/province/district/`;
+	const apiWar = `https://vapi.vnappmob.com/api/province/ward/`;
+
+	var callApiProvine = () => {
+		return axios.get(apiPro)
 			.then((response) => {
-				renderData(response.data, "province");
-
-
+				renderData(response.data.results, "province");
+			})
+			.catch((error) => {
+				console.error("Error fetching province data:", error);
 			});
 	}
-	callAPI('https://provinces.open-api.vn/api/?depth=1');
-	var callApiDistrict = (api) => {
-		return axios.get(api)
+
+	var callApiDistrict = (province_id) => {
+		return axios.get(`${apiDis}${province_id}`)
 			.then((response) => {
-				renderData(response.data.districts, "district");
+				renderDataDis(response.data.results, "district");
+			})
+			.catch((error) => {
+				console.error("Error fetching district data:", error);
 			});
 	}
-	var callApiWard = (api) => {
-		return axios.get(api)
+
+	var callApiWard = (district_id) => {
+		return axios.get(`${apiWar}${district_id}`)
 			.then((response) => {
-				renderData(response.data.wards, "ward");
+				renderWar(response.data.results, "ward");
+			})
+			.catch((error) => {
+				console.error("Error fetching ward data:", error);
 			});
 	}
 
 	var renderData = (array, select) => {
-		let row = ' <option disable value="">chọn</option>';
+		let row = '<option value="">Chọn Tỉnh/Thành phố</option>';
 		array.forEach(element => {
-			row += `<option data-code="${element.code}" value="${element.name}">${element.name}</option>`
+			row += `<option data-code="${element.province_id}" value="${element.province_name}">${element.province_name}</option>`;
 		});
 		document.querySelector("#" + select).innerHTML = row;
 	}
+	var renderDataDis = (array, select) => {
+		let row = '<option value="">Chọn Quận</option>';
+		array.forEach(element => {
+			row += `<option data-code="${element.district_id}" value="${element.district_name}">${element.district_name}</option>`;
+		});
+		document.querySelector("#" + select).innerHTML = row;
+	}
+	var renderWar = (array, select) => {
+		let row = '<option value="">Chọn phường</option>';
+		array.forEach(element => {
+			row += `<option data-code="${element.ward_id}" value="${element.ward_name}">${element.ward_name}</option>`;
+		});
+		document.querySelector("#" + select).innerHTML = row;
+	}
+
+	// Gọi hàm để lấy danh sách tỉnh/thành phố ban đầu
+	callApiProvine();
+
+	// Gọi hàm để lấy danh sách quận/huyện khi chọn tỉnh/thành phố
+	// Gọi hàm để lấy danh sách quận/huyện khi chọn tỉnh/thành phố
 	$("#province").change(() => {
-		let selectedOptionCity = $("#province option:selected");
-
-		let selectedCode = selectedOptionCity.data("code");
-		callApiDistrict(host + "p/" + selectedCode + "?depth=2");
-		$scope.form.city = selectedOptionCity.text();
+		let selectedProvinceId = $("#province option:selected").data('code');
+		callApiDistrict(selectedProvinceId);
 	});
 
+	// Gọi hàm để lấy danh sách phường/xã khi chọn quận/huyện
 	$("#district").change(() => {
-		let selectedOptionDistrict = $("#district option:selected");
-		let selectedCode = selectedOptionDistrict.data("code");
-		callApiWard(host + "d/" + selectedCode + "?depth=2");
-		$scope.form.district = selectedOptionDistrict.text();
-	});
-
-	$("#ward").change(() => {
-		let selectedOptionWard = $("#ward option:selected");
-		$scope.form.ward = selectedOptionWard.text();
+		let selectedDistrictId = $("#district option:selected").data('code');
+		callApiWard(selectedDistrictId);
 	});
 
 
@@ -90,9 +112,9 @@ app.controller("address-ctrl", function($scope, $http) {
 			var existingItemIndex = $scope.items.findIndex(existingItem => existingItem.id === item.id);
 
 			if (existingItemIndex !== -1) {
-				
+
 				$http.put(`/rest/address/${item.id}`, item).then(resp => {
-					
+
 					if ($("#province option:selected").val() === "") {
 						alert("Vui lòng chọn tỉnh trước khi cập nhật.");
 						return; // Dừng hàm nếu tỉnh chưa được chọn
